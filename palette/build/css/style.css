@@ -55,8 +55,8 @@ label {
 .canvas-style {
   border: 1px solid rgba(0, 0, 0, 0.4); }
 
-.test {
-  background-color: rgba(255, 255, 255, 0.2); }
+.tool--active {
+  background-color: #fddfeb; }
 
 .nav {
   background-repeat: no-repeat;
@@ -99,6 +99,8 @@ label {
     margin: 0 -16px;
     background-color: rgba(0, 0, 0, 0.12);
     border: none; }
+  .pane .tool--active {
+    outline: 1px solid red; }
   .pane__tools {
     top: 80px;
     left: 30px; }

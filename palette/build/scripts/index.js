@@ -48,7 +48,7 @@ function drawImage(imageSrc) {
 ctx.strokeStyle = '#225522';
 ctx.lineJoin = 'round';
 ctx.lineCap = 'round';
-ctx.lineWidth = 10;
+ctx.lineWidth = 4;
 
 let isDrawing = false;
 let lastX = 0;
@@ -56,7 +56,6 @@ let lastY = 0;
 
 function draw(e) {
   if (!isDrawing) return;
-  console.log(e);
   ctx.beginPath();
   ctx.moveTo(lastX, lastY);
   ctx.lineTo(e.offsetX, e.offsetY);
@@ -64,6 +63,17 @@ function draw(e) {
 
   [lastX, lastY] = [e.offsetX, e.offsetY];
 }
+
+const pane = document.querySelector('.pane');
+pane.addEventListener('click', e => {
+  const targetTool = e.target.closest('li');
+  if (targetTool === null) return;
+  const curActiveTool = document.querySelector('.tool--active');
+  curActiveTool.classList.remove('tool--active');
+  targetTool.classList.add('tool--active');
+
+  // if ()
+});
 
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mousedown', e => {

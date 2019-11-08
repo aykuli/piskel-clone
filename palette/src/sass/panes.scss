@@ -42,6 +42,12 @@
         border: none;
     }
 
+    & .tool {
+        &--active {
+            outline: 1px solid red;
+        }
+    }
+
     &__tools {
         top: 80px;
         left: 30px;

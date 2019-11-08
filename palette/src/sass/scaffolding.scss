@@ -70,9 +70,8 @@ label {
 
 .canvas-style {
     border: 1px solid rgba(0, 0, 0, 0.4);
-    // background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEVMTExVVVUnhsEkAAAAHUlEQVR4AWOAAUYoQOePEAUj3v9oYDQ9gMBoegAAJFwCAbLaTIMAAAAASUVORK5CYII=') repeat;
 }
 
-.test {
-    background-color: rgba(255, 255, 255, 0.2);
+.tool--active {
+    background-color: rgb(253, 223, 235);
 }
