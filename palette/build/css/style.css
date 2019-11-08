@@ -55,9 +55,6 @@ label {
 .canvas-style {
   border: 1px solid rgba(0, 0, 0, 0.4); }
 
-.tool--active {
-  background-color: #fddfeb; }
-
 .nav {
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -101,7 +98,7 @@ label {
     background-color: rgba(0, 0, 0, 0.12);
     border: none; }
   .pane .tool--active {
-    outline: 1px solid red; }
+    background-color: #fddfeb; }
   .pane__tools {
     top: 80px;
     left: 30px; }
@@ -140,6 +137,23 @@ label {
     border-radius: 50%; }
   .color label {
     position: relative; }
+  .color__indicator {
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    margin-right: 18px;
+    padding: 0;
+    border: none;
+    border: 1px solid black;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer; }
+  .color--prev div {
+    background-color: #fff; }
+  .color--red div {
+    background-color: #f74242; }
+  .color--blue div {
+    background-color: #316cb9; }
 
 .select__wrap {
   display: flex;
