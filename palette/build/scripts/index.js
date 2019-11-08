@@ -65,23 +65,35 @@ function draw(e) {
 }
 
 const pane = document.querySelector('.pane');
+const pencil = document.querySelector('#pencil');
+
+let targetTool = pencil;
+pencilTool(targetTool);
+
 pane.addEventListener('click', e => {
-  const targetTool = e.target.closest('li');
+  targetTool = e.target.closest('li');
+  console.log('targetTool =', targetTool);
   if (targetTool === null) return;
-  const curActiveTool = document.querySelector('.tool--active');
-  curActiveTool.classList.remove('tool--active');
+  const prevActiveTool = document.querySelector('.tool--active');
+  prevActiveTool.classList.remove('tool--active');
   targetTool.classList.add('tool--active');
-
-  // if ()
+  pencilTool(targetTool);
 });
 
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mousedown', e => {
-  isDrawing = true;
-  [lastX, lastY] = [e.offsetX, e.offsetY];
-});
-canvas.addEventListener('mouseup', () => (isDrawing = false));
-canvas.addEventListener('mouseout', () => (isDrawing = false));
+function pencilTool(targetTool) {
+  if (targetTool === pencil) {
+    console.log(pencil);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mousedown', e => {
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+    canvas.addEventListener('mouseup', () => (isDrawing = false));
+    canvas.addEventListener('mouseout', () => (isDrawing = false));
+  } else {
+    canvas.removeEventListener('mousemove', draw);
+  }
+}
 
 document.getElementById('draw').addEventListener('click', () => {
   const drawSelecterValue = document.forms.drawSelectorForm.elements.drawSelector.value;

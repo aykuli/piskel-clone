@@ -25,7 +25,10 @@
         margin: 12px 0;
 
         line-height: 24px;
+    }
         
+        
+    & li:hover {
         cursor: pointer;
     }
 
@@ -57,4 +60,8 @@
         top: 420px;
         left: 30px;
     }
+}
+
+.pencil--active {
+    cursor: url('../assets/img/pencil.svg') 0 0, auto;
 }
