@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Codejam Canvas from RSSchool</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet"> 
+</head>
+<body>
+    <div class="page__wrap">
+        <header>
+            <nav class="nav nav__main"></nav>
+            <h1>CodeJam - Pallete</h1>
+            <nav class="nav nav__user"></nav>
+        </header>
+        <main>
+            <aside>
+                <section class="pane pane__tools">
+                    <h2 class="visually-hidden">Tools for paint</h2>
+                    <ul>
+                        <li class="tool">
+                            <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.7782 11.25C17.7782 11.25 15.556 14.5072 15.556 15.75C15.556 16.9928 16.5511 18 17.7782 18C19.0053 18 20.0004 16.9928 20.0004 15.75C20.0004 14.5072 17.7782 11.25 17.7782 11.25ZM17.4528 7.63102L10.2414 0.329414C10.0244 0.109687 9.73999 0 9.45561 0C9.17124 0 8.88686 0.109687 8.67019 0.329414L5.83755 3.19746L2.84519 0.167344C2.62818 -0.0523828 2.27644 -0.0523828 2.05978 0.167344L1.27436 0.962578C1.05769 1.1823 1.05769 1.53844 1.27436 1.75781L4.26707 4.78758L0.97679 8.11898C-0.324946 9.43664 -0.324946 11.5734 0.97679 12.8914L5.04589 17.0114C5.69658 17.6702 6.54971 18 7.40248 18C8.25561 18 9.10839 17.6706 9.75908 17.0114L17.4525 9.22184C17.8865 8.78238 17.8865 8.07047 17.4528 7.63102ZM13.4174 10.1261H2.28964C2.33686 9.99105 2.4136 9.84551 2.54762 9.71016L3.00422 9.24785L5.8379 6.37875L7.87262 8.43891C8.3063 8.87801 9.00978 8.87801 9.44346 8.43891C9.87714 7.9998 9.87714 7.28754 9.44346 6.84844L7.40874 4.78828L9.45561 2.71582L15.0959 8.4266L13.4174 10.1261Z" fill="black" fill-opacity="0.5413"/>
+                            </svg>
+                            <span>Paint bucket</span>
+                        </li>
+                        <li class="tool">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.98242 13.0176C1.51367 13.4863 1.25 14.1223 1.25 14.7856V16.5625L0 18.75L1.25 20L3.4375 18.75H5.21445C5.87734 18.75 6.51328 18.4867 6.98203 18.018L11.9289 13.0719L6.92891 8.07189L1.98242 13.0176ZM18.9016 1.09845C17.4379 -0.366394 15.0625 -0.366394 13.5988 1.09845L10.5875 4.10978L10.0758 3.59806C9.70703 3.22931 9.11289 3.23439 8.75 3.59806L7.14961 5.19845C6.78359 5.56447 6.78359 6.15822 7.14961 6.52423L13.4754 12.85C13.8441 13.2188 14.4383 13.2137 14.8012 12.85L16.4016 11.25C16.7676 10.884 16.7676 10.2902 16.4016 9.92423L15.8898 9.41251L18.9012 6.40118C20.3664 4.93712 20.3664 2.5629 18.9016 1.09845Z" fill="black" fill-opacity="0.5413"/>
+                            </svg>
+                            <span>Choose color</span>
+                        </li>
+                    </ul>
+                        <hr>
+                    <ul>
+                        <li class="tool">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.7571 16.6311L10.6636 19.7247C10.2974 20.0909 9.70387 20.0909 9.33773 19.7247L6.24414 16.6311C5.65355 16.0406 6.07184 15.0307 6.90707 15.0308H8.90559L8.90555 11.093H4.96789V13.0916C4.96789 13.9268 3.95809 14.3451 3.36746 13.7545L0.273867 10.6609C-0.0922656 10.2948 -0.0922656 9.70117 0.273867 9.33508L3.36746 6.24148C3.95805 5.65089 4.96789 6.06917 4.96789 6.90441V8.90555H8.90555V4.96788H6.90438C6.06914 4.96788 5.65086 3.95808 6.24145 3.36745L9.33504 0.273852C9.70117 -0.092281 10.2947 -0.092281 10.6609 0.273852L13.7545 3.36745C14.345 3.95804 13.9268 4.96788 13.0915 4.96788H11.093V8.90555H15.0307V6.90703C15.0307 6.07179 16.0405 5.65351 16.6311 6.2441L19.7246 9.33769C20.0908 9.70383 20.0908 10.2974 19.7246 10.6635L16.6311 13.7571C16.0405 14.3477 15.0306 13.9294 15.0307 13.0942V11.093H11.093V15.0307H13.0942C13.9295 15.0307 14.3477 16.0405 13.7571 16.6311Z" fill="black" fill-opacity="0.5413"/>
+                            </svg>
+                            <span>Move</span>
+                        </li>
+                        <li class="tool">
+                            <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 4.56249V3.93749C0 3.41972 0.419727 2.99999 0.9375 2.99999H15V1.12499C15 0.29034 16.0117 -0.126652 16.6004 0.462059L19.7254 3.58706C20.0915 3.95319 20.0915 4.54679 19.7254 4.91288L16.6004 8.03788C16.0139 8.62429 15 8.21311 15 7.37499V5.49999H0.9375C0.419727 5.49999 0 5.08026 0 4.56249ZM19.0625 10.5H5V8.62499C5 7.79241 3.98977 7.37186 3.39957 7.96206L0.27457 11.0871C-0.0915234 11.4532 -0.0915234 12.0468 0.27457 12.4129L3.39957 15.5379C3.9866 16.1249 5 15.7124 5 14.875V13H19.0625C19.5803 13 20 12.5803 20 12.0625V11.4375C20 10.9197 19.5803 10.5 19.0625 10.5Z" fill="black" fill-opacity="0.5413"/>
+                            </svg>
+                            <span>Transform</span>
+                        </li>
+                    </ul>
+                </section>
+                <section class="pane pane__colors">
+                    <h2 class="visually-hidden">Tools for choosing colors</h2>
+                    <ul>
+                        <li class="color">
+                            <input type="color" id="currentColor" name="current-color" value="#C4C4C4">
+                            <label for="currentColor">Current color</label>
+                        </li>
+                        <li class="color">
+                            <input type="color" id="prevColor" name="prev-color" value="#41F795">
+                            <label for="prevColor">Prev color</label>
+                        </li>
+                    </ul>
+                        <hr>
+                    <ul>
+                        <li class="color">
+                            <input type="color" id="choosedColor0" name="choosed-color0" value="#F74141">
+                            <label for="choosedColor0">Red</label>
+                        </li>
+                        <li class="color">
+                            <input type="color" id="choosedColor1" name="choosed-color1" value="#41B6F7">
+                            <label for="choosedColor1">Blue</label>
+                        </li>
+                    </ul>
+                </section>
+            </aside>
+            <section class="drawing-section">
+                <h2 class="visually-hidden">Drawing on canvas</h2>
+                <canvas id="canvas" class="canvas-style" width="512" height="512"></canvas>    
+                <div class="select__wrap">
+                    <form name="drawSelectorForm">
+                        <select id="drawSelector" class="select__draw" name="select-what-to-draw">
+                            <option value="draw4x4" id="draw4x4">4x4</option>
+                            <option value="draw32x32" id="draw32x32">32x32</option>
+                            <option value="RSSchoolIcon" id="RSSchoolIcon">RSSchool icon</option>
+                        </select>
+                    </form>
+                    <button id='draw' class="select__btn">draw</button>
+                </div>
+            </section>
+        </main>
+        <div class="test"></div>
+    </div>
+    <script src="scripts/index.js"></script>
+</body>
+</html>

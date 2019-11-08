@@ -1,0 +1,11 @@
+node_modules
+.editorconfig
+.gitattributes
+.stylelintrc
+
+Thumbs.db
+
+*.code-workspace
+css/style.css.map
+
+prettier.config.js
