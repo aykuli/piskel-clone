@@ -59,11 +59,11 @@
                     <h2 class="visually-hidden">Tools for choosing colors</h2>
                     <ul>
                         <li class="color">
-                            <input type="color" id="currentColor" name="current-color" value="#555555">
+                            <input type="color" id="currentColor" name="current-color" value="#ffbb44">
                             <label for="currentColor">Current color</label>
                         </li>
                         <li class="color color--prev">
-                            <div class="color__indicator"></div>
+                            <button class="color__indicator" value="#ffffff"></button>
                             <span class="">Prev color</span>
                         </li>
                     </ul>
@@ -82,17 +82,7 @@
             </aside>
             <section class="drawing-section">
                 <h2 class="visually-hidden">Drawing on canvas</h2>
-                <canvas id="canvas" class="canvas-style" width="512" height="512"></canvas>    
-                <div class="select__wrap">
-                    <form name="drawSelectorForm">
-                        <select id="drawSelector" class="select__draw" name="select-what-to-draw">
-                            <option value="draw4x4" id="draw4x4">4x4</option>
-                            <option value="draw32x32" id="draw32x32">32x32</option>
-                            <option value="RSSchoolIcon" id="RSSchoolIcon">RSSchool icon</option>
-                        </select>
-                    </form>
-                    <button id='draw' class="select__btn">draw</button>
-                </div>
+                <canvas id="canvas" class="canvas-style" width="512" height="512"></canvas>
             </section>
         </main>
         <div class="test"></div>

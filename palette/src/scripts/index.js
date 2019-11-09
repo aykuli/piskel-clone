@@ -1,27 +1,20 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const pane = document.querySelector('.pane');
-const pickedColor = document.querySelector('#currentColor');
-const pencil = document.querySelector('#pencil');
 const currentColor = document.querySelector('#currentColor');
+const pencil = document.querySelector('#pencil');
 const prevColor = document.querySelector('.color--prev');
 const colorRed = document.querySelector('.color--red');
-const blueColor = document.querySelector('.color--blue');
+const colorBlue = document.querySelector('.color--blue');
+let prevColorCache = '#ffffff';
+let pickedColor = currentColor;
 
-ctx.lineJoin = 'round';
-ctx.lineCap = 'round';
 ctx.lineWidth = 4;
+let scale = 4;
 
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
-
-colorRed.addEventListener('click', () => {
-  console.log('red choosed');
-  ctx.strokeStyle = '#f74242';
-  console.log(ctx.strokeStyle);
-});
-console.log(ctx.strokeStyle);
 
 function draw(e) {
   if (!isDrawing) return;
@@ -36,7 +29,8 @@ function draw(e) {
 
 function watchColorPicker() {
   prevColor.children[0].style.background = ctx.strokeStyle;
-  ctx.strokeStyle = pickedColor.value;
+  prevColorCache = ctx.strokeStyle;
+  ctx.strokeStyle = currentColor.value;
 }
 
 function pencilTool(targetTool) {
@@ -71,4 +65,16 @@ pane.addEventListener('click', e => {
   pencilTool(targetTool);
 });
 
+colorRed.addEventListener('click', () => {
+  currentColor.value = '#f74242';
+  watchColorPicker();
+});
+colorBlue.addEventListener('click', () => {
+  currentColor.value = '#316cb9';
+  watchColorPicker();
+});
+prevColor.addEventListener('click', () => {
+  currentColor.value = prevColorCache;
+  watchColorPicker();
+});
 currentColor.addEventListener('change', watchColorPicker, false);
