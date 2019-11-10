@@ -27,7 +27,7 @@ let ctxData = [];
 
 window.onload = function() {
   console.log('page refreshed');
-  // localStorage.removeItem('userPaint');
+  localStorage.removeItem('userPaint');
   if (localStorage.getItem('userPaint') === null) {
     console.log('We are inside localStorage.getItem(userPaint) === null');
     console.log('Before for ctxData: ', ctxData);
@@ -42,8 +42,6 @@ window.onload = function() {
     console.log('after for ctxData: ', ctxData);
     console.log('after loadPrevImage()  ctxData: ', ctxData);
     let json = JSON.stringify(ctxData);
-
-    localStorage.setItem('userPaint', ctxData);
 
     localStorage.setItem('userPaint', json);
     ctxData = localStorage.getItem('userPaint');
@@ -79,16 +77,16 @@ function loadPrevImage() {
   }
 }
 
-function emptyCanvas(e) {
-  console.log('emptyCanvas');
-  for (let i = 0; i < row; i++) {
-    for (let j = 0; j < column; j++) {
-      ctxData[i][j] = '#ffffff';
-      ctx.fillStyle = ctxData[i][j];
-      ctx.fillRect(i * scale, j * scale, scale, scale);
-    }
-  }
-}
+// function emptyCanvas(e) {
+//   console.log('emptyCanvas');
+//   for (let i = 0; i < row; i++) {
+//     for (let j = 0; j < column; j++) {
+//       ctxData[i][j] = '#ffffff';
+//       ctx.fillStyle = ctxData[i][j];
+//       ctx.fillRect(i * scale, j * scale, scale, scale);
+//     }
+//   }
+// }
 
 function drawScale(e) {
   if (!isDrawing) return;
@@ -254,5 +252,5 @@ document.addEventListener('keydown', e => {
   }
 });
 
-let empty = document.getElementById('empty');
-empty.addEventListener('click', emptyCanvas);
+// let empty = document.getElementById('empty');
+// empty.addEventListener('click', emptyCanvas);

@@ -72,17 +72,26 @@ label {
     &--style {
         border: 1px solid rgba(0, 0, 0, 0.4);
     }
+    
+    &__buttons {
+        & button {
+            font-family: Roboto, Arial, serif;
+            font-size: 16px;
+            line-height: 24px;
+            font-style: normal;
+            font-weight: normal;
+            color: rgba(0, 0, 0, 0.6);
+            text-align: center;
+            
+            background-color: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.4);
 
-    &--empty{        
-        font-family: Roboto, Arial, serif;
-        font-size: 16px;
-        line-height: 24px;
-        font-style: normal;
-        font-weight: normal;
-        color: rgba(0, 0, 0, 0.6);
-        text-align: center;
-        
-        background-color: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.4);
+            &:hover, &:focus {
+                background-color: rgb(253, 223, 235);
+            }
+            &:active {
+                box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4);
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ let ctxData = [];
 
 window.onload = function() {
   console.log('page refreshed');
-  // localStorage.removeItem('userPaint');
+  localStorage.removeItem('userPaint');
   if (localStorage.getItem('userPaint') === null) {
     console.log('We are inside localStorage.getItem(userPaint) === null');
     console.log('Before for ctxData: ', ctxData);
@@ -161,6 +161,7 @@ function floodFill(e) {
         try {
           floodFillInner(x + dx, y + dy, colorPrev, targetColor);
         } catch (err) {
+          console.log('stak overload');
           setTimeout(() => {
             floodFillInner(x + dx, y + dy, colorPrev, targetColor);
           }, 0);
@@ -256,3 +257,46 @@ document.addEventListener('keydown', e => {
 
 let empty = document.getElementById('empty');
 empty.addEventListener('click', emptyCanvas);
+
+// let save = document.getElementById('save');
+// save.addEventListener('click', saveCanvas);
+
+// function saveCanvas(e) {
+//   function download(canvas, filename) {
+//     /// create an "off-screen" anchor tag
+//     var lnk = document.createElement('a'),
+//       e;
+//     /// the key here is to set the download attribute of the a tag
+//     lnk.download = filename;
+//     /// convert canvas content to data-uri for link. When download
+//     /// attribute is set the content pointed to by link will be
+//     /// pushed as "download" in HTML5 capable browsers
+//     lnk.href = canvas.toDataURL('image/png;base64');
+//     /// create a "fake" click-event to trigger the download
+//     if (document.createEvent) {
+//       e = document.createEvent('MouseEvents');
+//       e.initMouseEvent(
+//         'click',
+//         true,
+//         true,
+//         window,
+//         0,
+//         0,
+//         0,
+//         0,
+//         0,
+//         false,
+//         false,
+//         false,
+//         false,
+//         0,
+//         null,
+//       );
+
+//       lnk.dispatchEvent(e);
+//     } else if (lnk.fireEvent) {
+//       lnk.fireEvent('onclick');
+//     }
+//   }
+//   download(canvas, 'myimage.png');
+// }
