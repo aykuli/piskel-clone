@@ -4,6 +4,7 @@ const pane = document.querySelector('.pane');
 const currentColor = document.querySelector('#currentColor');
 const pencil = document.querySelector('#pencil');
 const bucket = document.querySelector('#bucket');
+const picker = document.getElementById('picker');
 const prevColor = document.querySelector('.color--prev');
 const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
@@ -34,7 +35,6 @@ function drawScale(e) {
   [lastX, lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
   ctx.fillRect((lastX - 1) * scale, (lastY - 1) * scale, scale, scale);
   ctxData[lastY - 1][lastX - 1] = ctx.fillStyle;
-  // console.log(ctxData);
 }
 function drawScaleIsTrue(e) {
   isDrawing = true;
@@ -48,7 +48,6 @@ function watchColorPicker() {
 }
 function pencilTool(targetTool) {
   if (targetTool === 'pencil') {
-    console.log('\n******************         pencil   active        **********************');
     canvas.addEventListener('mousemove', drawScale);
     canvas.addEventListener('mousedown', drawScaleIsTrue);
     canvas.addEventListener('mouseup', () => {
@@ -58,7 +57,6 @@ function pencilTool(targetTool) {
       isDrawing = false;
     });
   } else {
-    console.log('\n******************         pencil    remove       **********************');
     canvas.removeEventListener('mousemove', drawScale);
     canvas.removeEventListener('mousedown', drawScaleIsTrue);
   }
@@ -66,25 +64,19 @@ function pencilTool(targetTool) {
 
 function bucketTool(targetTool) {
   if (targetTool === 'bucket') {
-    console.log('\n******************         bucket     active      **********************');
     canvas.addEventListener('mousedown', floodFill);
   } else {
     canvas.removeEventListener('mousedown', floodFill);
-    console.log('\n******************         bucket     remove      **********************');
   }
 }
 function floodFill(e) {
   [lastX, lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
   let colorPrev = ctxData[lastY - 1][lastX - 1];
-  console.log('colorPrev: ', colorPrev);
-  console.log('targetColor: ', currentColor.value);
   floodFillInner(lastX - 1, lastY - 1, colorPrev, currentColor.value);
 
   function floodFillInner(x, y, colorPrev, targetColor) {
     if (targetColor === colorPrev) return;
     if (ctxData[y][x] !== colorPrev) return;
-    console.log('floodFill works');
-    console.log('targetColor: ', targetColor);
     ctxData[y][x] = targetColor;
     ctx.fillStyle = targetColor;
     ctx.fillRect(x * scale, y * scale, scale, scale);
@@ -101,6 +93,20 @@ function floodFill(e) {
       }
     }
   }
+}
+
+function pickerTool(targetTool) {
+  if ((targetTool = 'bucket')) {
+    canvas.addEventListener('click', colorPicker);
+  } else {
+    canvas.removeEventListener('click', colorPicker);
+  }
+}
+function colorPicker(e) {
+  [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+  console.log(`ctxData[${y}][${x}] = ${ctxData[y - 1][x - 1]}`);
+  let choosedColor = ctxData[y - 1][x - 1];
+  currentColor.value = choosedColor;
 }
 
 function colorChanging() {
@@ -129,7 +135,9 @@ pane.addEventListener('click', e => {
   prevActiveTool.classList.remove('tool--active');
   targetTool.classList.add('tool--active');
   targetTool = targetTool.id;
+  console.log('targetTool = ', targetTool);
 
   pencilTool(targetTool);
   bucketTool(targetTool);
+  pickerTool(targetTool);
 });
