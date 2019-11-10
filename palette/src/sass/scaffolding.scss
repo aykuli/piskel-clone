@@ -68,6 +68,21 @@ label {
     text-align: center;
 }
 
-.canvas-style {
-    border: 1px solid rgba(0, 0, 0, 0.4);
+.canvas {
+    &--style {
+        border: 1px solid rgba(0, 0, 0, 0.4);
+    }
+
+    &--empty{        
+        font-family: Roboto, Arial, serif;
+        font-size: 16px;
+        line-height: 24px;
+        font-style: normal;
+        font-weight: normal;
+        color: rgba(0, 0, 0, 0.6);
+        text-align: center;
+        
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.4);
+    }
 }

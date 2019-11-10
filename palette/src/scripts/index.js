@@ -14,7 +14,7 @@ let prevColorCache = '#ffffff';
 let pickedColor = currentColor;
 
 ctx.lineWidth = 4;
-let scale = 4;
+let scale = 16;
 let row = canvas.width / scale;
 let column = canvas.height / scale;
 console.log('row: ', row, 'column: ', column);
@@ -24,26 +24,70 @@ let lastX = 0;
 let lastY = 0;
 
 let ctxData = [];
-for (let i = 0; i < row; i++) {
-  ctxData.push([]);
-  for (let j = 0; j < column; j++) {
-    ctxData[i].push('#ffffff');
-  }
-}
+
 window.onload = function() {
-  localStorage.removeItem('userPaint');
+  console.log('page refreshed');
+  // localStorage.removeItem('userPaint');
   if (localStorage.getItem('userPaint') === null) {
+    console.log('We are inside localStorage.getItem(userPaint) === null');
+    console.log('Before for ctxData: ', ctxData);
+
+    for (let i = 0; i < row; i++) {
+      ctxData.push([]);
+      for (let j = 0; j < column; j++) {
+        ctxData[i].push('#ffffff');
+      }
+    }
+    console.log(ctxData[0][0]);
+    console.log('after for ctxData: ', ctxData);
+    console.log('after loadPrevImage()  ctxData: ', ctxData);
+    let json = JSON.stringify(ctxData);
+
     localStorage.setItem('userPaint', ctxData);
+
+    localStorage.setItem('userPaint', json);
+    ctxData = localStorage.getItem('userPaint');
+    console.log('localStorage.getItem(userPaint): ', localStorage.getItem('userPaint'));
+    console.log(ctxData[0][0]);
   } else {
-    ctxData = this.localStorage.getItem('userPaint');
+    console.log('localStorage is not null');
+    let json = localStorage.getItem('userPaint');
+    ctxData = JSON.parse(json);
+    console.log(' loading ctxData:', ctxData);
+    console.log(ctxData[0][0]);
+    loadPrevImage();
   }
-  // console.log("BEFORE:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
+};
+window.onbeforeunload = function() {
+  let json = localStorage.getItem('userPaint');
+  localStorageSave();
 };
 
 function localStorageSave() {
+  console.log('\nlocalStorage.removeItem(userPaint);');
+  let json = JSON.stringify(ctxData);
   localStorage.removeItem('userPaint');
-  localStorage.setItem('userPaint', ctxData);
-  // console.log("AFTER:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
+  localStorage.setItem('userPaint', json);
+}
+
+function loadPrevImage() {
+  for (let i = 0; i < row; i++) {
+    for (let j = 0; j < column; j++) {
+      ctx.fillStyle = ctxData[i][j];
+      ctx.fillRect(i * scale, j * scale, scale, scale);
+    }
+  }
+}
+
+function emptyCanvas(e) {
+  console.log('emptyCanvas');
+  for (let i = 0; i < row; i++) {
+    for (let j = 0; j < column; j++) {
+      ctxData[i][j] = '#ffffff';
+      ctx.fillStyle = ctxData[i][j];
+      ctx.fillRect(i * scale, j * scale, scale, scale);
+    }
+  }
 }
 
 function drawScale(e) {
@@ -53,8 +97,6 @@ function drawScale(e) {
   [lastX, lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
   ctx.fillRect((lastX - 1) * scale, (lastY - 1) * scale, scale, scale);
   ctxData[lastY - 1][lastX - 1] = ctx.fillStyle;
-  // console.log('Pencil: ctxData = ', ctxData);
-  localStorageSave();
 }
 function drawScaleIsTrue(e) {
   isDrawing = true;
@@ -73,6 +115,7 @@ function pencilTool() {
     canvas.addEventListener('mousedown', drawScaleIsTrue);
     canvas.addEventListener('mouseup', () => {
       isDrawing = false;
+      console.log('Pencil: ctxData = ', ctxData);
     });
     canvas.addEventListener('mouseout', () => {
       isDrawing = false;
@@ -81,6 +124,7 @@ function pencilTool() {
     canvas.removeEventListener('mousemove', drawScale);
     canvas.removeEventListener('mousedown', drawScaleIsTrue);
     console.log('-------  pencil remove ----------------');
+    console.log('AFTER pencil ctxData: ', ctxData);
   }
 }
 
@@ -89,10 +133,9 @@ function bucketTool() {
     console.log('-------  bucket add ----------------');
     canvas.addEventListener('mousedown', floodFill);
   } else {
-    // console.log('Bucket: ctxData = ', ctxData);
-    localStorageSave();
     canvas.removeEventListener('mousedown', floodFill);
     console.log('-------  bucket remove ----------------');
+    console.log('AFTER Bucket ctxData: ', ctxData);
   }
 }
 function floodFill(e) {
@@ -139,7 +182,8 @@ function colorPicker(e) {
   // console.log(`ctxData[${y}][${x}] = ${ctxData[y - 1][x - 1]}`);
   let choosedColor = ctxData[y - 1][x - 1];
   console.log('in colorPicker: choosedColor: ', choosedColor);
-  // currentColor.value = choosedColor;
+  currentColor.value = choosedColor;
+  console.log();
 }
 function highlightActiveTool(targetToolEl) {
   const prevActiveTool = document.querySelector('.tool--active');
@@ -163,6 +207,16 @@ function colorChanging() {
   });
   currentColor.addEventListener('change', watchColorPicker, false);
 }
+
+function line(e) {}
+
+function toolsWrapper() {
+  pencilTool();
+  bucketTool();
+  pickerTool();
+
+  // localStorageSave();
+}
 let targetTool = 'pencil';
 colorChanging();
 pencilTool(targetTool);
@@ -173,32 +227,32 @@ pane.addEventListener('click', e => {
   if (targetToolEl === null) return;
   highlightActiveTool(targetToolEl);
   console.log('targetTool = ', targetTool);
-
-  pencilTool();
-  bucketTool();
-  pickerTool();
+  toolsWrapper();
 });
 
 document.addEventListener('keydown', e => {
   console.log(e.code);
   switch (e.code) {
     case 'KeyB':
-      console.log(targetTool);
       targetTool = 'bucket';
       highlightActiveTool(bucket);
-      pencilTool();
+      toolsWrapper();
+      console.log("document.addEventListener('keydown' targetTool:", targetTool);
       break;
     case 'KeyP':
-      console.log(targetTool);
+      console.log("document.addEventListener('keydown'  targetTool:", targetTool);
       targetTool = 'pencil';
       highlightActiveTool(pencil);
-      bucketTool();
+      toolsWrapper();
       break;
     case 'KeyC':
-      console.log(targetTool);
+      console.log("document.addEventListener('keydown'  targetTool:", targetTool);
       targetTool = 'picker';
       highlightActiveTool(picker);
-      pickerTool();
+      toolsWrapper();
       break;
   }
 });
+
+let empty = document.getElementById('empty');
+empty.addEventListener('click', emptyCanvas);
