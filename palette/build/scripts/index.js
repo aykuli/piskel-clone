@@ -1,12 +1,3 @@
-// class Piskel {
-//   constructor() {
-
-//   }
-
-//   window() {
-
-//   }
-// }
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const pane = document.querySelector('.pane');
@@ -26,6 +17,7 @@ ctx.lineWidth = 4;
 let scale = 4;
 let row = canvas.width / scale;
 let column = canvas.height / scale;
+console.log('row: ', row, 'column: ', column);
 
 let isDrawing = false;
 let lastX = 0;
@@ -38,21 +30,21 @@ for (let i = 0; i < row; i++) {
     ctxData[i].push('#ffffff');
   }
 }
-// localStorage.removeItem('userPaint');
 window.onload = function() {
+  localStorage.removeItem('userPaint');
   if (localStorage.getItem('userPaint') === null) {
     localStorage.setItem('userPaint', ctxData);
   } else {
     ctxData = this.localStorage.getItem('userPaint');
   }
-  console.log("BEFORE:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
+  // console.log("BEFORE:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
 };
 
-window.unonload = function() {
+function localStorageSave() {
   localStorage.removeItem('userPaint');
   localStorage.setItem('userPaint', ctxData);
-  console.log("AFTER:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
-};
+  // console.log("AFTER:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
+}
 
 function drawScale(e) {
   if (!isDrawing) return;
@@ -61,6 +53,8 @@ function drawScale(e) {
   [lastX, lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
   ctx.fillRect((lastX - 1) * scale, (lastY - 1) * scale, scale, scale);
   ctxData[lastY - 1][lastX - 1] = ctx.fillStyle;
+  // console.log('Pencil: ctxData = ', ctxData);
+  localStorageSave();
 }
 function drawScaleIsTrue(e) {
   isDrawing = true;
@@ -72,8 +66,9 @@ function watchColorPicker() {
   prevColorCache = ctx.strokeStyle;
   ctx.strokeStyle = currentColor.value;
 }
-function pencilTool(targetTool) {
+function pencilTool() {
   if (targetTool === 'pencil') {
+    console.log('-------  pencil add ----------------');
     canvas.addEventListener('mousemove', drawScale);
     canvas.addEventListener('mousedown', drawScaleIsTrue);
     canvas.addEventListener('mouseup', () => {
@@ -85,14 +80,19 @@ function pencilTool(targetTool) {
   } else {
     canvas.removeEventListener('mousemove', drawScale);
     canvas.removeEventListener('mousedown', drawScaleIsTrue);
+    console.log('-------  pencil remove ----------------');
   }
 }
 
-function bucketTool(targetTool) {
+function bucketTool() {
   if (targetTool === 'bucket') {
+    console.log('-------  bucket add ----------------');
     canvas.addEventListener('mousedown', floodFill);
   } else {
+    // console.log('Bucket: ctxData = ', ctxData);
+    localStorageSave();
     canvas.removeEventListener('mousedown', floodFill);
+    console.log('-------  bucket remove ----------------');
   }
 }
 function floodFill(e) {
@@ -115,14 +115,20 @@ function floodFill(e) {
         x + dx < canvas.width / scale &&
         (y + dy >= 0 && y + dy < canvas.height / scale)
       ) {
-        floodFillInner(x + dx, y + dy, colorPrev, targetColor);
+        try {
+          floodFillInner(x + dx, y + dy, colorPrev, targetColor);
+        } catch (err) {
+          setTimeout(() => {
+            floodFillInner(x + dx, y + dy, colorPrev, targetColor);
+          }, 0);
+        }
       }
     }
   }
 }
 
-function pickerTool(targetTool) {
-  if ((targetTool = 'picker')) {
+function pickerTool() {
+  if (targetTool === 'picker') {
     canvas.addEventListener('click', colorPicker);
   } else {
     canvas.removeEventListener('click', colorPicker);
@@ -130,9 +136,10 @@ function pickerTool(targetTool) {
 }
 function colorPicker(e) {
   [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
-  console.log(`ctxData[${y}][${x}] = ${ctxData[y - 1][x - 1]}`);
+  // console.log(`ctxData[${y}][${x}] = ${ctxData[y - 1][x - 1]}`);
   let choosedColor = ctxData[y - 1][x - 1];
-  currentColor.value = choosedColor;
+  console.log('in colorPicker: choosedColor: ', choosedColor);
+  // currentColor.value = choosedColor;
 }
 function highlightActiveTool(targetToolEl) {
   const prevActiveTool = document.querySelector('.tool--active');
@@ -167,9 +174,9 @@ pane.addEventListener('click', e => {
   highlightActiveTool(targetToolEl);
   console.log('targetTool = ', targetTool);
 
-  pencilTool(targetTool);
-  bucketTool(targetTool);
-  pickerTool(targetTool);
+  pencilTool();
+  bucketTool();
+  pickerTool();
 });
 
 document.addEventListener('keydown', e => {
@@ -179,16 +186,19 @@ document.addEventListener('keydown', e => {
       console.log(targetTool);
       targetTool = 'bucket';
       highlightActiveTool(bucket);
+      pencilTool();
       break;
     case 'KeyP':
       console.log(targetTool);
       targetTool = 'pencil';
       highlightActiveTool(pencil);
+      bucketTool();
       break;
     case 'KeyC':
       console.log(targetTool);
       targetTool = 'picker';
       highlightActiveTool(picker);
+      pickerTool();
       break;
   }
 });
