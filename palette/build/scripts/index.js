@@ -1,3 +1,12 @@
+// class Piskel {
+//   constructor() {
+
+//   }
+
+//   window() {
+
+//   }
+// }
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const pane = document.querySelector('.pane');
@@ -8,11 +17,13 @@ const picker = document.getElementById('picker');
 const prevColor = document.querySelector('.color--prev');
 const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
+
+let targetToolEl = pencil;
 let prevColorCache = '#ffffff';
 let pickedColor = currentColor;
 
 ctx.lineWidth = 4;
-let scale = 32;
+let scale = 4;
 let row = canvas.width / scale;
 let column = canvas.height / scale;
 
@@ -27,6 +38,21 @@ for (let i = 0; i < row; i++) {
     ctxData[i].push('#ffffff');
   }
 }
+// localStorage.removeItem('userPaint');
+window.onload = function() {
+  if (localStorage.getItem('userPaint') === null) {
+    localStorage.setItem('userPaint', ctxData);
+  } else {
+    ctxData = this.localStorage.getItem('userPaint');
+  }
+  console.log("BEFORE:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
+};
+
+window.unonload = function() {
+  localStorage.removeItem('userPaint');
+  localStorage.setItem('userPaint', ctxData);
+  console.log("AFTER:    localStorage.getItem('userPaint')  ", localStorage.getItem('userPaint'));
+};
 
 function drawScale(e) {
   if (!isDrawing) return;
@@ -96,7 +122,7 @@ function floodFill(e) {
 }
 
 function pickerTool(targetTool) {
-  if ((targetTool = 'bucket')) {
+  if ((targetTool = 'picker')) {
     canvas.addEventListener('click', colorPicker);
   } else {
     canvas.removeEventListener('click', colorPicker);
@@ -107,6 +133,12 @@ function colorPicker(e) {
   console.log(`ctxData[${y}][${x}] = ${ctxData[y - 1][x - 1]}`);
   let choosedColor = ctxData[y - 1][x - 1];
   currentColor.value = choosedColor;
+}
+function highlightActiveTool(targetToolEl) {
+  const prevActiveTool = document.querySelector('.tool--active');
+  prevActiveTool.classList.remove('tool--active');
+  targetToolEl.classList.add('tool--active');
+  targetTool = targetToolEl.id;
 }
 
 function colorChanging() {
@@ -129,15 +161,34 @@ colorChanging();
 pencilTool(targetTool);
 
 pane.addEventListener('click', e => {
-  targetTool = e.target.closest('li');
-  if (targetTool === null) return;
-  const prevActiveTool = document.querySelector('.tool--active');
-  prevActiveTool.classList.remove('tool--active');
-  targetTool.classList.add('tool--active');
-  targetTool = targetTool.id;
+  targetToolEl = e.target.closest('li');
+  console.log(targetToolEl);
+  if (targetToolEl === null) return;
+  highlightActiveTool(targetToolEl);
   console.log('targetTool = ', targetTool);
 
   pencilTool(targetTool);
   bucketTool(targetTool);
   pickerTool(targetTool);
+});
+
+document.addEventListener('keydown', e => {
+  console.log(e.code);
+  switch (e.code) {
+    case 'KeyB':
+      console.log(targetTool);
+      targetTool = 'bucket';
+      highlightActiveTool(bucket);
+      break;
+    case 'KeyP':
+      console.log(targetTool);
+      targetTool = 'pencil';
+      highlightActiveTool(pencil);
+      break;
+    case 'KeyC':
+      console.log(targetTool);
+      targetTool = 'picker';
+      highlightActiveTool(picker);
+      break;
+  }
 });
