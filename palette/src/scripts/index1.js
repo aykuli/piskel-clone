@@ -35,13 +35,15 @@ window.onload = function() {
     for (let i = 0; i < row; i++) {
       ctxData.push([]);
       for (let j = 0; j < column; j++) {
-        ctxData[i].push('#ff0055');
+        ctxData[i].push('#ffffff');
       }
     }
     console.log(ctxData[0][0]);
     console.log('after for ctxData: ', ctxData);
     console.log('after loadPrevImage()  ctxData: ', ctxData);
     let json = JSON.stringify(ctxData);
+
+    localStorage.setItem('userPaint', ctxData);
 
     localStorage.setItem('userPaint', json);
     ctxData = localStorage.getItem('userPaint');
@@ -69,29 +71,24 @@ function localStorageSave() {
 }
 
 function loadPrevImage() {
-  // for (let i = 0; i < row; i++) {
-  //   for (let j = 0; j < column; j++) {
-  //     ctx.fillStyle = ctxData[i][j];
-  //     ctx.fillRect(i * scale, j * scale, scale, scale);
-  //   }
-  // }
-
-  const image = new Image();
-  image.onload = () => {
-    ctx.imageDraw(image, 0, 0);
-  };
+  for (let i = 0; i < row; i++) {
+    for (let j = 0; j < column; j++) {
+      ctx.fillStyle = ctxData[i][j];
+      ctx.fillRect(i * scale, j * scale, scale, scale);
+    }
+  }
 }
 
-// function emptyCanvas(e) {
-//   console.log('emptyCanvas');
-//   for (let i = 0; i < row; i++) {
-//     for (let j = 0; j < column; j++) {
-//       ctxData[i][j] = '#ffffff';
-//       ctx.fillStyle = ctxData[i][j];
-//       ctx.fillRect(i * scale, j * scale, scale, scale);
-//     }
-//   }
-// }
+function emptyCanvas(e) {
+  console.log('emptyCanvas');
+  for (let i = 0; i < row; i++) {
+    for (let j = 0; j < column; j++) {
+      ctxData[i][j] = '#ffffff';
+      ctx.fillStyle = ctxData[i][j];
+      ctx.fillRect(i * scale, j * scale, scale, scale);
+    }
+  }
+}
 
 function drawScale(e) {
   if (!isDrawing) return;
@@ -164,6 +161,7 @@ function floodFill(e) {
         try {
           floodFillInner(x + dx, y + dy, colorPrev, targetColor);
         } catch (err) {
+          console.log('stak overload');
           setTimeout(() => {
             floodFillInner(x + dx, y + dy, colorPrev, targetColor);
           }, 0);
@@ -257,5 +255,48 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// let empty = document.getElementById('empty');
-// empty.addEventListener('click', emptyCanvas);
+let empty = document.getElementById('empty');
+empty.addEventListener('click', emptyCanvas);
+
+let save = document.getElementById('save');
+save.addEventListener('click', saveCanvas);
+
+function saveCanvas(e) {
+  function download(canvas, filename) {
+    /// create an "off-screen" anchor tag
+    var lnk = document.createElement('a'),
+      e;
+    /// the key here is to set the download attribute of the a tag
+    lnk.download = filename;
+    /// convert canvas content to data-uri for link. When download
+    /// attribute is set the content pointed to by link will be
+    /// pushed as "download" in HTML5 capable browsers
+    lnk.href = canvas.toDataURL('image/png;base64');
+    /// create a "fake" click-event to trigger the download
+    if (document.createEvent) {
+      e = document.createEvent('MouseEvents');
+      e.initMouseEvent(
+        'click',
+        true,
+        true,
+        window,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        null,
+      );
+
+      lnk.dispatchEvent(e);
+    } else if (lnk.fireEvent) {
+      lnk.fireEvent('onclick');
+    }
+  }
+  download(canvas, 'myimage.png');
+}

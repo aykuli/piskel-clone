@@ -12,4 +12,4 @@ prettier.config.js
 
 build/
 
-sb.js
+src/scripts/index1.js

@@ -1,302 +1,322 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const pane = document.querySelector('.pane');
-const currentColor = document.querySelector('#currentColor');
-const pencil = document.querySelector('#pencil');
-const bucket = document.querySelector('#bucket');
-const picker = document.getElementById('picker');
-const prevColor = document.querySelector('.color--prev');
-const colorRed = document.querySelector('.color--red');
-const colorBlue = document.querySelector('.color--blue');
-
-let targetToolEl = pencil;
-let prevColorCache = '#ffffff';
-let pickedColor = currentColor;
-
-ctx.lineWidth = 4;
-let scale = 16;
-let row = canvas.width / scale;
-let column = canvas.height / scale;
-console.log('row: ', row, 'column: ', column);
-
-let isDrawing = false;
-let lastX = 0;
-let lastY = 0;
-
-let ctxData = [];
-
-window.onload = function() {
-  console.log('page refreshed');
-  localStorage.removeItem('userPaint');
-  if (localStorage.getItem('userPaint') === null) {
-    console.log('We are inside localStorage.getItem(userPaint) === null');
-    console.log('Before for ctxData: ', ctxData);
-
-    for (let i = 0; i < row; i++) {
-      ctxData.push([]);
-      for (let j = 0; j < column; j++) {
-        ctxData[i].push('#ffffff');
+class Picture {
+  constructor(scale, canvas, ctx, currentColor) {
+    let ctxData = [];
+    this.scale = scale;
+    this.canvas = canvas;
+    this.ctx = ctx;
+    this.row = this.canvas.width / this.scale;
+    this.column = this.canvas.height / this.scale;
+    this.isDrawing = false;
+    this.lastX = 0;
+    this.lastY = 0;
+    this.currentColor = currentColor;
+    this.prevColorCache = '#ffffff';
+  }
+  emptyCanvas = () => {
+    this.ctxData = [];
+    for (let i = 0; i < this.row; i++) {
+      this.ctxData.push([]);
+      for (let j = 0; j < this.column; j++) {
+        this.ctxData[i].push('#ffffff');
       }
     }
-    console.log(ctxData[0][0]);
-    console.log('after for ctxData: ', ctxData);
-    console.log('after loadPrevImage()  ctxData: ', ctxData);
-    let json = JSON.stringify(ctxData);
+    this.loadPrevImage();
+  };
 
-    localStorage.setItem('userPaint', ctxData);
+  clearCanvas = () => {
+    console.log('emptyCanvas');
+    for (let i = 0; i < this.row; i++) {
+      for (let j = 0; j < this.column; j++) {
+        this.ctxData[i][j] = '#ffffff';
+        this.ctx.fillStyle = this.ctxData[i][j];
+        this.ctx.fillRect(i * this.scale, j * this.scale, this.scale, this.scale);
+      }
+    }
+  };
 
+  loadPrevImage = () => {
+    for (let i = 0; i < this.row; i++) {
+      for (let j = 0; j < this.column; j++) {
+        this.ctx.fillStyle = this.ctxData[j][i];
+        this.ctx.fillRect(i * this.scale, j * this.scale, this.scale, this.scale);
+      }
+    }
+  };
+
+  localStorageSave = () => {
+    let json = JSON.stringify(this.ctxData);
+    localStorage.removeItem('userPaint');
     localStorage.setItem('userPaint', json);
-    ctxData = localStorage.getItem('userPaint');
-    console.log('localStorage.getItem(userPaint): ', localStorage.getItem('userPaint'));
-    console.log(ctxData[0][0]);
-  } else {
-    console.log('localStorage is not null');
-    let json = localStorage.getItem('userPaint');
-    ctxData = JSON.parse(json);
-    console.log(' loading ctxData:', ctxData);
-    console.log(ctxData[0][0]);
-    loadPrevImage();
-  }
-};
-window.onbeforeunload = function() {
-  let json = localStorage.getItem('userPaint');
-  localStorageSave();
-};
+  };
 
-function localStorageSave() {
-  console.log('\nlocalStorage.removeItem(userPaint);');
-  let json = JSON.stringify(ctxData);
-  localStorage.removeItem('userPaint');
-  localStorage.setItem('userPaint', json);
-}
+  saveCanvas = () => {
+    function download(canvas, filename) {
+      /// create an "off-screen" anchor tag
+      let lnk = document.createElement('a'),
+        e;
+      /// the key here is to set the download attribute of the a tag
+      lnk.download = filename;
+      /// convert canvas content to data-uri for link. When download
+      /// attribute is set the content pointed to by link will be
+      /// pushed as "download" in HTML5 capable browsers
+      lnk.href = canvas.toDataURL('image/png;base64');
+      /// create a "fake" click-event to trigger the download
+      if (document.createEvent) {
+        e = document.createEvent('MouseEvents');
+        e.initMouseEvent(
+          'click',
+          true,
+          true,
+          window,
+          0,
+          0,
+          0,
+          0,
+          0,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null,
+        );
 
-function loadPrevImage() {
-  for (let i = 0; i < row; i++) {
-    for (let j = 0; j < column; j++) {
-      ctx.fillStyle = ctxData[i][j];
-      ctx.fillRect(i * scale, j * scale, scale, scale);
+        lnk.dispatchEvent(e);
+      } else if (lnk.fireEvent) {
+        lnk.fireEvent('onclick');
+      }
     }
-  }
-}
+    download(canvas, 'myimage.png');
+  };
 
-function emptyCanvas(e) {
-  console.log('emptyCanvas');
-  for (let i = 0; i < row; i++) {
-    for (let j = 0; j < column; j++) {
-      ctxData[i][j] = '#ffffff';
-      ctx.fillStyle = ctxData[i][j];
-      ctx.fillRect(i * scale, j * scale, scale, scale);
+  highlightActiveTool = targetToolEl => {
+    const prevActiveTool = document.querySelector('.tool--active');
+    prevActiveTool.classList.remove('tool--active');
+    targetToolEl.classList.add('tool--active');
+  };
+
+  draw = e => {
+    if (!this.isDrawing) return;
+    this.isDrawing = true;
+    this.ctx.fillStyle = this.currentColor.value;
+
+    [this.lastX, this.lastY] = [
+      Math.ceil(e.offsetX / this.scale),
+      Math.ceil(e.offsetY / this.scale),
+    ];
+    this.ctx.fillRect(
+      (this.lastX - 1) * this.scale,
+      (this.lastY - 1) * this.scale,
+      this.scale,
+      this.scale,
+    );
+    this.ctxData[this.lastY - 1][this.lastX - 1] = this.ctx.fillStyle;
+  };
+
+  drawIsTrue = e => {
+    this.isDrawing = true;
+    this.draw(e);
+  };
+
+  pencilTool = targetTool => {
+    if (targetTool === 'pencil') {
+      console.log('-------  pencil add ----------------');
+      this.canvas.addEventListener('mousemove', this.draw);
+      this.canvas.addEventListener('mousedown', this.drawIsTrue);
+      this.canvas.addEventListener('mouseup', () => {
+        this.isDrawing = false;
+        this.localStorageSave();
+      });
+      this.canvas.addEventListener('mouseout', () => {
+        this.isDrawing = false;
+      });
+    } else {
+      this.canvas.removeEventListener('mousemove', this.draw);
+      this.canvas.removeEventListener('mousedown', this.drawIsTrue);
     }
-  }
-}
+  };
 
-function drawScale(e) {
-  if (!isDrawing) return;
-  isDrawing = true;
-  ctx.fillStyle = pickedColor.value;
-  [lastX, lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
-  ctx.fillRect((lastX - 1) * scale, (lastY - 1) * scale, scale, scale);
-  ctxData[lastY - 1][lastX - 1] = ctx.fillStyle;
-}
-function drawScaleIsTrue(e) {
-  isDrawing = true;
-  drawScale(e);
-}
+  bucketTool = targetTool => {
+    if (targetTool === 'bucket') {
+      console.log('-------  bucket add ----------------');
+      canvas.addEventListener('mousedown', this.floodFill);
+    } else {
+      canvas.removeEventListener('mousedown', this.floodFill);
+      console.log('-------  bucket remove ----------------');
+      console.log('AFTER Bucket ctxData: ', this.ctxData);
+    }
+  };
 
-function watchColorPicker() {
-  prevColor.children[0].style.background = ctx.strokeStyle;
-  prevColorCache = ctx.strokeStyle;
-  ctx.strokeStyle = currentColor.value;
-}
-function pencilTool() {
-  if (targetTool === 'pencil') {
-    console.log('-------  pencil add ----------------');
-    canvas.addEventListener('mousemove', drawScale);
-    canvas.addEventListener('mousedown', drawScaleIsTrue);
-    canvas.addEventListener('mouseup', () => {
-      isDrawing = false;
-      console.log('Pencil: ctxData = ', ctxData);
-    });
-    canvas.addEventListener('mouseout', () => {
-      isDrawing = false;
-    });
-  } else {
-    canvas.removeEventListener('mousemove', drawScale);
-    canvas.removeEventListener('mousedown', drawScaleIsTrue);
-    console.log('-------  pencil remove ----------------');
-    console.log('AFTER pencil ctxData: ', ctxData);
-  }
-}
+  floodFill = e => {
+    console.log('ctxData = ', this.ctxData);
+    [this.lastX, this.lastY] = [
+      Math.ceil(e.offsetX / this.scale),
+      Math.ceil(e.offsetY / this.scale),
+    ];
+    let colorPrev = this.ctxData[this.lastY - 1][this.lastX - 1];
+    console.log('colorPrev =', colorPrev);
+    floodFillInner(
+      this.lastX - 1,
+      this.lastY - 1,
+      colorPrev,
+      this.currentColor.value,
+      this.scale,
+      this.ctxData,
+      this.canvas,
+    );
 
-function bucketTool() {
-  if (targetTool === 'bucket') {
-    console.log('-------  bucket add ----------------');
-    canvas.addEventListener('mousedown', floodFill);
-  } else {
-    canvas.removeEventListener('mousedown', floodFill);
-    console.log('-------  bucket remove ----------------');
-    console.log('AFTER Bucket ctxData: ', ctxData);
-  }
-}
-function floodFill(e) {
-  [lastX, lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
-  let colorPrev = ctxData[lastY - 1][lastX - 1];
-  floodFillInner(lastX - 1, lastY - 1, colorPrev, currentColor.value);
+    function floodFillInner(x, y, colorPrev, targetColor, scale, ctxData, canvas) {
+      if (targetColor === colorPrev) return;
+      if (ctxData[y][x] !== colorPrev) return;
+      ctxData[y][x] = targetColor;
+      ctx.fillStyle = targetColor;
+      ctx.fillRect(x * scale, y * scale, scale, scale);
 
-  function floodFillInner(x, y, colorPrev, targetColor) {
-    if (targetColor === colorPrev) return;
-    if (ctxData[y][x] !== colorPrev) return;
-    ctxData[y][x] = targetColor;
-    ctx.fillStyle = targetColor;
-    ctx.fillRect(x * scale, y * scale, scale, scale);
+      const around = [{ dx: 0, dy: -1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 }, { dx: 0, dy: +1 }];
 
-    const around = [{ dx: 0, dy: -1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 }, { dx: 0, dy: +1 }];
-
-    for (let { dx, dy } of around) {
-      if (
-        x + dx >= 0 &&
-        x + dx < canvas.width / scale &&
-        (y + dy >= 0 && y + dy < canvas.height / scale)
-      ) {
-        try {
-          floodFillInner(x + dx, y + dy, colorPrev, targetColor);
-        } catch (err) {
-          console.log('stak overload');
-          setTimeout(() => {
-            floodFillInner(x + dx, y + dy, colorPrev, targetColor);
-          }, 0);
+      for (let { dx, dy } of around) {
+        if (
+          x + dx >= 0 &&
+          x + dx < canvas.width / scale &&
+          (y + dy >= 0 && y + dy < canvas.height / scale)
+        ) {
+          try {
+            floodFillInner(x + dx, y + dy, colorPrev, targetColor, scale, ctxData, canvas);
+            console.log('inside floodFillInner');
+          } catch (err) {
+            console.log('stak overload');
+            setTimeout(() => {
+              floodFillInner(x + dx, y + dy, colorPrev, targetColor, scale, ctxData, canvas);
+            }, 0);
+          }
         }
       }
     }
-  }
+  };
+
+  watchColor = (prevColor, newColor) => {
+    prevColor.children[0].style.background = this.ctx.fillStyle;
+    prevColorCache = this.ctx.fillStyle;
+    this.ctx.fillStyle = newColor;
+    this.currentColor.value = newColor;
+  };
+
+  pickerTool = targetTool => {
+    if (targetTool === 'picker') {
+      canvas.addEventListener('click', this.colorPicker);
+    } else {
+      canvas.removeEventListener('click', this.colorPicker);
+    }
+  };
+  colorPicker = e => {
+    let [x, y] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    console.log(`ctxData[${y}][${x}] = ${this.ctxData[y - 1][x - 1]}`);
+    let choosedColor = this.ctxData[y - 1][x - 1];
+    console.log('in colorPicker: choosedColor: ', choosedColor);
+    // this.watchColor(this.currentColor, choosedColor);
+    this.ctx.fillStyle = choosedColor;
+
+    currentColor.value = choosedColor;
+  };
+
+  tools = targetTool => {
+    this.pencilTool(targetTool);
+    this.bucketTool(targetTool);
+    this.pickerTool(targetTool);
+  };
 }
 
-function pickerTool() {
-  if (targetTool === 'picker') {
-    canvas.addEventListener('click', colorPicker);
+// Start working with index.html step by step
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const pane = document.querySelector('.pane');
+const currentColor = document.getElementById('currentColor');
+const prevColor = document.querySelector('.color--prev');
+const colorRed = document.querySelector('.color--red');
+const colorBlue = document.querySelector('.color--blue');
+let prevColorCache = '#ffffff';
+
+let app = new Picture(32, canvas, ctx, currentColor);
+
+/**********   INITIALIZATION    ************ */
+// Initialization process, loading prev image
+window.onload = function() {
+  console.log('page refreshed');
+  if (
+    localStorage.getItem('userPaint') === null ||
+    localStorage.getItem('userPaint') === undefined
+  ) {
+    app.emptyCanvas();
+    let json = JSON.stringify(app.ctxData);
+
+    localStorage.setItem('userPaint', app.ctxData);
   } else {
-    canvas.removeEventListener('click', colorPicker);
+    let json = localStorage.getItem('userPaint');
+    app.ctxData = JSON.parse(json);
+    app.loadPrevImage();
   }
-}
-function colorPicker(e) {
-  [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
-  // console.log(`ctxData[${y}][${x}] = ${ctxData[y - 1][x - 1]}`);
-  let choosedColor = ctxData[y - 1][x - 1];
-  console.log('in colorPicker: choosedColor: ', choosedColor);
-  currentColor.value = choosedColor;
-  console.log();
-}
-function highlightActiveTool(targetToolEl) {
-  const prevActiveTool = document.querySelector('.tool--active');
-  prevActiveTool.classList.remove('tool--active');
-  targetToolEl.classList.add('tool--active');
-  targetTool = targetToolEl.id;
-}
+};
 
-function colorChanging() {
-  colorRed.addEventListener('click', () => {
-    currentColor.value = '#f74242';
-    watchColorPicker();
-  });
-  colorBlue.addEventListener('click', () => {
-    currentColor.value = '#316cb9';
-    watchColorPicker();
-  });
-  prevColor.addEventListener('click', () => {
-    currentColor.value = prevColorCache;
-    watchColorPicker();
-  });
-  currentColor.addEventListener('change', watchColorPicker, false);
-}
+window.onbeforeunload = () => app.localStorageSave();
+/**********   and of INITIALIZATION    ************ */
 
-function line(e) {}
+/********************    CLEAR CANVAS    *******************/
+let empty = document.getElementById('empty');
+empty.addEventListener('click', app.emptyCanvas);
+/*****************  end of  CLEAR CANVAS    ****************/
 
-function toolsWrapper() {
-  pencilTool();
-  bucketTool();
-  pickerTool();
+/********************    SAVE IMAGE    *********************/
+let save = document.getElementById('save');
+save.addEventListener('click', app.saveCanvas);
+/*****************  end of  SAVE IMAGE    ******************/
 
-  // localStorageSave();
-}
+/********************       TOOLS       *******************/
 let targetTool = 'pencil';
-colorChanging();
-pencilTool(targetTool);
+app.pencilTool(targetTool);
 
 pane.addEventListener('click', e => {
-  targetToolEl = e.target.closest('li');
-  console.log(targetToolEl);
+  let targetToolEl = e.target.closest('li');
   if (targetToolEl === null) return;
-  highlightActiveTool(targetToolEl);
-  console.log('targetTool = ', targetTool);
-  toolsWrapper();
+  targetTool = targetToolEl.id;
+  app.highlightActiveTool(targetToolEl);
+  app.tools(targetTool);
 });
+/********************    end of TOOLS    *******************/
 
+/******************    COLOR MANAGING    *******************/
+colorRed.addEventListener('click', () => {
+  currentColor.value = '#f74242';
+  app.watchColor(prevColor, currentColor.value, false);
+});
+colorBlue.addEventListener('click', () => {
+  currentColor.value = '#316cb9';
+  app.watchColor(prevColor, currentColor.value, false);
+});
+prevColor.addEventListener('click', () => {
+  currentColor.value = prevColorCache;
+  app.watchColor(prevColor, currentColor.value, false);
+});
+currentColor.addEventListener('change', e => {
+  app.watchColor(prevColor, currentColor.value, false);
+});
+/*************    end of  COLOR MANAGING      **************/
+
+/****************    KEYBOARD SHORTCUTS     ****************/
 document.addEventListener('keydown', e => {
   console.log(e.code);
   switch (e.code) {
     case 'KeyB':
       targetTool = 'bucket';
-      highlightActiveTool(bucket);
-      toolsWrapper();
-      console.log("document.addEventListener('keydown' targetTool:", targetTool);
       break;
     case 'KeyP':
-      console.log("document.addEventListener('keydown'  targetTool:", targetTool);
       targetTool = 'pencil';
-      highlightActiveTool(pencil);
-      toolsWrapper();
       break;
     case 'KeyC':
-      console.log("document.addEventListener('keydown'  targetTool:", targetTool);
       targetTool = 'picker';
-      highlightActiveTool(picker);
-      toolsWrapper();
       break;
   }
+  let targetToolEl = document.getElementById(targetTool);
+  app.highlightActiveTool(targetToolEl);
+  app.tools(targetTool);
 });
-
-let empty = document.getElementById('empty');
-empty.addEventListener('click', emptyCanvas);
-
-let save = document.getElementById('save');
-save.addEventListener('click', saveCanvas);
-
-function saveCanvas(e) {
-  function download(canvas, filename) {
-    /// create an "off-screen" anchor tag
-    var lnk = document.createElement('a'),
-      e;
-    /// the key here is to set the download attribute of the a tag
-    lnk.download = filename;
-    /// convert canvas content to data-uri for link. When download
-    /// attribute is set the content pointed to by link will be
-    /// pushed as "download" in HTML5 capable browsers
-    lnk.href = canvas.toDataURL('image/png;base64');
-    /// create a "fake" click-event to trigger the download
-    if (document.createEvent) {
-      e = document.createEvent('MouseEvents');
-      e.initMouseEvent(
-        'click',
-        true,
-        true,
-        window,
-        0,
-        0,
-        0,
-        0,
-        0,
-        false,
-        false,
-        false,
-        false,
-        0,
-        null,
-      );
-
-      lnk.dispatchEvent(e);
-    } else if (lnk.fireEvent) {
-      lnk.fireEvent('onclick');
-    }
-  }
-  download(canvas, 'myimage.png');
-}
+/****************    KEYBOARD SHORTCUTS     ****************/
