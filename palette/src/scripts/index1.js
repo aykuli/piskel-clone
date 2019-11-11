@@ -35,7 +35,7 @@ window.onload = function() {
     for (let i = 0; i < row; i++) {
       ctxData.push([]);
       for (let j = 0; j < column; j++) {
-        ctxData[i].push('#ffffff');
+        ctxData[i].push('#ff0055');
       }
     }
     console.log(ctxData[0][0]);
@@ -69,12 +69,17 @@ function localStorageSave() {
 }
 
 function loadPrevImage() {
-  for (let i = 0; i < row; i++) {
-    for (let j = 0; j < column; j++) {
-      ctx.fillStyle = ctxData[i][j];
-      ctx.fillRect(i * scale, j * scale, scale, scale);
-    }
-  }
+  // for (let i = 0; i < row; i++) {
+  //   for (let j = 0; j < column; j++) {
+  //     ctx.fillStyle = ctxData[i][j];
+  //     ctx.fillRect(i * scale, j * scale, scale, scale);
+  //   }
+  // }
+
+  const image = new Image();
+  image.onload = () => {
+    ctx.imageDraw(image, 0, 0);
+  };
 }
 
 // function emptyCanvas(e) {
