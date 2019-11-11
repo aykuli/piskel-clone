@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: ['airbnb-base', 'prettier'],
   plugins: ['prettier'],
+  parser: 'babel-eslint',
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -22,5 +23,6 @@ module.exports = {
         js: 'always',
       },
     ],
+    'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
   },
 };
