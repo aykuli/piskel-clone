@@ -87,43 +87,71 @@ class Picture {
     download(this.canvas, 'myimage.png');
   };
 
-  draw = e => {
+  plot(x, y) {
+    this.ctx.fillStyle = this.currentColor.value;
+    this.ctx.fillRect((x - 1) * this.scale, (y - 1) * this.scale, this.scale, this.scale);
+    this.ctxData[y - 1][x - 1] = this.ctx.fillStyle;
+  }
+
+  // Bresenham algorithm
+  Bresenham = (x1, x2, y1, y2) => {
+    let [innerX1, innerY1] = [x1, y1];
+    const [innerX2, innerY2] = [x2, y2];
     if (!this.isDrawing) return;
     this.isDrawing = true;
-    this.ctx.fillStyle = this.currentColor.value;
 
-    [this.lastX, this.lastY] = [
-      Math.ceil(e.offsetX / this.scale),
-      Math.ceil(e.offsetY / this.scale),
-    ];
-    this.ctx.fillRect(
-      (this.lastX - 1) * this.scale,
-      (this.lastY - 1) * this.scale,
-      this.scale,
-      this.scale
-    );
-    this.ctxData[this.lastY - 1][this.lastX - 1] = this.ctx.fillStyle;
+    const deltaX = Math.abs(x2 - x1);
+    const deltaY = Math.abs(y2 - y1);
+    const signX = x1 < x2 ? 1 : -1;
+    const signY = y1 < y2 ? 1 : -1;
+    let err = deltaX - deltaY;
+
+    this.plot(innerX2, innerY2);
+    while (innerX1 !== innerX2 || innerY1 !== innerY2) {
+      this.plot(innerX1, innerY1);
+      const err2 = err * 2;
+      if (err2 > -deltaY) {
+        err -= deltaY;
+        innerX1 += signX;
+      }
+      if (err2 < deltaX) {
+        err += deltaX;
+        innerY1 += signY;
+      }
+    }
   };
 
-  drawIsTrue = e => {
+  draw = e => {
+    [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    this.Bresenham(this.x1, this.x2, this.y1, this.y2);
+    [this.x1, this.y1] = [this.x2, this.y2];
+  };
+
+  drawOnMouseDown = e => {
     this.isDrawing = true;
-    this.draw(e);
+    [this.x1, this.y1] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    this.plot(this.x1, this.y1);
+  };
+
+  drawMouseUp = e => {
+    [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    this.Bresenham(this.x1, this.x2, this.y1, this.y2);
+    this.isDrawing = false;
+    this.localStorageSave();
   };
 
   pencilTool = targetTool => {
     if (targetTool === 'pencil') {
       this.canvas.addEventListener('mousemove', this.draw);
-      this.canvas.addEventListener('mousedown', this.drawIsTrue);
-      this.canvas.addEventListener('mouseup', () => {
-        this.isDrawing = false;
-        this.localStorageSave();
-      });
+      this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
+      this.canvas.addEventListener('mouseup', this.drawMouseUp);
       this.canvas.addEventListener('mouseout', () => {
         this.isDrawing = false;
       });
     } else {
       this.canvas.removeEventListener('mousemove', this.draw);
-      this.canvas.removeEventListener('mousedown', this.drawIsTrue);
+      this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
+      this.canvas.removeEventListener('mouseup', this.drawMouseUp);
     }
   };
 
@@ -202,6 +230,7 @@ class Picture {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
+    this.lineTool(targetTool);
   };
 }
 
@@ -214,8 +243,10 @@ const prevColor = document.querySelector('.color--prev');
 const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
 const prevColorCache = '#ffffff';
+console.log(prevColor.children[0].style.background);
+// prevColor.children[0].style.background = '#ffffff';
 
-const app = new Picture(32, canvas, ctx, currentColor);
+const app = new Picture(4, canvas, ctx, currentColor);
 
 // **********   INITIALIZATION    ************ */
 // Initialization process, loading prev image
