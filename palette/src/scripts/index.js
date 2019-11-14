@@ -10,9 +10,6 @@ class Picture {
     this.lastY = 0;
     this.currentColor = currentColor;
     this.prevColorCache = '#ffffff';
-    if (canvas == null) {
-      throw new Error("there is no canvas");
-    }
   }
 
   emptyCanvas = () => {
@@ -60,11 +57,27 @@ class Picture {
       // convert canvas content to data-uri for link. When download
       // attribute is set the content pointed to by link will be
       // pushed as "download" in HTML5 capable browsers
-      lnk.href = canvas.toDataURL('image/png;base64');https://aykuli.github.io/codejam-palette-public/
+      lnk.href = canvas.toDataURL('image/png;base64');
       // create a "fake" click-event to trigger the download
       if (document.createEvent) {
         const e = document.createEvent('MouseEvents');
-        e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        e.initMouseEvent(
+          'click',
+          true,
+          true,
+          window,
+          0,
+          0,
+          0,
+          0,
+          0,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
 
         lnk.dispatchEvent(e);
       } else if (lnk.fireEvent) {
@@ -81,7 +94,7 @@ class Picture {
   }
 
   // Bresenham algorithm
-  bresenham = (x1, x2, y1, y2) => {
+  Bresenham = (x1, x2, y1, y2) => {
     let [innerX1, innerY1] = [x1, y1];
     const [innerX2, innerY2] = [x2, y2];
     if (!this.isDrawing) return;
@@ -110,7 +123,7 @@ class Picture {
 
   draw = e => {
     [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
-    this.bresenham(this.x1, this.x2, this.y1, this.y2);
+    this.Bresenham(this.x1, this.x2, this.y1, this.y2);
     [this.x1, this.y1] = [this.x2, this.y2];
   };
 
@@ -122,7 +135,7 @@ class Picture {
 
   drawMouseUp = e => {
     [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
-    this.bresenham(this.x1, this.x2, this.y1, this.y2);
+    this.Bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
     this.localStorageSave();
   };
@@ -151,7 +164,10 @@ class Picture {
   }
 
   floodFill = e => {
-    [this.lastX, this.lastY] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    [this.lastX, this.lastY] = [
+      Math.ceil(e.offsetX / this.scale),
+      Math.ceil(e.offsetY / this.scale),
+    ];
     const colorPrev = this.ctxData[this.lastY - 1][this.lastX - 1];
     const floodFillInner = (x, y, targetColor, scale, canvas) => {
       if (targetColor === colorPrev) return;
@@ -163,7 +179,11 @@ class Picture {
       const around = [{ dx: 0, dy: -1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 }, { dx: 0, dy: +1 }];
 
       for (const { dx, dy } of around) {
-        if (x + dx >= 0 && x + dx < canvas.width / scale && (y + dy >= 0 && y + dy < canvas.height / scale)) {
+        if (
+          x + dx >= 0 &&
+          x + dx < canvas.width / scale &&
+          (y + dy >= 0 && y + dy < canvas.height / scale)
+        ) {
           try {
             floodFillInner(x + dx, y + dy, targetColor, scale, canvas);
           } catch (err) {
@@ -174,7 +194,13 @@ class Picture {
         }
       }
     };
-    floodFillInner(this.lastX - 1, this.lastY - 1, this.currentColor.value, this.scale, this.canvas);
+    floodFillInner(
+      this.lastX - 1,
+      this.lastY - 1,
+      this.currentColor.value,
+      this.scale,
+      this.canvas
+    );
   };
 
   watchColor(prevColor, newColor) {
@@ -204,6 +230,7 @@ class Picture {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
+    this.lineTool(targetTool);
   };
 }
 
@@ -216,14 +243,18 @@ const prevColor = document.querySelector('.color--prev');
 const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
 const prevColorCache = '#ffffff';
-prevColor.children[0].style.background = '#ffffff';
+console.log(prevColor.children[0].style.background);
+// prevColor.children[0].style.background = '#ffffff';
 
 const app = new Picture(4, canvas, ctx, currentColor);
 
 // **********   INITIALIZATION    ************ */
 // Initialization process, loading prev image
 window.onload = () => {
-  if (localStorage.getItem('userPaint') === null || localStorage.getItem('userPaint') === undefined) {
+  if (
+    localStorage.getItem('userPaint') === null ||
+    localStorage.getItem('userPaint') === undefined
+  ) {
     app.emptyCanvas();
     localStorage.setItem('userPaint', app.ctxData);
   } else {
@@ -262,6 +293,7 @@ pane.addEventListener('click', e => {
 // ********************    end of TOOLS    *******************/
 
 // ******************    COLOR MANAGING    *******************/
+
 colorRed.addEventListener('click', () => {
   currentColor.value = '#f74242';
   app.watchColor(prevColor, currentColor.value, false);
@@ -298,4 +330,4 @@ document.addEventListener('keydown', e => {
   targetToolEl.classList.add('tool--active');
   app.tools(targetTool);
 });
-// ****************  end of  KEYBOARD SHORTCUTS     ****************/
+// ****************    KEYBOARD SHORTCUTS     ****************/
