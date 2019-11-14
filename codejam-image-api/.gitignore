@@ -1,8 +1,7 @@
 node_modules
+dist
 
 Thumbs.db
 
 *.code-workspace
-css/style.css.map
 
-build/
