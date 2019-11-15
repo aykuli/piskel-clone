@@ -1,83 +1,51 @@
 class Picture {
-  constructor(scale, canvas, ctx, currentColor) {
-    this.scale = scale;
+  constructor(canvas, ctx, currentColor) {
     this.canvas = canvas;
     this.ctx = ctx;
-    this.row = this.canvas.width / this.scale;
-    this.column = this.canvas.height / this.scale;
+    this.row = this.canvas.width / scale;
+    this.column = this.canvas.height / scale;
     this.isDrawing = false;
     this.lastX = 0;
     this.lastY = 0;
     this.currentColor = currentColor;
     this.prevColorCache = '#ffffff';
+    this.dataURI = null;
     if (canvas == null) {
       throw new Error('there is no canvas');
     }
   }
 
-  emptyCanvas = () => {
-    this.ctxData = [];
-    for (let i = 0; i < this.row; i += 1) {
-      this.ctxData.push([]);
-      for (let j = 0; j < this.column; j += 1) {
-        this.ctxData[i].push('#ffffff');
+  loadingWindow() {
+    console.log('starting load');
+    window.onload = () => {
+      console.log('Hello!');
+      console.log('window onloaded');
+      console.log('localStorage.getItem(userPaint) = ', localStorage.getItem('userPaint'));
+      if (localStorage.getItem('userPaint') !== null) {
+        console.log('inside localStorage.getItem(userPaint !== null');
+        this.dataURI = localStorage.getItem('userPaint');
+        console.log('localStorage.getItem(userPaint): ', this.dataURI);
+        let img = new Image();
+        img.onload = () => {
+          this.ctx.drawImage(img, 0, 0);
+        };
+        img.src = localStorage.getItem('userPaint');
       }
-    }
-    this.loadPrevImage();
-  };
-
-  clearCanvas() {
-    for (let i = 0; i < this.row; i += 1) {
-      for (let j = 0; j < this.column; j += 1) {
-        this.ctxData[i][j] = '#ffffff';
-        this.ctx.fillStyle = this.ctxData[i][j];
-        this.ctx.fillRect(i * this.scale, j * this.scale, this.scale, this.scale);
-      }
-    }
-  }
-
-  loadPrevImage() {
-    for (let i = 0; i < this.row; i += 1) {
-      for (let j = 0; j < this.column; j += 1) {
-        this.ctx.fillStyle = this.ctxData[j][i];
-        this.ctx.fillRect(i * this.scale, j * this.scale, this.scale, this.scale);
-      }
-    }
+    };
   }
 
   localStorageSave() {
-    const json = JSON.stringify(this.ctxData);
+    console.log('saving in localStorage this.ctx.imageData');
     localStorage.removeItem('userPaint');
-    localStorage.setItem('userPaint', json);
+
+    this.dataURI = this.canvas.toDataURL();
+    localStorage.setItem('userPaint', JSON.stringify(this.dataURI));
+    // console.log('localStorage.getItem(userPaint) = ', localStorage.getItem('userPaint'));
   }
-
-  saveCanvas = () => {
-    function download(canvas, filename) {
-      // create an "off-screen" anchor tag
-      const lnk = document.createElement('a');
-      // the key here is to set the download attribute of the a tag
-      lnk.download = filename;
-      // convert canvas content to data-uri for link. When download
-      // attribute is set the content pointed to by link will be
-      // pushed as "download" in HTML5 capable browsers
-      lnk.href = canvas.toDataURL('image/png;base64');
-      // create a "fake" click-event to trigger the download
-      if (document.createEvent) {
-        const e = document.createEvent('MouseEvents');
-        e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-
-        lnk.dispatchEvent(e);
-      } else if (lnk.fireEvent) {
-        lnk.fireEvent('onclick');
-      }
-    }
-    download(this.canvas, 'myimage.png');
-  };
 
   plot(x, y) {
     this.ctx.fillStyle = this.currentColor.value;
-    this.ctx.fillRect((x - 1) * this.scale, (y - 1) * this.scale, this.scale, this.scale);
-    this.ctxData[y - 1][x - 1] = this.ctx.fillStyle;
+    this.ctx.fillRect((x - 1) * scale, (y - 1) * scale, scale, scale);
   }
 
   // Bresenham algorithm
@@ -109,19 +77,19 @@ class Picture {
   };
 
   draw = e => {
-    [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    [this.x2, this.y2] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     [this.x1, this.y1] = [this.x2, this.y2];
   };
 
   drawOnMouseDown = e => {
     this.isDrawing = true;
-    [this.x1, this.y1] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    [this.x1, this.y1] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
     this.plot(this.x1, this.y1);
   };
 
   drawMouseUp = e => {
-    [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    [this.x2, this.y2] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
     this.localStorageSave();
@@ -144,6 +112,7 @@ class Picture {
 
   bucketTool(targetTool) {
     if (targetTool === 'bucket') {
+      console.log('bucket tool choosed');
       this.canvas.addEventListener('mousedown', this.floodFill);
     } else {
       this.canvas.removeEventListener('mousedown', this.floodFill);
@@ -151,12 +120,14 @@ class Picture {
   }
 
   floodFill = e => {
-    [this.lastX, this.lastY] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    console.log('inside floodFill');
+
+    [this.lastX, this.lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+    console.log(this.lastX);
     const colorPrev = this.ctxData[this.lastY - 1][this.lastX - 1];
     const floodFillInner = (x, y, targetColor, scale, canvas) => {
       if (targetColor === colorPrev) return;
-      if (this.ctxData[y][x] !== colorPrev) return;
-      this.ctxData[y][x] = targetColor;
+
       this.ctx.fillStyle = targetColor;
       this.ctx.fillRect(x * scale, y * scale, scale, scale);
 
@@ -179,7 +150,7 @@ class Picture {
         }
       }
     };
-    floodFillInner(this.lastX - 1, this.lastY - 1, this.currentColor.value, this.scale, this.canvas);
+    floodFillInner(this.lastX - 1, this.lastY - 1, this.currentColor.value, scale, this.canvas);
   };
 
   watchColor(prevColor, newColor) {
@@ -199,8 +170,9 @@ class Picture {
   }
 
   colorPicker = e => {
-    const [x, y] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
-    const choosedColor = this.ctxData[y - 1][x - 1];
+    const [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+    const choosedColor = this.ctx.getImageData(x, y, 1, 1);
+    console.log('choosedColor =', choosedColor);
     this.ctx.fillStyle = choosedColor;
     this.currentColor.value = choosedColor;
   };
@@ -212,6 +184,18 @@ class Picture {
   };
 }
 
+function getLinkToImage() {
+  const url =
+    'https://api.unsplash.com/photos/random?query=town,Minsk&client_id=e2077ad31a806c894c460aec8f81bc2af4d09c4f8104ae3177bb809faf0eac17';
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data.urls.regular);
+    });
+}
+// getLinkToImage();
+function drawImage() {}
+
 // Start working with index.html
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -222,34 +206,32 @@ const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
 const prevColorCache = '#ffffff';
 prevColor.children[0].style.background = '#ffffff';
-
-const app = new Picture(4, canvas, ctx, currentColor);
+let dataURI = null;
+let scale = 4;
+console.log(scale);
+let app = new Picture(canvas, ctx, currentColor);
 
 // **********   INITIALIZATION    ************ */
 // Initialization process, loading prev image
-window.onload = () => {
-  if (localStorage.getItem('userPaint') === null || localStorage.getItem('userPaint') === undefined) {
-    app.emptyCanvas();
-    localStorage.setItem('userPaint', app.ctxData);
-  } else {
-    const json = localStorage.getItem('userPaint');
-    app.ctxData = JSON.parse(json);
-    app.loadPrevImage();
+
+const img = new Image();
+
+window.addEventListener('load', () => {
+  if (localStorage.getItem('userPaint') !== null) {
+    dataURI = localStorage.getItem('userPaint');
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = JSON.parse(dataURI);
   }
-};
+});
+
+// const image = new Image(60, 45);
+// image.src = 'https://mdn.mozillademos.org/files/5397/rhino.jpg';
+// image.onload = () => ctx.drawImage(image, 100, 100, canvas.width, canvas.height);
 
 window.onbeforeunload = () => app.localStorageSave();
 // **********   and of INITIALIZATION    ************ */
-
-// ********************    CLEAR CANVAS    *******************/
-const empty = document.getElementById('empty');
-empty.addEventListener('click', app.emptyCanvas);
-// *****************  end of  CLEAR CANVAS    ****************/
-
-// ********************    SAVE IMAGE    *********************/
-const save = document.getElementById('save');
-save.addEventListener('click', app.saveCanvas);
-// *****************  end of  SAVE IMAGE    ******************/
 
 // ********************       TOOLS       *******************/
 let targetTool = 'pencil';
@@ -304,3 +286,21 @@ document.addEventListener('keydown', e => {
   app.tools(targetTool);
 });
 // ****************  end of  KEYBOARD SHORTCUTS     ****************/
+
+const canvasResolution = document.querySelector('.canvas__resolution');
+canvasResolution.addEventListener('click', e => {
+  switch (e.target.id) {
+    case 'res128':
+      scale = 4;
+      app = new Picture(scale, canvas, ctx, currentColor);
+      break;
+    case 'res256':
+      scale = 2;
+      app = new Picture(scale, canvas, ctx, currentColor);
+      break;
+    case 'res512':
+      scale = 1;
+      app = new Picture(scale, canvas, ctx, currentColor);
+      break;
+  }
+});

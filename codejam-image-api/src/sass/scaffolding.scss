@@ -66,22 +66,46 @@ label {
     flex-grow: 1;
     
     text-align: center;
+
+    & input[type="text"] {
+        margin: 0 10px;
+        padding: 5px;
+
+        font-size: 14px;
+        line-height: 14px;
+        color: rgba(0, 0, 0, 0.7);
+    }
 }
 
+
 .canvas {
+    &__wrapper {
+        flex-grow: 1;
+        outline: 1px solid blue;
+    }
+
     &--style {
         border: 1px solid rgba(0, 0, 0, 0.4);
     }
     
     &__buttons {
+        width: 512px;
+        margin: 0 auto;
+        padding: 10px 0;
+
+        text-align: center;
+
         & button {
+            margin-right: 15px;
+            margin-bottom: 15px;
+
             font-family: Roboto, Arial, serif;
             font-size: 16px;
             line-height: 24px;
             font-style: normal;
             font-weight: normal;
             color: rgba(0, 0, 0, 0.6);
-            text-align: center;
+            text-align: left;
             
             background-color: #fff;
             border: 1px solid rgba(0, 0, 0, 0.4);
@@ -92,6 +116,12 @@ label {
             &:active {
                 box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4);
             }
+        }
+    }
+
+    &__resolution {
+        span {
+            margin-right: 15px;
         }
     }
 }
