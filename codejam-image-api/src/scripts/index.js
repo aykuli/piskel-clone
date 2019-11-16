@@ -9,7 +9,6 @@ class Picture {
     this.lastY = 0;
     this.currentColor = currentColor;
     this.prevColorCache = '#ffffff';
-    this.dataURI = null;
     if (canvas == null) {
       throw new Error('there is no canvas');
     }
@@ -19,8 +18,8 @@ class Picture {
     console.log('saving in localStorage this.ctx.imageData');
     localStorage.removeItem('userPaint');
 
-    this.dataURI = this.canvas.toDataURL();
-    localStorage.setItem('userPaint', JSON.stringify(this.dataURI));
+    const dataURI = this.canvas.toDataURL();
+    localStorage.setItem('userPaint', JSON.stringify(dataURI));
   }
 
   plot(x, y) {
@@ -58,6 +57,7 @@ class Picture {
 
   draw = e => {
     [this.x2, this.y2] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+    console.log(this.x1);
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     [this.x1, this.y1] = [this.x2, this.y2];
   };
@@ -162,6 +162,85 @@ class Picture {
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
   };
+
+  windowReload(ctx) {
+    if (localStorage.getItem('userPaint') !== null) {
+      const dataURI = localStorage.getItem('userPaint');
+      const img = new Image();
+
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = JSON.parse(dataURI);
+    }
+    console.log('load:  ', localStorage.getItem('piskelCloneResolution'));
+  }
+
+  drawImageOnCanvas(url, canvas, isForSave) {
+    let img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.src = url;
+    if (isForSave) {
+      [canvas.width, canvas.height] = [512, 512];
+    } else {
+      [canvas.width, canvas.height] = [size, size];
+    }
+    let [currentWidth, currentHeight] = [canvas.width, canvas.height];
+    let [x, y] = [0, 0];
+    img.onload = function() {
+      if (img.naturalWidth > img.naturalHeight) {
+        let scaleImg = img.naturalWidth / canvas.width;
+        currentWidth = canvas.width;
+        currentHeight = img.naturalHeight / scaleImg;
+        x = 0;
+        y = (canvas.height - currentHeight) / 2;
+      } else if (img.naturalWidth === img.naturalHeight) {
+        currentWidth = canvas.width;
+        currentHeight = canvas.height;
+      } else {
+        let scaleImg = img.naturalHeight / canvas.height;
+        currentWidth = img.naturalWidth / scaleImg;
+        currentHeight = canvas.height;
+        x = (canvas.width - currentWidth) / 2;
+        y = 0;
+      }
+
+      ctx.drawImage(img, x, y, currentWidth, currentHeight);
+      if (isForSave) {
+        const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+        localStorage.removeItem('piskelCloneImg');
+        localStorage.setItem('piskelCloneImg', JSON.stringify(dataURI));
+      }
+    };
+  }
+
+  saveCanvas() {
+    function download(canvas, filename) {
+      // create an "off-screen" anchor tag
+      const lnk = document.createElement('a');
+      // the key here is to set the download attribute of the a tag
+      lnk.download = filename;
+      // convert canvas content to data-uri for link. When download
+      // attribute is set the content pointed to by link will be
+      // pushed as "download" in HTML5 capable browsers
+      lnk.href = canvas.toDataURL('image/png;base64');
+      if (document.createEvent) {
+        const e = document.createEvent('MouseEvents');
+        e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+        lnk.dispatchEvent(e);
+      } else if (lnk.fireEvent) {
+        lnk.fireEvent('onclick');
+      }
+    }
+    download(this.canvas, 'myimage.png');
+  }
+
+  highlightCurrentResolution(target) {
+    const currentRes = document.querySelector('.res-active');
+    currentRes.classList.remove('res-active');
+    target.classList.add('res-active');
+  }
 }
 
 function getLinkToImage(city) {
@@ -170,40 +249,11 @@ function getLinkToImage(city) {
     .then(res => res.json())
     .then(data => {
       console.log(data.urls.regular);
-      drawImageOnCanvas(data.urls.regular);
+      app.drawImageOnCanvas(data.urls.regular, canvas);
     })
     .catch(err => alert('Put down in input right city'));
 }
 
-function drawImageOnCanvas(url) {
-  let img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.src = url;
-  let [currentWidth, currentHeight] = [canvas.width, canvas.height];
-  let [x, y] = [0, 0];
-  img.onload = function() {
-    if (img.naturalWidth > img.naturalHeight) {
-      let scaleImg = img.naturalWidth / canvas.width;
-      currentWidth = canvas.width;
-      currentHeight = img.naturalHeight / scaleImg;
-      x = 0;
-      y = (canvas.height - currentHeight) / 2;
-    } else if ((img.naturalWidth = img.naturalHeight)) {
-      currentWidth = canvas.width;
-      currentHeight = canvas.height;
-    } else {
-      let scaleImg = img.naturalHeight / canvas.height;
-      currentWidth = img.naturalWidth / scaleImg;
-      currentHeight = canvas.height;
-      x = (canvas.width - currentWidth) / 2;
-      y = 0;
-    }
-
-    ctx.drawImage(img, x, y, currentWidth, currentHeight);
-  };
-  console.log();
-}
-// getLinkToImage(city);
 // Start working with index.html
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -217,29 +267,30 @@ const prevColorCache = '#ffffff';
 prevColor.children[0].style.background = '#ffffff';
 let dataURI = null;
 let scale = 1;
+let size = 512;
 let cityChoiseInpit = document.getElementById('cityChoiseInpit');
 let city = 'Almaty';
 const load = document.getElementById('load');
 
 let app = new Picture(canvas, ctx, currentColor);
 
+if (localStorage.getItem('piskelCloneResolution')) {
+  size = +localStorage.getItem('piskelCloneResolution');
+  [canvas.width, canvas.height] = [size, size];
+
+  const currentRes = document.querySelector('.res-active');
+  currentRes.classList.remove('res-active');
+  const target = document.getElementById('res' + size);
+  target.classList.add('res-active');
+}
 // **********   INITIALIZATION    ************ */
 // Initialization process, loading prev image
 
-window.addEventListener('load', () => {
-  if (localStorage.getItem('userPaint') !== null) {
-    dataURI = localStorage.getItem('userPaint');
-    const img = new Image();
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0);
-    };
-    img.src = JSON.parse(dataURI);
-  }
-});
+window.addEventListener('load', app.windowReload(ctx));
 
 window.onbeforeunload = () => app.localStorageSave();
 // **********   and of INITIALIZATION    ************ */
-drawImageOnCanvas('https://ak.picdn.net/offset/photos/557ff40572375f2a29e52feb/large_w/offset_233372.jpg');
+
 // ********************       TOOLS       *******************/
 let targetTool = 'pencil';
 app.pencilTool(targetTool);
@@ -277,6 +328,11 @@ prevColor.addEventListener('click', () => {
 currentColor.addEventListener('change', app.watchColor(prevColor, currentColor.value, false));
 // *************    end of  COLOR MANAGING      **************/
 
+// ********************    SAVE IMAGE    *********************/
+const save = document.getElementById('save');
+save.addEventListener('click', app.saveCanvas);
+// *****************  end of  SAVE IMAGE    ******************/
+
 // ****************    KEYBOARD SHORTCUTS     ****************/
 document.addEventListener('keydown', e => {
   switch (e.code) {
@@ -302,43 +358,70 @@ document.addEventListener('keydown', e => {
 
 const canvasResolution = document.querySelector('.canvas__resolution');
 canvasResolution.addEventListener('click', e => {
+  localStorage.removeItem('piskelCloneResolution');
   switch (e.target.id) {
     case 'res128':
-      localStorage.removeItem('userPaunt');
-      app.localStorageSave();
-
-      canvas.width = 128;
-      canvas.height = 128;
-
-      if (localStorage.getItem('userPaint') !== null) {
-        dataURI = localStorage.getItem('userPaint');
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-        };
-        img.src = JSON.parse(dataURI);
-      }
-
-      app = new Picture(canvas, ctx, currentColor);
+      size = 128;
       break;
+
     case 'res256':
-      // scale = 2;
-      canvas.width = 256;
-      canvas.height = 256;
-      app = new Picture(canvas, ctx, currentColor);
+      size = 256;
       break;
+
     case 'res512':
-      scale = 1;
-      canvas.width = 512;
-      canvas.height = 512;
-      ctx.restore();
-      app = new Picture(canvas, ctx, currentColor);
+      size = 512;
       break;
   }
+
+  localStorage.setItem('piskelCloneResolution', size);
+  canvas.width = size;
+  canvas.height = size;
+  app.highlightCurrentResolution(e.target);
+  app = new Picture(canvas, ctx, currentColor);
+
+  dataURI = localStorage.getItem('piskelCloneImg');
+  let img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0);
+  };
+  img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
+
+  let [currentWidth, currentHeight] = [canvas.width, canvas.height];
+  let [x, y] = [0, 0];
+  img.onload = function() {
+    if (img.naturalWidth > img.naturalHeight) {
+      let scaleImg = img.naturalWidth / canvas.width;
+      currentWidth = canvas.width;
+      currentHeight = img.naturalHeight / scaleImg;
+      x = 0;
+      y = (canvas.height - currentHeight) / 2;
+    } else if (img.naturalWidth === img.naturalHeight) {
+      currentWidth = canvas.width;
+      currentHeight = canvas.height;
+    } else {
+      let scaleImg = img.naturalHeight / canvas.height;
+      currentWidth = img.naturalWidth / scaleImg;
+      currentHeight = canvas.height;
+      x = (canvas.width - currentWidth) / 2;
+      y = 0;
+    }
+
+    ctx.drawImage(img, x, y, currentWidth, currentHeight);
+  };
 });
 
 load.addEventListener('click', () => {
   city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // getLinkToImage(city);
+  // app.drawImageOnCanvas(
+  //   'https://images.unsplash.com/photo-1573848700501-f909e91dbe13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
+  //   canvas,
+  //   true
+  // );
+  // app.drawImageOnCanvas(
+  //   'https://images.unsplash.com/photo-1573848700501-f909e91dbe13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
+  //   canvas,
+  //   false
+  // );
 });
