@@ -23,8 +23,9 @@ class Picture {
   }
 
   plot(x, y) {
+    this.ctx.imageSmoothingEnabled = false;
     this.ctx.fillStyle = this.currentColor.value;
-    this.ctx.fillRect((x - 1) * scale, (y - 1) * scale, scale, scale);
+    this.ctx.fillRect(x, y, 1, 1);
   }
 
   // Bresenham algorithm
@@ -57,7 +58,7 @@ class Picture {
 
   draw = e => {
     [this.x2, this.y2] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
-    console.log(this.x1);
+
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     [this.x1, this.y1] = [this.x2, this.y2];
   };
@@ -169,6 +170,7 @@ class Picture {
       const img = new Image();
 
       img.onload = () => {
+        this.ctx.imageSmoothingEnabled = false;
         ctx.drawImage(img, 0, 0);
       };
       img.src = JSON.parse(dataURI);
@@ -176,18 +178,15 @@ class Picture {
     console.log('load:  ', localStorage.getItem('piskelCloneResolution'));
   }
 
-  drawImageOnCanvas(url, canvas, isForSave) {
+  downloadImage(url, canvas) {
     let img = new Image();
     img.crossOrigin = 'Anonymous';
     img.src = url;
-    if (isForSave) {
-      [canvas.width, canvas.height] = [512, 512];
-    } else {
-      [canvas.width, canvas.height] = [size, size];
-    }
+    [canvas.width, canvas.height] = [512, 512];
+
     let [currentWidth, currentHeight] = [canvas.width, canvas.height];
     let [x, y] = [0, 0];
-    img.onload = function() {
+    img.onload = () => {
       if (img.naturalWidth > img.naturalHeight) {
         let scaleImg = img.naturalWidth / canvas.width;
         currentWidth = canvas.width;
@@ -204,17 +203,15 @@ class Picture {
         x = (canvas.width - currentWidth) / 2;
         y = 0;
       }
-
+      this.ctx.imageSmoothingEnabled = false;
       ctx.drawImage(img, x, y, currentWidth, currentHeight);
-      if (isForSave) {
-        const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-        localStorage.removeItem('piskelCloneImg');
-        localStorage.setItem('piskelCloneImg', JSON.stringify(dataURI));
-      }
+      const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+      localStorage.removeItem('piskelCloneImg');
+      localStorage.setItem('piskelCloneImg', JSON.stringify(dataURI));
     };
   }
 
-  saveCanvas() {
+  saveCanvas(canvas) {
     function download(canvas, filename) {
       // create an "off-screen" anchor tag
       const lnk = document.createElement('a');
@@ -233,7 +230,7 @@ class Picture {
         lnk.fireEvent('onclick');
       }
     }
-    download(this.canvas, 'myimage.png');
+    download(canvas, 'myimage.png');
   }
 
   highlightCurrentResolution(target) {
@@ -249,7 +246,8 @@ function getLinkToImage(city) {
     .then(res => res.json())
     .then(data => {
       console.log(data.urls.regular);
-      app.drawImageOnCanvas(data.urls.regular, canvas);
+      app.drawImageOnCanvas(data.urls.regular, canvas, true);
+      app.drawImageOnCanvas(data.urls.regular, canvas, false);
     })
     .catch(err => alert('Put down in input right city'));
 }
@@ -271,9 +269,10 @@ let size = 512;
 let cityChoiseInpit = document.getElementById('cityChoiseInpit');
 let city = 'Almaty';
 const load = document.getElementById('load');
+ctx.imageSmoothingEnabled = false;
 
 let app = new Picture(canvas, ctx, currentColor);
-
+localStorage.removeItem('piskelCloneResolution');
 if (localStorage.getItem('piskelCloneResolution')) {
   size = +localStorage.getItem('piskelCloneResolution');
   [canvas.width, canvas.height] = [size, size];
@@ -282,6 +281,8 @@ if (localStorage.getItem('piskelCloneResolution')) {
   currentRes.classList.remove('res-active');
   const target = document.getElementById('res' + size);
   target.classList.add('res-active');
+  if (localStorage.getItem('piskelCloneResolution') === 128) scale = 4;
+  if (localStorage.getItem('piskelCloneResolution') === 256) scale = 2;
 }
 // **********   INITIALIZATION    ************ */
 // Initialization process, loading prev image
@@ -330,7 +331,9 @@ currentColor.addEventListener('change', app.watchColor(prevColor, currentColor.v
 
 // ********************    SAVE IMAGE    *********************/
 const save = document.getElementById('save');
-save.addEventListener('click', app.saveCanvas);
+save.addEventListener('click', () => {
+  app.saveCanvas(canvas);
+});
 // *****************  end of  SAVE IMAGE    ******************/
 
 // ****************    KEYBOARD SHORTCUTS     ****************/
@@ -362,14 +365,17 @@ canvasResolution.addEventListener('click', e => {
   switch (e.target.id) {
     case 'res128':
       size = 128;
+      scale = 4;
       break;
 
     case 'res256':
       size = 256;
+      scale = 2;
       break;
 
     case 'res512':
       size = 512;
+      scale = 1;
       break;
   }
 
@@ -382,10 +388,10 @@ canvasResolution.addEventListener('click', e => {
   dataURI = localStorage.getItem('piskelCloneImg');
   let img = new Image();
   img.onload = () => {
+    this.ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
   };
   img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
-
   let [currentWidth, currentHeight] = [canvas.width, canvas.height];
   let [x, y] = [0, 0];
   img.onload = function() {
@@ -406,6 +412,7 @@ canvasResolution.addEventListener('click', e => {
       y = 0;
     }
 
+    ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, x, y, currentWidth, currentHeight);
   };
 });
@@ -414,14 +421,12 @@ load.addEventListener('click', () => {
   city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // getLinkToImage(city);
-  // app.drawImageOnCanvas(
-  //   'https://images.unsplash.com/photo-1573848700501-f909e91dbe13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-  //   canvas,
-  //   true
-  // );
-  // app.drawImageOnCanvas(
-  //   'https://images.unsplash.com/photo-1573848700501-f909e91dbe13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-  //   canvas,
-  //   false
-  // );
+  let url =
+    'https://images.unsplash.com/photo-1573848700501-f909e91dbe13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80';
+
+  app.downloadImage(url, canvas);
+  const currentRes = document.querySelector('.res-active');
+  currentRes.classList.remove('res-active');
+  const target = document.getElementById('res512');
+  target.classList.add('res-active');
 });
