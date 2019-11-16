@@ -15,32 +15,12 @@ class Picture {
     }
   }
 
-  loadingWindow() {
-    console.log('starting load');
-    window.onload = () => {
-      console.log('Hello!');
-      console.log('window onloaded');
-      console.log('localStorage.getItem(userPaint) = ', localStorage.getItem('userPaint'));
-      if (localStorage.getItem('userPaint') !== null) {
-        console.log('inside localStorage.getItem(userPaint !== null');
-        this.dataURI = localStorage.getItem('userPaint');
-        console.log('localStorage.getItem(userPaint): ', this.dataURI);
-        let img = new Image();
-        img.onload = () => {
-          this.ctx.drawImage(img, 0, 0);
-        };
-        img.src = localStorage.getItem('userPaint');
-      }
-    };
-  }
-
   localStorageSave() {
     console.log('saving in localStorage this.ctx.imageData');
     localStorage.removeItem('userPaint');
 
     this.dataURI = this.canvas.toDataURL();
     localStorage.setItem('userPaint', JSON.stringify(this.dataURI));
-    // console.log('localStorage.getItem(userPaint) = ', localStorage.getItem('userPaint'));
   }
 
   plot(x, y) {
@@ -184,18 +164,46 @@ class Picture {
   };
 }
 
-function getLinkToImage() {
-  const url =
-    'https://api.unsplash.com/photos/random?query=town,Minsk&client_id=e2077ad31a806c894c460aec8f81bc2af4d09c4f8104ae3177bb809faf0eac17';
+function getLinkToImage(city) {
+  let url = `https://api.unsplash.com/photos/random?query=town,${city}&client_id=e2077ad31a806c894c460aec8f81bc2af4d09c4f8104ae3177bb809faf0eac17`;
   fetch(url)
     .then(res => res.json())
     .then(data => {
       console.log(data.urls.regular);
-    });
+      drawImageOnCanvas(data.urls.regular);
+    })
+    .catch(err => alert('Put down in input right city'));
 }
-// getLinkToImage();
-function drawImage() {}
 
+function drawImageOnCanvas(url) {
+  let img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.src = url;
+  let [currentWidth, currentHeight] = [canvas.width, canvas.height];
+  let [x, y] = [0, 0];
+  img.onload = function() {
+    if (img.naturalWidth > img.naturalHeight) {
+      let scaleImg = img.naturalWidth / canvas.width;
+      currentWidth = canvas.width;
+      currentHeight = img.naturalHeight / scaleImg;
+      x = 0;
+      y = (canvas.height - currentHeight) / 2;
+    } else if ((img.naturalWidth = img.naturalHeight)) {
+      currentWidth = canvas.width;
+      currentHeight = canvas.height;
+    } else {
+      let scaleImg = img.naturalHeight / canvas.height;
+      currentWidth = img.naturalWidth / scaleImg;
+      currentHeight = canvas.height;
+      x = (canvas.width - currentWidth) / 2;
+      y = 0;
+    }
+
+    ctx.drawImage(img, x, y, currentWidth, currentHeight);
+  };
+  console.log();
+}
+// getLinkToImage(city);
 // Start working with index.html
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -204,21 +212,24 @@ const currentColor = document.getElementById('currentColor');
 const prevColor = document.querySelector('.color--prev');
 const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
+const empty = document.getElementById('empty');
 const prevColorCache = '#ffffff';
 prevColor.children[0].style.background = '#ffffff';
 let dataURI = null;
-let scale = 4;
-console.log(scale);
+let scale = 1;
+let cityChoiseInpit = document.getElementById('cityChoiseInpit');
+let city = 'Almaty';
+const load = document.getElementById('load');
+
 let app = new Picture(canvas, ctx, currentColor);
 
 // **********   INITIALIZATION    ************ */
 // Initialization process, loading prev image
 
-const img = new Image();
-
 window.addEventListener('load', () => {
   if (localStorage.getItem('userPaint') !== null) {
     dataURI = localStorage.getItem('userPaint');
+    const img = new Image();
     img.onload = () => {
       ctx.drawImage(img, 0, 0);
     };
@@ -226,13 +237,9 @@ window.addEventListener('load', () => {
   }
 });
 
-// const image = new Image(60, 45);
-// image.src = 'https://mdn.mozillademos.org/files/5397/rhino.jpg';
-// image.onload = () => ctx.drawImage(image, 100, 100, canvas.width, canvas.height);
-
 window.onbeforeunload = () => app.localStorageSave();
 // **********   and of INITIALIZATION    ************ */
-
+drawImageOnCanvas('https://ak.picdn.net/offset/photos/557ff40572375f2a29e52feb/large_w/offset_233372.jpg');
 // ********************       TOOLS       *******************/
 let targetTool = 'pencil';
 app.pencilTool(targetTool);
@@ -241,10 +248,16 @@ pane.addEventListener('click', e => {
   const targetToolEl = e.target.closest('li');
   if (targetToolEl === null) return;
   targetTool = targetToolEl.id;
-  const prevActiveTool = document.querySelector('.tool--active');
-  prevActiveTool.classList.remove('tool--active');
-  targetToolEl.classList.add('tool--active');
-  app.tools(targetTool);
+
+  if (targetTool === 'empty') {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    targetTool = 'pencil';
+  } else {
+    const prevActiveTool = document.querySelector('.tool--active');
+    prevActiveTool.classList.remove('tool--active');
+    targetToolEl.classList.add('tool--active');
+    app.tools(targetTool);
+  }
 });
 // ********************    end of TOOLS    *******************/
 
@@ -291,16 +304,41 @@ const canvasResolution = document.querySelector('.canvas__resolution');
 canvasResolution.addEventListener('click', e => {
   switch (e.target.id) {
     case 'res128':
-      scale = 4;
-      app = new Picture(scale, canvas, ctx, currentColor);
+      localStorage.removeItem('userPaunt');
+      app.localStorageSave();
+
+      canvas.width = 128;
+      canvas.height = 128;
+
+      if (localStorage.getItem('userPaint') !== null) {
+        dataURI = localStorage.getItem('userPaint');
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = JSON.parse(dataURI);
+      }
+
+      app = new Picture(canvas, ctx, currentColor);
       break;
     case 'res256':
-      scale = 2;
-      app = new Picture(scale, canvas, ctx, currentColor);
+      // scale = 2;
+      canvas.width = 256;
+      canvas.height = 256;
+      app = new Picture(canvas, ctx, currentColor);
       break;
     case 'res512':
       scale = 1;
-      app = new Picture(scale, canvas, ctx, currentColor);
+      canvas.width = 512;
+      canvas.height = 512;
+      ctx.restore();
+      app = new Picture(canvas, ctx, currentColor);
       break;
   }
+});
+
+load.addEventListener('click', () => {
+  city = cityChoiseInpit.value;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // getLinkToImage(city);
 });

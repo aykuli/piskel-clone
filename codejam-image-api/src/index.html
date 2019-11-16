@@ -79,7 +79,7 @@
             <section class="drawing-section">
                 <h2 class="visually-hidden">Drawing on canvas</h2>
                 <div class="canvas__wrapper">
-                    <canvas id="canvas" class="canvas--style" width="512" height="512"></canvas>
+                    <canvas id="canvas" class="canvas--style" width="512" height="512">Your browser doesn't support canvas</canvas>
                     <div class="canvas__buttons">
                         <div class="canvas__resolution">
                             <span>Choose resolution:</span>
@@ -89,7 +89,7 @@
                         </div>
                         <div class="load-image">
                             <label>Choose city:
-                                <input type="text" name="load-image">
+                                <input id="cityChoiseInpit" type="text" name="load-image" placeholder="Almaty" value="Almaty">
                             </label>
                             <button id="load" class="canvas--load" type="button">Load</button>
                             <button id="save" class="canvas--save" type="button">Save</button>
