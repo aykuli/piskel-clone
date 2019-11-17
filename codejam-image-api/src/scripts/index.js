@@ -14,12 +14,17 @@ class Picture {
     }
   }
 
-  localStorageSave() {
-    console.log('saving in localStorage this.ctx.imageData');
-    localStorage.removeItem('userPaint');
+  saveInLocalStorage(localStorageKey) {
+    console.log('saving in localStorage ', localStorageKey);
+    localStorage.removeItem(localStorageKey);
 
-    const dataURI = this.canvas.toDataURL();
-    localStorage.setItem('userPaint', JSON.stringify(dataURI));
+    const dataURI = this.canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+    localStorage.setItem(localStorageKey, JSON.stringify(dataURI));
+  }
+
+  insertFromLocalStorage(localStorageKey) {
+    const dataURI = localStorage.getItem(localStorageKey);
+    return 'data:image/png;base64,'.concat(JSON.parse(dataURI));
   }
 
   plot(x, y) {
@@ -73,11 +78,12 @@ class Picture {
     [this.x2, this.y2] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
-    this.localStorageSave();
+    this.saveInLocalStorage('piskelCloneImg');
   };
 
   pencilTool = targetTool => {
     if (targetTool === 'pencil') {
+      console.log(targetTool);
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.addEventListener('mouseup', this.drawMouseUp);
@@ -85,6 +91,7 @@ class Picture {
         this.isDrawing = false;
       });
     } else {
+      console.log(targetTool);
       this.canvas.removeEventListener('mousemove', this.draw);
       this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.removeEventListener('mouseup', this.drawMouseUp);
@@ -143,6 +150,7 @@ class Picture {
   }
 
   pickerTool(targetTool) {
+    console.log(targetTool);
     if (targetTool === 'picker') {
       this.canvas.addEventListener('click', this.colorPicker);
     } else {
@@ -150,12 +158,31 @@ class Picture {
     }
   }
 
+  RGBToHex(data) {
+    let dataHex = '#';
+    console.log(data);
+    for (let i = 0; i < 3; i += 1) {
+      let color = data[i];
+      console.log(color);
+      let letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+      let firstLetter = letter[Math.floor(color / 16)];
+      let secondLetter = letter[color % 16];
+      console.log('firstLetter: ', firstLetter, 'secondLetter: ', secondLetter);
+      dataHex = dataHex + firstLetter + secondLetter;
+    }
+    return dataHex;
+  }
+
   colorPicker = e => {
+    console.log('e.layerX:', e.layerX, 'e.offsetX: ', e.offsetX);
     const [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
     const choosedColor = this.ctx.getImageData(x, y, 1, 1);
-    console.log('choosedColor =', choosedColor);
-    this.ctx.fillStyle = choosedColor;
-    this.currentColor.value = choosedColor;
+    var data = choosedColor.data;
+    var color = this.RGBToHex(data);
+
+    console.log('choosedColor =', color);
+    this.ctx.fillStyle = color;
+    this.currentColor.value = color;
   };
 
   tools = targetTool => {
@@ -205,9 +232,7 @@ class Picture {
       }
       this.ctx.imageSmoothingEnabled = false;
       ctx.drawImage(img, x, y, currentWidth, currentHeight);
-      const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-      localStorage.removeItem('piskelCloneImg');
-      localStorage.setItem('piskelCloneImg', JSON.stringify(dataURI));
+      app.saveInLocalStorage('piskelCloneImg');
     };
   }
 
@@ -238,6 +263,18 @@ class Picture {
     currentRes.classList.remove('res-active');
     target.classList.add('res-active');
   }
+
+  grayscale() {
+    var imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    var data = imageData.data;
+    for (var i = 0; i < data.length; i += 4) {
+      var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      data[i] = avg; // red
+      data[i + 1] = avg; // green
+      data[i + 2] = avg; // blue
+    }
+    this.ctx.putImageData(imageData, 0, 0);
+  }
 }
 
 function getLinkToImage(city) {
@@ -246,8 +283,7 @@ function getLinkToImage(city) {
     .then(res => res.json())
     .then(data => {
       console.log(data.urls.regular);
-      app.drawImageOnCanvas(data.urls.regular, canvas, true);
-      app.drawImageOnCanvas(data.urls.regular, canvas, false);
+      app.downloadImage(data.urls.regular, canvas);
     })
     .catch(err => alert('Put down in input right city'));
 }
@@ -271,6 +307,8 @@ let city = 'Almaty';
 const load = document.getElementById('load');
 ctx.imageSmoothingEnabled = false;
 
+const grayScaleBtn = document.getElementById('grayScale');
+
 let app = new Picture(canvas, ctx, currentColor);
 localStorage.removeItem('piskelCloneResolution');
 if (localStorage.getItem('piskelCloneResolution')) {
@@ -289,7 +327,7 @@ if (localStorage.getItem('piskelCloneResolution')) {
 
 window.addEventListener('load', app.windowReload(ctx));
 
-window.onbeforeunload = () => app.localStorageSave();
+window.onbeforeunload = () => app.saveInLocalStorage('piskelCloneImg');
 // **********   and of INITIALIZATION    ************ */
 
 // ********************       TOOLS       *******************/
@@ -304,6 +342,8 @@ pane.addEventListener('click', e => {
   if (targetTool === 'empty') {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     targetTool = 'pencil';
+  } else if (targetTool === 'grayscale') {
+    app.grayscale();
   } else {
     const prevActiveTool = document.querySelector('.tool--active');
     prevActiveTool.classList.remove('tool--active');
@@ -378,20 +418,19 @@ canvasResolution.addEventListener('click', e => {
       scale = 1;
       break;
   }
-
+  app.saveInLocalStorage('piskelCloneImg');
   localStorage.setItem('piskelCloneResolution', size);
   canvas.width = size;
   canvas.height = size;
   app.highlightCurrentResolution(e.target);
   app = new Picture(canvas, ctx, currentColor);
 
-  dataURI = localStorage.getItem('piskelCloneImg');
   let img = new Image();
   img.onload = () => {
     this.ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
   };
-  img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
+  img.src = app.insertFromLocalStorage('piskelCloneImg');
   let [currentWidth, currentHeight] = [canvas.width, canvas.height];
   let [x, y] = [0, 0];
   img.onload = function() {
@@ -420,13 +459,20 @@ canvasResolution.addEventListener('click', e => {
 load.addEventListener('click', () => {
   city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  console.log(city);
   // getLinkToImage(city);
+
+  // this block of code when unsplash limit of 50 downloads end
   let url =
     'https://images.unsplash.com/photo-1573848700501-f909e91dbe13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80';
 
   app.downloadImage(url, canvas);
+  // this block of code when unsplash limit of 50 downloads end
+
   const currentRes = document.querySelector('.res-active');
   currentRes.classList.remove('res-active');
   const target = document.getElementById('res512');
   target.classList.add('res-active');
+  scale = 1;
+  size = 512;
 });
