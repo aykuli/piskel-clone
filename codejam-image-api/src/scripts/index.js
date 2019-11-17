@@ -110,35 +110,67 @@ class Picture {
   floodFill = e => {
     console.log('inside floodFill');
 
-    [this.lastX, this.lastY] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
-    console.log(this.lastX);
-    const colorPrev = this.ctxData[this.lastY - 1][this.lastX - 1];
-    const floodFillInner = (x, y, targetColor, scale, canvas) => {
-      if (targetColor === colorPrev) return;
+    let [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
 
-      this.ctx.fillStyle = targetColor;
-      this.ctx.fillRect(x * scale, y * scale, scale, scale);
+    const targetColor = this.RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
+    let replacementColor = this.currentColor.value;
+    if (targetColor === replacementColor) return;
+    this.ctx.fillStyle = replacementColor;
+    this.ctx.fillRect(x, y, 1, 1);
+    let Queue = [];
 
-      const around = [
-        { dx: 0, dy: -1 },
-        { dx: -1, dy: 0 },
-        { dx: 1, dy: 0 },
-        { dx: 0, dy: +1 },
-      ];
-
-      for (const { dx, dy } of around) {
-        if (x + dx >= 0 && x + dx < canvas.width / scale && y + dy >= 0 && y + dy < canvas.height / scale) {
-          try {
-            floodFillInner(x + dx, y + dy, targetColor, scale, canvas);
-          } catch (err) {
-            setTimeout(() => {
-              floodFillInner(x + dx, y + dy, targetColor, scale, canvas);
-            }, 0);
-          }
-        }
+    let xy = [x, y];
+    Queue.push(xy);
+    let i = 0;
+    while (Queue.length > 0) {
+      i++;
+      if (i === 100000) return;
+      xy = [x, y];
+      let xPlus1y = [x + 1, y];
+      if (
+        x + 1 > 0 &&
+        x + 1 < this.canvas.width &&
+        targetColor === this.RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
+      ) {
+        Queue.push(xPlus1y);
+        this.ctx.fillRect(x + 1, y, 1, 1);
       }
-    };
-    floodFillInner(this.lastX - 1, this.lastY - 1, this.currentColor.value, scale, this.canvas);
+
+      if (
+        x - 1 > 0 &&
+        x - 1 < this.canvas.width &&
+        targetColor === this.RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
+      ) {
+        Queue.push([x - 1, y]);
+        this.ctx.fillRect(x - 1, y, 1, 1);
+      }
+
+      if (
+        y + 1 > 0 &&
+        y + 1 < this.canvas.width &&
+        targetColor === this.RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
+      ) {
+        Queue.push([x, y + 1]);
+        this.ctx.fillRect(x, y + 1, 1, 1);
+      }
+
+      if (
+        y - 1 > 0 &&
+        y - 1 < this.canvas.width &&
+        targetColor === this.RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
+      ) {
+        Queue.push([x, y - 1]);
+        this.ctx.fillRect(x, y - 1, 1, 1);
+      }
+
+      Queue.shift(0);
+      if (Queue.length > 0) {
+        x = Queue[0][0];
+        y = Queue[0][1];
+      }
+    }
+    console.log('Queue.length =', Queue.length);
+    Queue = [];
   };
 
   watchColor(prevColor, newColor) {
@@ -160,27 +192,22 @@ class Picture {
 
   RGBToHex(data) {
     let dataHex = '#';
-    console.log(data);
     for (let i = 0; i < 3; i += 1) {
       let color = data[i];
-      console.log(color);
       let letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
       let firstLetter = letter[Math.floor(color / 16)];
       let secondLetter = letter[color % 16];
-      console.log('firstLetter: ', firstLetter, 'secondLetter: ', secondLetter);
       dataHex = dataHex + firstLetter + secondLetter;
     }
     return dataHex;
   }
 
   colorPicker = e => {
-    console.log('e.layerX:', e.layerX, 'e.offsetX: ', e.offsetX);
     const [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
     const choosedColor = this.ctx.getImageData(x, y, 1, 1);
     var data = choosedColor.data;
     var color = this.RGBToHex(data);
 
-    console.log('choosedColor =', color);
     this.ctx.fillStyle = color;
     this.currentColor.value = color;
   };
@@ -423,7 +450,6 @@ canvasResolution.addEventListener('click', e => {
   canvas.width = size;
   canvas.height = size;
   app.highlightCurrentResolution(e.target);
-  app = new Picture(canvas, ctx, currentColor);
 
   let img = new Image();
   img.onload = () => {
@@ -433,7 +459,7 @@ canvasResolution.addEventListener('click', e => {
   img.src = app.insertFromLocalStorage('piskelCloneImg');
   let [currentWidth, currentHeight] = [canvas.width, canvas.height];
   let [x, y] = [0, 0];
-  img.onload = function() {
+  img.onload = function () {
     if (img.naturalWidth > img.naturalHeight) {
       let scaleImg = img.naturalWidth / canvas.width;
       currentWidth = canvas.width;
@@ -464,7 +490,7 @@ load.addEventListener('click', () => {
 
   // this block of code when unsplash limit of 50 downloads end
   let url =
-    'https://images.unsplash.com/photo-1573848700501-f909e91dbe13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80';
+    'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
   app.downloadImage(url, canvas);
   // this block of code when unsplash limit of 50 downloads end
