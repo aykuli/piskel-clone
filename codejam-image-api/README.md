@@ -17,5 +17,3 @@ There will appear folder `dist`, where will be files `index.html`, `main.js`, `m
 5. To check eslint errors run 
     `npm run lint`
 
-6. To autofix eslint errors run
-    `npm run lintF`

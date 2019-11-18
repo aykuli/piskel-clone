@@ -166,13 +166,11 @@ load.addEventListener('click', () => {
   const city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   app.getLinkToImage(city);
-
-  // this block of code when unsplash limit of 50 downloads end
-  // const url =
+  // when limit on unsplash.com ends this block of code can help to view functionality
+  // let url =
   //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
   // app.downloadImage(url);
-  // this block of code when unsplash limit of 50 downloads end
 
   const currentRes = document.querySelector('.res-active');
   currentRes.classList.remove('res-active');

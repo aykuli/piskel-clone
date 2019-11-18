@@ -282,6 +282,7 @@ export default class Picture {
       .then(res => res.json())
       .then(data => {
         this.downloadImage(data.urls.regular);
-      });
+      })
+      .catch(() => alert('Your limit of 50 images on unsplash.com is end'));
   }
 }
