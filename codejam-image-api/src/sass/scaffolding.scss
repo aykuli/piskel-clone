@@ -135,3 +135,40 @@ button.res-active {
     background-color: rgb(253, 223, 235);
     box-shadow: 2px 2px 5px rgb(253, 223, 235);
 }
+
+.netlify-identity-menu {
+    display: flex;
+    justify-content: space-between;
+
+    list-style: none;
+}
+
+.netlify-identity-item a {
+    display: block;
+    padding: 0 10px;
+
+    font-family: Roboto, Arial, serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-style: normal;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.4);
+    text-decoration: none;
+
+    border: 1px solid rgba(0, 0, 0, 0.2);
+
+    &:hover, &:focus {
+        background-color: rgba(253, 223, 235, .5);
+        box-shadow: 2px 2px 5px rgb(253, 223, 235);
+        color: rgba(0, 0, 0, 0.6);
+    }
+    &:active {
+        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4);
+    }
+}
+
+
+
+.netlify-identity-item:first-child {
+    margin-right: 15px;
+}

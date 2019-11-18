@@ -12,7 +12,9 @@
         <header>
             <nav class="nav nav__main"></nav>
             <h1>CodeJam - Image API</h1>
-            <nav class="nav nav__user"></nav>
+            <nav class="nav nav__user">
+                <div data-netlify-identity-menu></div>
+            </nav>
         </header>
         <main>
             <aside>
@@ -98,5 +100,7 @@
             </section>
         </main>
     </div>
+    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script src="https://unpkg.com/netlify-auth-providers"></script>
 </body>
 </html>

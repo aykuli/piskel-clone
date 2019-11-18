@@ -169,7 +169,6 @@ class Picture {
         y = Queue[0][1];
       }
     }
-    console.log('Queue.length =', Queue.length);
     Queue = [];
   };
 
@@ -486,13 +485,13 @@ load.addEventListener('click', () => {
   city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   console.log(city);
-  // getLinkToImage(city);
+  getLinkToImage(city);
 
   // this block of code when unsplash limit of 50 downloads end
-  let url =
-    'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
+  // let url =
+  //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
-  app.downloadImage(url, canvas);
+  // app.downloadImage(url, canvas);
   // this block of code when unsplash limit of 50 downloads end
 
   const currentRes = document.querySelector('.res-active');
