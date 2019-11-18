@@ -1,4 +1,4 @@
-import Picture from './Picture';
+import Picture from './Picture.js';
 // Taking elements from index.html
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -165,13 +165,13 @@ canvasResolution.addEventListener('click', e => {
 load.addEventListener('click', () => {
   const city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // app.getLinkToImage(city);
+  app.getLinkToImage(city);
 
   // this block of code when unsplash limit of 50 downloads end
-  const url =
-    'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
+  // const url =
+  //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
-  app.downloadImage(url);
+  // app.downloadImage(url);
   // this block of code when unsplash limit of 50 downloads end
 
   const currentRes = document.querySelector('.res-active');

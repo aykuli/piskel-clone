@@ -1,4 +1,4 @@
-import RGBToHex from './RGBToHex';
+import RGBToHex from './RGBToHex.js';
 
 export default class Picture {
   constructor(canvas, ctx, currentColor, scale, size) {
