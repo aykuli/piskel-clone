@@ -96,6 +96,7 @@ class Picture {
       this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.removeEventListener('mouseup', this.drawMouseUp);
     }
+    this.saveInLocalStorage('piskelCloneImg')
   };
 
   bucketTool(targetTool) {
@@ -218,17 +219,29 @@ class Picture {
   };
 
   windowReload(ctx) {
-    if (localStorage.getItem('userPaint') !== null) {
-      const dataURI = localStorage.getItem('userPaint');
+    if (localStorage.getItem('piskelCloneImg') !== null) {
       const img = new Image();
 
       img.onload = () => {
         this.ctx.imageSmoothingEnabled = false;
         ctx.drawImage(img, 0, 0);
       };
-      img.src = JSON.parse(dataURI);
+      img.src = app.insertFromLocalStorage('piskelCloneImg');
     }
-    console.log('load:  ', localStorage.getItem('piskelCloneResolution'));
+
+    if (localStorage.getItem('piskelCloneResolution')) {
+      size = +localStorage.getItem('piskelCloneResolution');
+      [canvas.width, canvas.height] = [size, size];
+
+      const currentRes = document.querySelector('.res-active');
+      currentRes.classList.remove('res-active');
+      const target = document.getElementById('res' + size);
+      target.classList.add('res-active');
+      if (localStorage.getItem('piskelCloneResolution') === 128) scale = 4;
+      if (localStorage.getItem('piskelCloneResolution') === 256) scale = 2;
+    }
+
+    console.log('load piskelCloneResolution =', localStorage.getItem('piskelCloneResolution'));
   }
 
   downloadImage(url, canvas) {
@@ -336,18 +349,18 @@ ctx.imageSmoothingEnabled = false;
 const grayScaleBtn = document.getElementById('grayScale');
 
 let app = new Picture(canvas, ctx, currentColor);
-localStorage.removeItem('piskelCloneResolution');
-if (localStorage.getItem('piskelCloneResolution')) {
-  size = +localStorage.getItem('piskelCloneResolution');
-  [canvas.width, canvas.height] = [size, size];
+// localStorage.setItem('piskelCloneResolution', size);
+// if (localStorage.getItem('piskelCloneResolution')) {
+//   size = +localStorage.getItem('piskelCloneResolution');
+//   [canvas.width, canvas.height] = [size, size];
 
-  const currentRes = document.querySelector('.res-active');
-  currentRes.classList.remove('res-active');
-  const target = document.getElementById('res' + size);
-  target.classList.add('res-active');
-  if (localStorage.getItem('piskelCloneResolution') === 128) scale = 4;
-  if (localStorage.getItem('piskelCloneResolution') === 256) scale = 2;
-}
+//   const currentRes = document.querySelector('.res-active');
+//   currentRes.classList.remove('res-active');
+//   const target = document.getElementById('res' + size);
+//   target.classList.add('res-active');
+//   if (localStorage.getItem('piskelCloneResolution') === 128) scale = 4;
+//   if (localStorage.getItem('piskelCloneResolution') === 256) scale = 2;
+// }
 // **********   INITIALIZATION    ************ */
 // Initialization process, loading prev image
 
@@ -485,13 +498,13 @@ load.addEventListener('click', () => {
   city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   console.log(city);
-  getLinkToImage(city);
+  // getLinkToImage(city);
 
   // this block of code when unsplash limit of 50 downloads end
-  // let url =
-  //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
+  let url =
+    'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
-  // app.downloadImage(url, canvas);
+  app.downloadImage(url, canvas);
   // this block of code when unsplash limit of 50 downloads end
 
   const currentRes = document.querySelector('.res-active');
