@@ -1,14 +1,24 @@
+function RGBToHex(data) {
+  let dataHex = '#';
+  for (let i = 0; i < 3; i += 1) {
+    const color = data[i];
+    const letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+    const firstLetter = letter[Math.floor(color / 16)];
+    const secondLetter = letter[color % 16];
+    dataHex = dataHex + firstLetter + secondLetter;
+  }
+  return dataHex;
+}
+
 class Picture {
-  constructor(canvas, ctx, currentColor) {
+  constructor(canvas, ctx, currentColor, scale, size) {
     this.canvas = canvas;
     this.ctx = ctx;
-    this.row = this.canvas.width / scale;
-    this.column = this.canvas.height / scale;
     this.isDrawing = false;
-    this.lastX = 0;
-    this.lastY = 0;
     this.currentColor = currentColor;
     this.prevColorCache = '#ffffff';
+    this.scale = scale;
+    this.size = size;
 
     if (canvas == null) {
       throw new Error('there is no canvas');
@@ -20,11 +30,6 @@ class Picture {
 
     const dataURI = this.canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
     localStorage.setItem(localStorageKey, JSON.stringify(dataURI));
-  }
-
-  insertFromLocalStorage(localStorageKey) {
-    const dataURI = localStorage.getItem(localStorageKey);
-    return 'data:image/png;base64,'.concat(JSON.parse(dataURI));
   }
 
   plot(x, y) {
@@ -63,7 +68,7 @@ class Picture {
 
   draw = e => {
     if (this.isDrawing) {
-      [this.x2, this.y2] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+      [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
 
       this.bresenham(this.x1, this.x2, this.y1, this.y2);
       [this.x1, this.y1] = [this.x2, this.y2];
@@ -72,12 +77,12 @@ class Picture {
 
   drawOnMouseDown = e => {
     this.isDrawing = true;
-    [this.x1, this.y1] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+    [this.x1, this.y1] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
     this.plot(this.x1, this.y1);
   };
 
   drawMouseUp = e => {
-    [this.x2, this.y2] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+    [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
     this.saveInLocalStorage('piskelCloneImg');
@@ -108,9 +113,9 @@ class Picture {
   }
 
   floodFill = e => {
-    let [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+    let [x, y] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
 
-    const targetColor = this.RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
+    const targetColor = RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
     const replacementColor = this.currentColor.value;
     if (targetColor === replacementColor) return;
     this.ctx.fillStyle = replacementColor;
@@ -122,7 +127,7 @@ class Picture {
       if (
         x + 1 > 0 &&
         x + 1 < this.canvas.width &&
-        targetColor === this.RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
+        targetColor === RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
       ) {
         Queue.push([x + 1, y]);
         this.ctx.fillRect(x + 1, y, 1, 1);
@@ -131,7 +136,7 @@ class Picture {
       if (
         x - 1 >= 0 &&
         x - 1 < this.canvas.width &&
-        targetColor === this.RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
+        targetColor === RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
       ) {
         Queue.push([x - 1, y]);
         this.ctx.fillRect(x - 1, y, 1, 1);
@@ -140,7 +145,7 @@ class Picture {
       if (
         y + 1 > 0 &&
         y + 1 < this.canvas.width &&
-        targetColor === this.RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
+        targetColor === RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
       ) {
         Queue.push([x, y + 1]);
         this.ctx.fillRect(x, y + 1, 1, 1);
@@ -149,7 +154,7 @@ class Picture {
       if (
         y - 1 >= 0 &&
         y - 1 < this.canvas.width &&
-        targetColor === this.RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
+        targetColor === RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
       ) {
         Queue.push([x, y - 1]);
         this.ctx.fillRect(x, y - 1, 1, 1);
@@ -179,22 +184,10 @@ class Picture {
     }
   }
 
-  RGBToHex(data) {
-    let dataHex = '#';
-    for (let i = 0; i < 3; i += 1) {
-      const color = data[i];
-      const letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
-      const firstLetter = letter[Math.floor(color / 16)];
-      const secondLetter = letter[color % 16];
-      dataHex = dataHex + firstLetter + secondLetter;
-    }
-    return dataHex;
-  }
-
   colorPicker = e => {
-    const [x, y] = [Math.ceil(e.offsetX / scale), Math.ceil(e.offsetY / scale)];
+    const [x, y] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
     const choosedColor = this.ctx.getImageData(x, y, 1, 1);
-    const color = this.RGBToHex(choosedColor.data);
+    const color = RGBToHex(choosedColor.data);
 
     this.ctx.fillStyle = color;
     this.currentColor.value = color;
@@ -214,19 +207,20 @@ class Picture {
         this.ctx.imageSmoothingEnabled = false;
         this.ctx.drawImage(img, 0, 0);
       };
-      img.src = this.insertFromLocalStorage('piskelCloneImg');
+      const dataURI = localStorage.getItem('piskelCloneImg');
+      img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
     }
 
     if (localStorage.getItem('piskelCloneResolution')) {
-      size = +localStorage.getItem('piskelCloneResolution');
-      [this.canvas.width, this.canvas.height] = [size, size];
+      this.size = +localStorage.getItem('piskelCloneResolution');
+      [this.canvas.width, this.canvas.height] = [this.size, this.size];
 
       const currentRes = document.querySelector('.res-active');
       currentRes.classList.remove('res-active');
-      const target = document.getElementById('res'.concat(size));
+      const target = document.getElementById('res'.concat(this.size));
       target.classList.add('res-active');
-      if (localStorage.getItem('piskelCloneResolution') === '128') scale = 4;
-      if (localStorage.getItem('piskelCloneResolution') === '256') scale = 2;
+      if (localStorage.getItem('piskelCloneResolution') === '128') this.scale = 4;
+      if (localStorage.getItem('piskelCloneResolution') === '256') this.scale = 2;
     }
   };
 
@@ -280,15 +274,9 @@ class Picture {
     }
   }
 
-  highlightCurrentResolution(target) {
-    const currentRes = document.querySelector('.res-active');
-    currentRes.classList.remove('res-active');
-    target.classList.add('res-active');
-  }
-
   grayscale() {
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    const data = imageData.data;
+    const { data } = imageData;
     for (let i = 0; i < data.length; i += 4) {
       const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
       data[i] = avg; // red
@@ -304,12 +292,11 @@ class Picture {
       .then(res => res.json())
       .then(data => {
         this.downloadImage(data.urls.regular);
-      })
-      .catch(() => alert('Put down in input right city'));
+      });
   }
 }
 
-// Start working with index.html
+// Taking elements from index.html
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const pane = document.querySelector('.pane');
@@ -319,8 +306,6 @@ const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
 const prevColorCache = '#ffffff';
 prevColor.children[0].style.background = '#ffffff';
-let scale = 1;
-let size = 512;
 const cityChoiseInpit = document.getElementById('cityChoiseInpit');
 const load = document.getElementById('load');
 ctx.imageSmoothingEnabled = false;
@@ -328,16 +313,13 @@ let isImgLoaded = false;
 const modalLoadImg = document.querySelector('.modal__no-image');
 const modalOverlay = document.querySelector('.modal__overlay');
 
-const app = new Picture(canvas, ctx, currentColor);
-// **********   INITIALIZATION    ************ */
-// Initialization process, loading prev image
+// Creating app
+const app = new Picture(canvas, ctx, currentColor, 1, 512);
 
 window.addEventListener('load', app.windowReload());
 
 window.onbeforeunload = () => app.saveInLocalStorage('piskelCloneImg');
-// **********   and of INITIALIZATION    ************ */
 
-// ********************       TOOLS       *******************/
 let targetTool = 'pencil';
 app.pencilTool(targetTool);
 
@@ -369,9 +351,7 @@ modalOverlay.addEventListener('click', () => {
   modalLoadImg.classList.remove('display-block');
   modalOverlay.classList.remove('display-block');
 });
-// ********************    end of TOOLS    *******************/
 
-// ******************    COLOR MANAGING    *******************/
 colorRed.addEventListener('click', () => {
   currentColor.value = '#f74242';
   app.watchColor(prevColor, currentColor.value, false);
@@ -385,16 +365,12 @@ prevColor.addEventListener('click', () => {
   app.watchColor(prevColor, currentColor.value, false);
 });
 currentColor.addEventListener('change', app.watchColor(prevColor, currentColor.value, false));
-// *************    end of  COLOR MANAGING      **************/
 
-// ********************    SAVE IMAGE    *********************/
 const save = document.getElementById('save');
 save.addEventListener('click', () => {
   app.saveCanvas();
 });
-// *****************  end of  SAVE IMAGE    ******************/
 
-// ****************    KEYBOARD SHORTCUTS     ****************/
 document.addEventListener('keydown', e => {
   switch (e.code) {
     case 'KeyB':
@@ -415,39 +391,43 @@ document.addEventListener('keydown', e => {
   targetToolEl.classList.add('tool--active');
   app.tools(targetTool);
 });
-// ****************  end of  KEYBOARD SHORTCUTS     ****************/
 
 const canvasResolution = document.querySelector('.canvas__resolution');
 canvasResolution.addEventListener('click', e => {
   localStorage.removeItem('piskelCloneResolution');
   switch (e.target.id) {
     case 'res128':
-      size = 128;
-      scale = 4;
+      app.size = 128;
+      app.scale = 4;
       break;
 
     case 'res256':
-      size = 256;
-      scale = 2;
+      app.size = 256;
+      app.scale = 2;
       break;
 
     default:
-      size = 512;
-      scale = 1;
+      app.size = 512;
+      app.scale = 1;
       break;
   }
   app.saveInLocalStorage('piskelCloneImg');
-  localStorage.setItem('piskelCloneResolution', size);
-  canvas.width = size;
-  canvas.height = size;
-  app.highlightCurrentResolution(e.target);
+  localStorage.setItem('piskelCloneResolution', app.size);
+  canvas.width = app.size;
+  canvas.height = app.size;
+  const currentRes = document.querySelector('.res-active');
+  currentRes.classList.remove('res-active');
+  e.target.classList.add('res-active');
 
   const img = new Image();
   img.onload = () => {
     this.ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
   };
-  img.src = app.insertFromLocalStorage('piskelCloneImg');
+
+  const dataURI = localStorage.getItem('piskelCloneImg');
+  img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
+
   let [currentWidth, currentHeight] = [canvas.width, canvas.height];
   let [x, y] = [0, 0];
   img.onload = () => {
@@ -489,7 +469,7 @@ load.addEventListener('click', () => {
   currentRes.classList.remove('res-active');
   const target = document.getElementById('res512');
   target.classList.add('res-active');
-  scale = 1;
-  size = 512;
+  app.scale = 1;
+  app.size = 512;
   isImgLoaded = true;
 });
