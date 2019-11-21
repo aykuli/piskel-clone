@@ -275,6 +275,7 @@ document.addEventListener('keydown', e => {
       targetTool = 'picker';
       break;
     default:
+      return;
   }
   const targetToolEl = document.querySelector(`#${targetTool}`);
   const prevActiveToolEl = document.querySelector('.tool--active');
