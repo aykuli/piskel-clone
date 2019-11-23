@@ -5,4 +5,4 @@ Thumbs.db
 *.code-workspace
 css/style.css.map
 
-build
+dist
