@@ -1,19 +1,43 @@
 import RGBToHex from './RGBToHex.js';
 
 export default class Picture {
-  constructor(canvas, ctx, currentColor, scale, size) {
+  constructor(canvas, ctx, currentColor, size, prevColor) {
     this.canvas = canvas;
     this.ctx = ctx;
     this.isDrawing = false;
     this.currentColor = currentColor;
     this.prevColorCache = '#ffffff';
-    this.scale = scale;
+    this.scale = 1;
     this.size = size;
+    this.prevColor = prevColor;
 
     if (canvas == null) {
       throw new Error('there is no canvas');
     }
   }
+
+  windowReload = () => {
+    if (localStorage.getItem('piskelCloneImg') !== null) {
+      const img = new Image();
+      const dataURI = localStorage.getItem('piskelCloneImg');
+      img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
+      img.onload = () => {
+        this.ctx.drawImage(img, 0, 0);
+      };
+    }
+
+    if (localStorage.getItem('piskelCloneResolution') !== null) {
+      this.size = +localStorage.getItem('piskelCloneResolution');
+      [this.canvas.width, this.canvas.height] = [this.size, this.size];
+
+      const currentRes = document.querySelector('.res-active');
+      currentRes.classList.remove('res-active');
+      const target = document.getElementById('res'.concat(this.size));
+      target.classList.add('res-active');
+      if (localStorage.getItem('piskelCloneResolution') === '128') this.scale = 4;
+      if (localStorage.getItem('piskelCloneResolution') === '256') this.scale = 2;
+    }
+  };
 
   saveInLocalStorage(localStorageKey) {
     localStorage.removeItem(localStorageKey);
@@ -56,9 +80,13 @@ export default class Picture {
     }
   };
 
+  getXYCoors(e) {
+    return [Math.ceil((e.offsetX / 512) * this.size), Math.ceil((e.offsetY / 512) * this.size)];
+  }
+
   draw = e => {
     if (this.isDrawing) {
-      [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+      [this.x2, this.y2] = this.getXYCoors(e);
 
       this.bresenham(this.x1, this.x2, this.y1, this.y2);
       [this.x1, this.y1] = [this.x2, this.y2];
@@ -67,12 +95,12 @@ export default class Picture {
 
   drawOnMouseDown = e => {
     this.isDrawing = true;
-    [this.x1, this.y1] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    [this.x1, this.y1] = this.getXYCoors(e);
     this.plot(this.x1, this.y1);
   };
 
   drawMouseUp = e => {
-    [this.x2, this.y2] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    [this.x2, this.y2] = this.getXYCoors(e);
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
     this.saveInLocalStorage('piskelCloneImg');
@@ -91,7 +119,6 @@ export default class Picture {
       this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.removeEventListener('mouseup', this.drawMouseUp);
     }
-    this.saveInLocalStorage('piskelCloneImg');
   };
 
   bucketTool(targetTool) {
@@ -103,7 +130,7 @@ export default class Picture {
   }
 
   floodFill = e => {
-    let [x, y] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    let [x, y] = this.getXYCoors(e);
 
     const targetColor = RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
     const replacementColor = this.currentColor.value;
@@ -158,10 +185,8 @@ export default class Picture {
     Queue = [];
   };
 
-  watchColor(prevColor, newColor) {
-    const prevChild = prevColor.children[0];
-    prevChild.style.background = this.ctx.fillStyle;
-    this.prevColorCache = this.ctx.fillStyle;
+  watchColor(newColor) {
+    this.prevColor.value = this.ctx.fillStyle;
     this.ctx.fillStyle = newColor;
     this.currentColor.value = newColor;
   }
@@ -175,7 +200,7 @@ export default class Picture {
   }
 
   colorPicker = e => {
-    const [x, y] = [Math.ceil(e.offsetX / this.scale), Math.ceil(e.offsetY / this.scale)];
+    const [x, y] = this.getXYCoors(e);
     const choosedColor = this.ctx.getImageData(x, y, 1, 1);
     const color = RGBToHex(choosedColor.data);
 
@@ -187,31 +212,6 @@ export default class Picture {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
-  };
-
-  windowReload = () => {
-    if (localStorage.getItem('piskelCloneImg') !== null) {
-      const img = new Image();
-
-      img.onload = () => {
-        this.ctx.imageSmoothingEnabled = false;
-        this.ctx.drawImage(img, 0, 0);
-      };
-      const dataURI = localStorage.getItem('piskelCloneImg');
-      img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
-    }
-
-    if (localStorage.getItem('piskelCloneResolution')) {
-      this.size = +localStorage.getItem('piskelCloneResolution');
-      [this.canvas.width, this.canvas.height] = [this.size, this.size];
-
-      const currentRes = document.querySelector('.res-active');
-      currentRes.classList.remove('res-active');
-      const target = document.getElementById('res'.concat(this.size));
-      target.classList.add('res-active');
-      if (localStorage.getItem('piskelCloneResolution') === '128') this.scale = 4;
-      if (localStorage.getItem('piskelCloneResolution') === '256') this.scale = 2;
-    }
   };
 
   downloadImage(url) {
@@ -249,19 +249,15 @@ export default class Picture {
     // create an "off-screen" anchor tag
     const lnk = document.createElement('a');
     // the key here is to set the download attribute of the a tag
-    lnk.download = 'myimage.png';
-    // convert canvas content to data-uri for link. When download
-    // attribute is set the content pointed to by link will be
-    // pushed as "download" in HTML5 capable browsers
-    lnk.href = this.canvas.toDataURL('image/png;base64');
-    if (document.createEvent) {
-      const e = document.createEvent('MouseEvents');
-      e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-
-      lnk.dispatchEvent(e);
-    } else if (lnk.fireEvent) {
-      lnk.fireEvent('onclick');
-    }
+    // convert canvas content to data-uri for link.
+    lnk.setAttribute('href', this.canvas.toDataURL('image/png;base64'));
+    lnk.setAttribute('download', 'myimage.png');
+    lnk.style.display = 'none';
+    document.body.appendChild(lnk);
+    // When download attribute is set the content pointed to by link
+    // will be pushed as "download" in HTML5 capable browsers
+    lnk.click();
+    document.body.removeChild(lnk);
   }
 
   grayscale() {

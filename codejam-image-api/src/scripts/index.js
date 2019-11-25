@@ -1,32 +1,38 @@
 import Picture from './Picture.js';
+
 // Taking elements from index.html
-const canvas = document.getElementById('canvas');
+const canvas = document.querySelector('#canvas');
 const ctx = canvas.getContext('2d');
-const pane = document.querySelector('.pane');
-const currentColor = document.getElementById('currentColor');
-const prevColor = document.querySelector('.color--prev');
+const paneTools = document.querySelector('.pane__tools');
+const currentColor = document.querySelector('#currentColor');
+const prevColor = document.querySelector('#prevColor');
 const colorRed = document.querySelector('.color--red');
 const colorBlue = document.querySelector('.color--blue');
-const prevColorCache = '#ffffff';
-prevColor.children[0].style.background = '#ffffff';
-const cityChoiseInpit = document.getElementById('cityChoiseInpit');
-const load = document.getElementById('load');
+
+const cityChoiseInpit = document.querySelector('#cityChoiseInpit');
+const load = document.querySelector('#load');
+
 ctx.imageSmoothingEnabled = false;
 let isImgLoaded = false;
+
 const modalLoadImg = document.querySelector('.modal__no-image');
 const modalOverlay = document.querySelector('.modal__overlay');
+const sizes = [512, 256, 128];
 
 // Creating app
-const app = new Picture(canvas, ctx, currentColor, 1, 512);
+const app = new Picture(canvas, ctx, currentColor, sizes[0], prevColor);
 
 window.addEventListener('load', app.windowReload());
 
 window.onbeforeunload = () => app.saveInLocalStorage('piskelCloneImg');
 
+// default tool, when user comes fisrt time on page
+// and his localStorage don't have 'piskelCloneImg' and 'piskelCloneResolution'
 let targetTool = 'pencil';
 app.pencilTool(targetTool);
 
-pane.addEventListener('click', e => {
+// pane tools
+paneTools.addEventListener('click', e => {
   const targetToolEl = e.target.closest('li');
   if (targetToolEl === null) return;
   targetTool = targetToolEl.id;
@@ -50,30 +56,27 @@ pane.addEventListener('click', e => {
   }
 });
 
+// modal popup appear when user click on grayscale but image of city doesn't loaded yet
 modalOverlay.addEventListener('click', () => {
   modalLoadImg.classList.remove('display-block');
   modalOverlay.classList.remove('display-block');
 });
 
-colorRed.addEventListener('click', () => {
-  currentColor.value = '#f74242';
-  app.watchColor(prevColor, currentColor.value, false);
-});
-colorBlue.addEventListener('click', () => {
-  currentColor.value = '#316cb9';
-  app.watchColor(prevColor, currentColor.value, false);
-});
-prevColor.addEventListener('click', () => {
-  currentColor.value = prevColorCache;
-  app.watchColor(prevColor, currentColor.value, false);
-});
-currentColor.addEventListener('change', app.watchColor(prevColor, currentColor.value, false));
+// color managing
+const constColorPalette = ['#f74242', '#316cb9'];
 
-const save = document.getElementById('save');
+colorRed.addEventListener('click', () => app.watchColor(constColorPalette[0]));
+colorBlue.addEventListener('click', () => app.watchColor(constColorPalette[1]));
+prevColor.addEventListener('click', () => app.watchColor(currentColor.value));
+currentColor.addEventListener('change', () => app.watchColor(currentColor.value));
+
+// saving image on hard drive
+const save = document.querySelector('#save');
 save.addEventListener('click', () => {
   app.saveCanvas();
 });
 
+// keyboard shortcuts
 window.addEventListener('keydown', e => {
   switch (e.code) {
     case 'KeyB':
@@ -92,34 +95,33 @@ window.addEventListener('keydown', e => {
       }
       break;
     default:
-      targetTool = 'pencil';
+      return;
   }
-  const targetToolEl = document.getElementById(targetTool);
+  const targetToolEl = document.querySelector(`#${targetTool}`);
   const prevActiveTool = document.querySelector('.tool--active');
   prevActiveTool.classList.remove('tool--active');
   targetToolEl.classList.add('tool--active');
   app.tools(targetTool);
 });
 
+// user changing canvas resolution
 const canvasResolution = document.querySelector('.canvas__resolution');
 canvasResolution.addEventListener('click', e => {
   localStorage.removeItem('piskelCloneResolution');
   switch (e.target.id) {
     case 'res128':
-      app.size = 128;
-      app.scale = 4;
+      [, , app.size] = sizes;
       break;
 
     case 'res256':
-      app.size = 256;
-      app.scale = 2;
+      [, app.size] = sizes;
       break;
 
     default:
-      app.size = 512;
-      app.scale = 1;
+      [app.size] = sizes;
       break;
   }
+
   app.saveInLocalStorage('piskelCloneImg');
   localStorage.setItem('piskelCloneResolution', app.size);
   canvas.width = app.size;
@@ -162,21 +164,21 @@ canvasResolution.addEventListener('click', e => {
   };
 });
 
+// user load image from unsplash
 load.addEventListener('click', () => {
   const city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   app.getLinkToImage(city);
   // when limit on unsplash.com ends this block of code can help to view functionality
-  // let url =
+  // const url =
   //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
   // app.downloadImage(url);
 
   const currentRes = document.querySelector('.res-active');
   currentRes.classList.remove('res-active');
-  const target = document.getElementById('res512');
+  const target = document.querySelector('#res512');
   target.classList.add('res-active');
-  app.scale = 1;
   app.size = 512;
   isImgLoaded = true;
 });
