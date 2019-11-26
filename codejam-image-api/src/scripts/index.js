@@ -13,7 +13,13 @@ const cityChoiseInpit = document.querySelector('#cityChoiseInpit');
 const load = document.querySelector('#load');
 
 ctx.imageSmoothingEnabled = false;
-let isImgLoaded = false;
+let isImgLoaded;
+
+if (localStorage.getItem('isImgLoaded') === null) {
+  isImgLoaded = false;
+} else {
+  isImgLoaded = localStorage.getItem('isImgLoaded') === 'true';
+}
 
 const modalLoadImg = document.querySelector('.modal__no-image');
 const modalOverlay = document.querySelector('.modal__overlay');
@@ -22,12 +28,15 @@ function removePopup() {
   if (!isImgLoaded) {
     modalLoadImg.classList.remove('display-block');
     modalOverlay.classList.remove('display-block');
+  } else {
+    modalLoadImg.classList.add('display-block');
+    modalOverlay.classList.add('display-block');
   }
 }
 
-const sizes = [512, 256, 128];
+const generalSize = 512;
 // Creating app
-const app = new Picture(canvas, ctx, currentColor, sizes[0], prevColor);
+const app = new Picture(canvas, ctx, currentColor, generalSize, prevColor);
 
 window.addEventListener('load', app.windowReload());
 
@@ -50,13 +59,15 @@ paneTools.addEventListener('click', e => {
     case 'empty':
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       isImgLoaded = false;
+      localStorage.removeItem('isImgLoaded');
+      localStorage.setItem('isImgLoaded', 'false');
       targetTool = 'pencil';
       break;
     case 'grayscale':
-      if (isImgLoaded) app.grayscale();
-      else {
-        modalLoadImg.classList.add('display-block');
-        modalOverlay.classList.add('display-block');
+      if (isImgLoaded) {
+        app.grayscale();
+      } else {
+        removePopup();
       }
       break;
     default:
@@ -67,7 +78,9 @@ paneTools.addEventListener('click', e => {
 });
 
 // modal popup appear when user click on grayscale but image of city doesn't loaded yet
-modalOverlay.addEventListener('click', removePopup);
+modalOverlay.addEventListener('click', () => {
+  removePopup();
+});
 
 // color managing
 const constColorPalette = ['#f74242', '#316cb9'];
@@ -79,7 +92,7 @@ currentColor.addEventListener('change', () => app.watchColor(currentColor.value)
 
 // saving image on hard drive
 const save = document.querySelector('#save');
-save.addEventListener('click', app.saveCanvas);
+save.addEventListener('click', () => app.saveCanvas());
 
 // keyboard shortcuts
 window.addEventListener('keydown', e => {
@@ -112,15 +125,15 @@ canvasResolution.addEventListener('click', e => {
   localStorage.removeItem('piskelCloneResolution');
   switch (e.target.id) {
     case 'res128':
-      [, , app.size] = sizes;
+      app.size = generalSize / 4;
       break;
 
     case 'res256':
-      [, app.size] = sizes;
+      app.size = generalSize / 2;
       break;
 
     default:
-      [app.size] = sizes;
+      app.size = generalSize;
       break;
   }
 
@@ -133,17 +146,16 @@ canvasResolution.addEventListener('click', e => {
   e.target.classList.add('res-active');
 
   const img = new Image();
-  img.addEventListener('load', () => {
+  img.onload = () => {
     this.ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
-  });
-
+  };
   const dataURI = localStorage.getItem('piskelCloneImg');
   img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
 
   let [currentWidth, currentHeight] = [canvas.width, canvas.height];
   let [x, y] = [0, 0];
-  img.addEventListener('load', () => {
+  img.onload = () => {
     if (img.naturalWidth > img.naturalHeight) {
       const scaleImg = img.naturalWidth / canvas.width;
       currentWidth = canvas.width;
@@ -160,10 +172,9 @@ canvasResolution.addEventListener('click', e => {
       x = (canvas.width - currentWidth) / 2;
       y = 0;
     }
-
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, x, y, currentWidth, currentHeight);
-  });
+  };
 });
 
 // user load image from unsplash
@@ -176,6 +187,7 @@ load.addEventListener('click', () => {
     'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
   app.downloadImage(url);
-
   isImgLoaded = true;
+  localStorage.removeItem('isImgLoaded');
+  localStorage.setItem('isImgLoaded', 'true');
 });
