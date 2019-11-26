@@ -1,4 +1,4 @@
-import Picture from './Picture.js';
+import Picture from './Picture';
 
 // Taking elements from index.html
 const canvas = document.querySelector('#canvas');
@@ -17,8 +17,15 @@ let isImgLoaded = false;
 
 const modalLoadImg = document.querySelector('.modal__no-image');
 const modalOverlay = document.querySelector('.modal__overlay');
-const sizes = [512, 256, 128];
 
+function removePopup() {
+  if (!isImgLoaded) {
+    modalLoadImg.classList.remove('display-block');
+    modalOverlay.classList.remove('display-block');
+  }
+}
+
+const sizes = [512, 256, 128];
 // Creating app
 const app = new Picture(canvas, ctx, currentColor, sizes[0], prevColor);
 
@@ -34,33 +41,33 @@ app.pencilTool(targetTool);
 // pane tools
 paneTools.addEventListener('click', e => {
   const targetToolEl = e.target.closest('li');
+
   if (targetToolEl === null) return;
   targetTool = targetToolEl.id;
+  const prevActiveTool = document.querySelector('.tool--active');
 
-  if (targetTool === 'empty') {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    isImgLoaded = false;
-    targetTool = 'pencil';
-  } else if (targetTool === 'grayscale') {
-    if (isImgLoaded) {
-      app.grayscale();
-    } else {
-      modalLoadImg.classList.add('display-block');
-      modalOverlay.classList.add('display-block');
-    }
-  } else {
-    const prevActiveTool = document.querySelector('.tool--active');
-    prevActiveTool.classList.remove('tool--active');
-    targetToolEl.classList.add('tool--active');
-    app.tools(targetTool);
+  switch (targetTool) {
+    case 'empty':
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      isImgLoaded = false;
+      targetTool = 'pencil';
+      break;
+    case 'grayscale':
+      if (isImgLoaded) app.grayscale();
+      else {
+        modalLoadImg.classList.add('display-block');
+        modalOverlay.classList.add('display-block');
+      }
+      break;
+    default:
+      prevActiveTool.classList.remove('tool--active');
+      targetToolEl.classList.add('tool--active');
+      app.tools(targetTool);
   }
 });
 
 // modal popup appear when user click on grayscale but image of city doesn't loaded yet
-modalOverlay.addEventListener('click', () => {
-  modalLoadImg.classList.remove('display-block');
-  modalOverlay.classList.remove('display-block');
-});
+modalOverlay.addEventListener('click', removePopup);
 
 // color managing
 const constColorPalette = ['#f74242', '#316cb9'];
@@ -72,9 +79,7 @@ currentColor.addEventListener('change', () => app.watchColor(currentColor.value)
 
 // saving image on hard drive
 const save = document.querySelector('#save');
-save.addEventListener('click', () => {
-  app.saveCanvas();
-});
+save.addEventListener('click', app.saveCanvas);
 
 // keyboard shortcuts
 window.addEventListener('keydown', e => {
@@ -89,10 +94,7 @@ window.addEventListener('keydown', e => {
       targetTool = 'picker';
       break;
     case 'Escape':
-      if (!isImgLoaded) {
-        modalLoadImg.classList.remove('display-block');
-        modalOverlay.classList.remove('display-block');
-      }
+      removePopup();
       break;
     default:
       return;
@@ -131,17 +133,17 @@ canvasResolution.addEventListener('click', e => {
   e.target.classList.add('res-active');
 
   const img = new Image();
-  img.onload = () => {
+  img.addEventListener('load', () => {
     this.ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0);
-  };
+  });
 
   const dataURI = localStorage.getItem('piskelCloneImg');
   img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
 
   let [currentWidth, currentHeight] = [canvas.width, canvas.height];
   let [x, y] = [0, 0];
-  img.onload = () => {
+  img.addEventListener('load', () => {
     if (img.naturalWidth > img.naturalHeight) {
       const scaleImg = img.naturalWidth / canvas.width;
       currentWidth = canvas.width;
@@ -161,24 +163,19 @@ canvasResolution.addEventListener('click', e => {
 
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, x, y, currentWidth, currentHeight);
-  };
+  });
 });
 
 // user load image from unsplash
 load.addEventListener('click', () => {
   const city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  app.getLinkToImage(city);
+  // app.getLinkToImage(city);
   // when limit on unsplash.com ends this block of code can help to view functionality
-  // const url =
-  //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
+  const url =
+    'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
-  // app.downloadImage(url);
+  app.downloadImage(url);
 
-  const currentRes = document.querySelector('.res-active');
-  currentRes.classList.remove('res-active');
-  const target = document.querySelector('#res512');
-  target.classList.add('res-active');
-  app.size = 512;
   isImgLoaded = true;
 });

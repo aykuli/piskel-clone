@@ -1,4 +1,4 @@
-import RGBToHex from './RGBToHex.js';
+import RGBToHex from './RGBToHex';
 
 export default class Picture {
   constructor(canvas, ctx, currentColor, size, prevColor) {
@@ -7,7 +7,6 @@ export default class Picture {
     this.isDrawing = false;
     this.currentColor = currentColor;
     this.prevColorCache = '#ffffff';
-    this.scale = 1;
     this.size = size;
     this.prevColor = prevColor;
 
@@ -21,9 +20,7 @@ export default class Picture {
       const img = new Image();
       const dataURI = localStorage.getItem('piskelCloneImg');
       img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
-      img.onload = () => {
-        this.ctx.drawImage(img, 0, 0);
-      };
+      img.addEventListener('load', () => this.ctx.drawImage(img, 0, 0));
     }
 
     if (localStorage.getItem('piskelCloneResolution') !== null) {
@@ -34,8 +31,6 @@ export default class Picture {
       currentRes.classList.remove('res-active');
       const target = document.getElementById('res'.concat(this.size));
       target.classList.add('res-active');
-      if (localStorage.getItem('piskelCloneResolution') === '128') this.scale = 4;
-      if (localStorage.getItem('piskelCloneResolution') === '256') this.scale = 2;
     }
   };
 
@@ -218,11 +213,11 @@ export default class Picture {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
     img.src = url;
-    [this.canvas.width, this.canvas.height] = [512, 512];
 
     let [currentWidth, currentHeight] = [this.canvas.width, this.canvas.height];
     let [x, y] = [0, 0];
-    img.onload = () => {
+
+    img.addEventListener('load', () => {
       if (img.naturalWidth > img.naturalHeight) {
         const scaleImg = img.naturalWidth / this.canvas.width;
         currentWidth = this.canvas.width;
@@ -242,7 +237,7 @@ export default class Picture {
       this.ctx.imageSmoothingEnabled = false;
       this.ctx.drawImage(img, x, y, currentWidth, currentHeight);
       this.saveInLocalStorage('piskelCloneImg');
-    };
+    });
   }
 
   saveCanvas() {
