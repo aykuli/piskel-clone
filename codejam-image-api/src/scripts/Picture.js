@@ -19,17 +19,17 @@ export default class Picture {
     if (localStorage.getItem('piskelCloneImg') !== null) {
       const img = new Image();
       const dataURI = localStorage.getItem('piskelCloneImg');
-      img.src = 'data:image/png;base64,'.concat(dataURI);
+      img.src = `data:image/png;base64,${dataURI}`;
       img.addEventListener('load', () => this.ctx.drawImage(img, 0, 0));
     }
 
     if (localStorage.getItem('piskelCloneResolution') !== null) {
-      this.size = +localStorage.getItem('piskelCloneResolution');
+      this.size = Number(localStorage.getItem('piskelCloneResolution'));
       [this.canvas.width, this.canvas.height] = [this.size, this.size];
-
       const currentRes = document.querySelector('.res-active');
       currentRes.classList.remove('res-active');
-      const target = document.getElementById('res'.concat(this.size));
+
+      const target = document.querySelector(`#res${this.size}`);
       target.classList.add('res-active');
     }
   };
@@ -275,60 +275,5 @@ export default class Picture {
         this.downloadImage(data.urls.regular);
       })
       .catch(() => alert('Your limit of 50 images on unsplash.com is end'));
-  }
-
-  canvasResolutionChanging(e, generalSize) {
-    localStorage.removeItem('piskelCloneResolution');
-    switch (e.target.id) {
-      case 'res128':
-        this.size = generalSize / 4;
-        break;
-
-      case 'res256':
-        this.size = generalSize / 2;
-        break;
-
-      default:
-        this.size = generalSize;
-        break;
-    }
-
-    this.saveInLocalStorage('piskelCloneImg');
-    localStorage.setItem('piskelCloneResolution', this.size);
-    [this.canvas.width, this.canvas.height] = [this.size, this.size];
-    const currentRes = document.querySelector('.res-active');
-    currentRes.classList.remove('res-active');
-    e.target.classList.add('res-active');
-
-    const img = new Image();
-    img.onload = () => {
-      this.ctx.imageSmoothingEnabled = false;
-      this.ctx.drawImage(img, 0, 0);
-    };
-    const dataURI = localStorage.getItem('piskelCloneImg');
-    img.src = 'data:image/png;base64,'.concat(dataURI);
-
-    let [currentWidth, currentHeight] = [this.canvas.width, this.canvas.height];
-    let [x, y] = [0, 0];
-    img.onload = () => {
-      if (img.naturalWidth > img.naturalHeight) {
-        const scaleImg = img.naturalWidth / this.canvas.width;
-        currentWidth = this.canvas.width;
-        currentHeight = img.naturalHeight / scaleImg;
-        x = 0;
-        y = (this.canvas.height - currentHeight) / 2;
-      } else if (img.naturalWidth === img.naturalHeight) {
-        currentWidth = this.canvas.width;
-        currentHeight = this.canvas.height;
-      } else {
-        const scaleImg = img.naturalHeight / this.canvas.height;
-        currentWidth = img.naturalWidth / scaleImg;
-        currentHeight = this.canvas.height;
-        x = (this.canvas.width - currentWidth) / 2;
-        y = 0;
-      }
-      this.ctx.imageSmoothingEnabled = false;
-      this.ctx.drawImage(img, x, y, currentWidth, currentHeight);
-    };
   }
 }

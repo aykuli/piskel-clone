@@ -13,19 +13,16 @@ const cityChoiseInpit = document.querySelector('#cityChoiseInpit');
 const load = document.querySelector('#load');
 
 ctx.imageSmoothingEnabled = false;
-let isImgLoaded;
 
 if (localStorage.getItem('isImgLoaded') === null) {
-  isImgLoaded = false;
-} else {
-  isImgLoaded = localStorage.getItem('isImgLoaded') === 'true';
+  localStorage.setItem('isImgLoaded', 'false');
 }
 
 const modalLoadImg = document.querySelector('.modal__no-image');
 const modalOverlay = document.querySelector('.modal__overlay');
 
-function popupToggle(isToAdd) {
-  if (!isImgLoaded) {
+function popupToggle(isToAdd = false) {
+  if (localStorage.getItem('isImgLoaded') === 'false') {
     modalLoadImg.classList.remove('display-block');
     modalOverlay.classList.remove('display-block');
   }
@@ -59,13 +56,12 @@ paneTools.addEventListener('click', e => {
   switch (targetTool) {
     case 'empty':
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      isImgLoaded = false;
       localStorage.removeItem('isImgLoaded');
       localStorage.setItem('isImgLoaded', 'false');
       targetTool = 'pencil';
       break;
     case 'grayscale':
-      isImgLoaded ? app.grayscale() : popupToggle(true);
+      localStorage.getItem('isImgLoaded') === 'true' ? app.grayscale() : popupToggle(true);
       break;
     default:
       prevActiveTool.classList.remove('tool--active');
@@ -75,7 +71,7 @@ paneTools.addEventListener('click', e => {
 });
 
 // modal popup appear when user click on grayscale but image of city doesn't loaded yet
-modalOverlay.addEventListener('click', () => popupToggle(false));
+modalOverlay.addEventListener('click', () => popupToggle());
 
 // color managing
 const constColorPalette = ['#f74242', '#316cb9'];
@@ -105,7 +101,7 @@ window.addEventListener('keydown', e => {
       targetTool = 'picker';
       break;
     case 'Escape':
-      popupToggle(false);
+      popupToggle();
       break;
     default:
       return;
@@ -120,21 +116,58 @@ window.addEventListener('keydown', e => {
 });
 
 // user changing canvas resolution
+const handleOnload = ({ target: img }) => {
+  let [currentWidth, currentHeight] = [canvas.width, canvas.height];
+  let [x, y] = [0, 0];
+  if (img.naturalWidth > img.naturalHeight) {
+    const scaleImg = img.naturalWidth / canvas.width;
+    currentWidth = canvas.width;
+    currentHeight = img.naturalHeight / scaleImg;
+    x = 0;
+    y = (canvas.height - currentHeight) / 2;
+  } else if (img.naturalWidth === img.naturalHeight) {
+    currentWidth = canvas.width;
+    currentHeight = canvas.height;
+  } else {
+    const scaleImg = img.naturalHeight / canvas.height;
+    currentWidth = img.naturalWidth / scaleImg;
+    currentHeight = canvas.height;
+    x = (canvas.width - currentWidth) / 2;
+    y = 0;
+  }
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(img, x, y, currentWidth, currentHeight);
+};
 
 const canvasResolution = document.querySelector('.canvas__resolution');
-canvasResolution.addEventListener('click', e => app.canvasResolutionChanging(e, generalSize));
+canvasResolution.addEventListener('click', e => {
+  localStorage.removeItem('piskelCloneResolution');
+  const ratio = Number(e.target.dataset.ratio);
+  app.size = generalSize / ratio;
+
+  app.saveInLocalStorage('piskelCloneImg');
+  localStorage.setItem('piskelCloneResolution', app.size);
+  [canvas.width, canvas.height] = [app.size, app.size];
+  const currentRes = document.querySelector('.res-active');
+  currentRes.classList.remove('res-active');
+  e.target.classList.add('res-active');
+
+  const img = new Image();
+  const dataURI = localStorage.getItem('piskelCloneImg');
+  img.src = `data:image/png;base64,${dataURI}`;
+  img.onload = handleOnload;
+});
 
 // user load image from unsplash
 load.addEventListener('click', () => {
   const city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  app.getLinkToImage(city);
+  // app.getLinkToImage(city);
   // when limit on unsplash.com ends this block of code can help to view functionality
-  // const url =
-  //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
+  const url =
+    'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
-  // app.downloadImage(url);
-  isImgLoaded = true;
+  app.downloadImage(url);
   localStorage.removeItem('isImgLoaded');
   localStorage.setItem('isImgLoaded', 'true');
 });
