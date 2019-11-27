@@ -24,11 +24,12 @@ if (localStorage.getItem('isImgLoaded') === null) {
 const modalLoadImg = document.querySelector('.modal__no-image');
 const modalOverlay = document.querySelector('.modal__overlay');
 
-function removePopup() {
+function popupToggle(isToAdd) {
   if (!isImgLoaded) {
     modalLoadImg.classList.remove('display-block');
     modalOverlay.classList.remove('display-block');
-  } else {
+  }
+  if (isToAdd) {
     modalLoadImg.classList.add('display-block');
     modalOverlay.classList.add('display-block');
   }
@@ -64,11 +65,7 @@ paneTools.addEventListener('click', e => {
       targetTool = 'pencil';
       break;
     case 'grayscale':
-      if (isImgLoaded) {
-        app.grayscale();
-      } else {
-        removePopup();
-      }
+      isImgLoaded ? app.grayscale() : popupToggle(true);
       break;
     default:
       prevActiveTool.classList.remove('tool--active');
@@ -78,9 +75,7 @@ paneTools.addEventListener('click', e => {
 });
 
 // modal popup appear when user click on grayscale but image of city doesn't loaded yet
-modalOverlay.addEventListener('click', () => {
-  removePopup();
-});
+modalOverlay.addEventListener('click', () => popupToggle(false));
 
 // color managing
 const constColorPalette = ['#f74242', '#316cb9'];
@@ -98,95 +93,47 @@ save.addEventListener('click', () => app.saveCanvas());
 window.addEventListener('keydown', e => {
   switch (e.code) {
     case 'KeyB':
+      e.preventDefault();
       targetTool = 'bucket';
       break;
     case 'KeyP':
+      e.preventDefault();
       targetTool = 'pencil';
       break;
     case 'KeyC':
+      e.preventDefault();
       targetTool = 'picker';
       break;
     case 'Escape':
-      removePopup();
+      popupToggle(false);
       break;
     default:
       return;
   }
-  const targetToolEl = document.querySelector(`#${targetTool}`);
-  const prevActiveTool = document.querySelector('.tool--active');
-  prevActiveTool.classList.remove('tool--active');
-  targetToolEl.classList.add('tool--active');
-  app.tools(targetTool);
+  if (targetTool !== 'grayscale') {
+    const targetToolEl = document.querySelector(`#${targetTool}`);
+    const prevActiveTool = document.querySelector('.tool--active');
+    prevActiveTool.classList.remove('tool--active');
+    targetToolEl.classList.add('tool--active');
+    app.tools(targetTool);
+  }
 });
 
 // user changing canvas resolution
+
 const canvasResolution = document.querySelector('.canvas__resolution');
-canvasResolution.addEventListener('click', e => {
-  localStorage.removeItem('piskelCloneResolution');
-  switch (e.target.id) {
-    case 'res128':
-      app.size = generalSize / 4;
-      break;
-
-    case 'res256':
-      app.size = generalSize / 2;
-      break;
-
-    default:
-      app.size = generalSize;
-      break;
-  }
-
-  app.saveInLocalStorage('piskelCloneImg');
-  localStorage.setItem('piskelCloneResolution', app.size);
-  canvas.width = app.size;
-  canvas.height = app.size;
-  const currentRes = document.querySelector('.res-active');
-  currentRes.classList.remove('res-active');
-  e.target.classList.add('res-active');
-
-  const img = new Image();
-  img.onload = () => {
-    this.ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(img, 0, 0);
-  };
-  const dataURI = localStorage.getItem('piskelCloneImg');
-  img.src = 'data:image/png;base64,'.concat(JSON.parse(dataURI));
-
-  let [currentWidth, currentHeight] = [canvas.width, canvas.height];
-  let [x, y] = [0, 0];
-  img.onload = () => {
-    if (img.naturalWidth > img.naturalHeight) {
-      const scaleImg = img.naturalWidth / canvas.width;
-      currentWidth = canvas.width;
-      currentHeight = img.naturalHeight / scaleImg;
-      x = 0;
-      y = (canvas.height - currentHeight) / 2;
-    } else if (img.naturalWidth === img.naturalHeight) {
-      currentWidth = canvas.width;
-      currentHeight = canvas.height;
-    } else {
-      const scaleImg = img.naturalHeight / canvas.height;
-      currentWidth = img.naturalWidth / scaleImg;
-      currentHeight = canvas.height;
-      x = (canvas.width - currentWidth) / 2;
-      y = 0;
-    }
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(img, x, y, currentWidth, currentHeight);
-  };
-});
+canvasResolution.addEventListener('click', e => app.canvasResolutionChanging(e, generalSize));
 
 // user load image from unsplash
 load.addEventListener('click', () => {
   const city = cityChoiseInpit.value;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // app.getLinkToImage(city);
+  app.getLinkToImage(city);
   // when limit on unsplash.com ends this block of code can help to view functionality
-  const url =
-    'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
+  // const url =
+  //   'https://image.shutterstock.com/z/stock-vector-vector-illustration-in-simple-flat-linear-style-with-smiling-cartoon-characters-teamwork-and-1369217765.jpg';
 
-  app.downloadImage(url);
+  // app.downloadImage(url);
   isImgLoaded = true;
   localStorage.removeItem('isImgLoaded');
   localStorage.setItem('isImgLoaded', 'true');
