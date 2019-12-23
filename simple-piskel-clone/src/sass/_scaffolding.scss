@@ -2,6 +2,8 @@
 
 body {
     min-width: 600px;
+    width: 100%;
+    height: 100%;
 
     font-family: Roboto, Arial, serif;
     font-size: 16px;
@@ -12,16 +14,6 @@ body {
     background-color: $dark;;
 
     color: $font-for-dark-bg;
-}
-
-
-main {
-    display: flex;
-    padding: 0 20px 50px;
-}
-
-label {
-    cursor: pointer;
 }
 
 .visually-hidden {
@@ -39,6 +31,22 @@ label {
 	overflow: hidden;
 }
 
+.page__wrap {
+    position: relative;
+}
+
+.main {
+    display: flex;
+    height: 100%;
+    margin: 0 60px 0 110px;
+}
+
+.column {
+    &--right {
+        margin-left: 10px;
+    }
+}
+
 .drawing-section {
     flex-grow: 1;
     
@@ -54,65 +62,10 @@ label {
     }
 }
 
+.column {
+    &--right {
+        width: 200px;
 
-.canvas {
-    &__wrapper {
-        flex-grow: 1;
-        width: 512px;
-        height: 512px;
-        margin: 0 auto;
+        outline: 1px solid red;
     }
-
-    &--style {
-        width: 100%;
-        height: 100%;
-        background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEVMTExVVVUnhsEkAAAAHUlEQVR4AWOAAUYoQOePEAUj3v9oYDQ9gMBoegAAJFwCAbLaTIMAAAAASUVORK5CYII=') repeat;
-        border: 1px solid rgba(0, 0, 0, 0.4);
-    }
-    
-    &__buttons {
-        width: 512px;
-        margin: 0 auto;
-        padding: 10px 0;
-
-        text-align: center;
-
-        & button {
-            margin-right: 15px;
-            margin-bottom: 15px;
-
-            font-family: Roboto, Arial, serif;
-            font-size: 16px;
-            line-height: 24px;
-            font-style: normal;
-            font-weight: normal;
-            color: rgba(0, 0, 0, 0.6);
-            text-align: left;
-            
-            background-color: #fff;
-            border: 1px solid rgba(0, 0, 0, 0.4);
-
-            &:hover, &:focus {
-                background-color: rgb(253, 223, 235);
-            }
-            &:active {
-                box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4);
-            }
-        }
-    }
-
-    &__resolution {
-        span {
-            margin-right: 15px;
-        }
-    }
-}
-
-button.res-active {
-    background-color: rgb(253, 223, 235);
-    box-shadow: 2px 2px 5px rgb(253, 223, 235);
-}
-
-.display-block {
-    display: block;
 }

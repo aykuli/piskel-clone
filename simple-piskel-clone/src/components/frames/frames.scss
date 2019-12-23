@@ -1,6 +1,9 @@
 @import '../../sass/vars.scss';
 
 .frames {
+    height: 100%;
+    margin-right: 10px;
+
     &__list {
         margin: 0;
         margin-bottom: 10px;

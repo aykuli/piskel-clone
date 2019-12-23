@@ -1,4 +1,4 @@
-@import './vars';
+@import '../../sass/vars';
 
 .tool {
     width: 46px;
@@ -10,8 +10,6 @@
     background-color: $dark-light;
 
     cursor: pointer;
-    
-    // outline: 1px solid blue;
 
     &:hover, &:focus {
         background-color: $grey;
@@ -19,6 +17,10 @@
 }
 
 .tools {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(50%);
     max-width: 100px;
 
     &__container {
