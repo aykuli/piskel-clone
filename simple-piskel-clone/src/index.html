@@ -31,12 +31,33 @@
                 <label for="color-switch-primary" class="visually-hidden">Primary color</label>
                 <input class="tools__palette--primary" type="color" id="colorSwicthPrimary" name="color-switch-primary" value="#ff0000">
                 <button class="tools__palette--swaper" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span>
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="30" heght="30">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="20" heght="20">
                         <path fill="#fff" d="M201.5,0.3L16.3,185.5h108.9c0,337.7,261.5,326.8,370.4,326.8C277.7,436.1,277.7,338,277.7,185.5h108.9L201.5,0.3z"/>
                     </svg>
                 </button>
             </div>
         </div>
+        <div class="column frames">
+            <ul class="frames__list">
+                <li class="frame__wrap frame__active">
+                    <span class="frame__number">1</span>
+                    <div class="frame">
+                        <canvas class="frame__thumb" width="96" height="96"></canvas>
+                    </div>
+                    <button class="frame__btn--delete"><span class="visually-hidden">Delete this canvas</span></button>
+                </li>
+            </ul>
+            <button class="frames__btn--add">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" stroke-width="4" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <p>Add new frame</p>
+            </button>
+        </div>
+        <div class="draw">
+            <div class="draw__canvas--wrap">
+                <canvas id="canvas" class="draw__canvas" width="512" height="512">Your browser doesn't support canvas</canvas>
+            </div>
+        </div>
+
         <!-- <aside>
             <section class="pane pane__tools">
                 <h2 class="visually-hidden">Tools for paint</h2>
@@ -97,7 +118,7 @@
                 </ul>
             </section>
         </aside> -->
-        <section class="drawing-section">
+        <!-- <section class="drawing-section">
             <h2 class="visually-hidden">Drawing on canvas</h2>
             <div class="canvas__wrapper">
                 <canvas id="canvas" class="canvas--style" width="512" height="512">Your browser doesn't support canvas</canvas>
@@ -117,7 +138,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
     </main>
     <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://unpkg.com/netlify-auth-providers"></script>

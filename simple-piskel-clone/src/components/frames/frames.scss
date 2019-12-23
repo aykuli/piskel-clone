@@ -1,0 +1,79 @@
+@import '../../sass/vars.scss';
+
+.frames {
+    &__list {
+        margin: 0;
+        margin-bottom: 10px;
+        padding: 0;
+
+        background: url(./img/frame-bg.png) repeat;
+
+        list-style: none;
+    }
+
+    &__btn {
+        &--add {
+            font-size: 16px;
+                line-height: 20px;
+                color: $grey;
+
+            background-color: $dark-light;
+            border: 3px solid $grey;
+            
+            &:hover {
+                border: 3px solid $green;
+                color: #fff;
+            }
+            & p {
+                margin: 0;   
+            }
+        }
+    }
+}
+
+.frame {
+    position: relative;
+    
+    &__wrap {
+        position: relative;
+
+        border: 3px solid $green;
+    }
+
+    &__number {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        padding: 0 5px;
+
+        font-size: 16px;
+        font-weight: bold;
+        color: $dark;
+
+        background-color: $green;
+    }
+
+    &__btn {
+        &--delete {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+
+            width: 25px;
+            height: 25px;
+
+            background-image: url(./img/trash.svg);
+            background-repeat: no-repeat;
+            background-position: 3px 3px;
+            background-color: $green;
+            border: none;
+            cursor: pointer;
+            
+            &:hover {
+                box-shadow: 2px 2px 7px $green-bloom,
+                            -2px -2px 7px $green-bloom;
+            }
+        }
+    }
+}

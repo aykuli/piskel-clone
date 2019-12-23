@@ -19,15 +19,15 @@
     color: rgba(0, 0, 0, 0.4);
     text-decoration: none;
 
-    background-color: $btn-green;
+    background-color: $green;
     border: 1px solid rgba(0, 0, 0, 0.2);
 
     &:hover, &:focus {
         color: rgb(230, 230, 230);
 
-        background-color: $btn-green;
-        box-shadow: 2px 2px 7px $btn-green-hover,
-        -2px -2px 7px $btn-green-hover;
+        background-color: $green;
+        box-shadow: 2px 2px 7px $green-bloom,
+        -2px -2px 7px $green-bloom;
     }
 
 }

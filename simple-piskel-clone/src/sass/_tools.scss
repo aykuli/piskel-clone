@@ -7,14 +7,14 @@
     margin: 1px;
     padding: 0;
 
-    background-color: $pane-bg-dark;
+    background-color: $dark-light;
 
     cursor: pointer;
     
     // outline: 1px solid blue;
 
     &:hover, &:focus {
-        background-color: $pane-bg-hover-dark;
+        background-color: $grey;
     }
 }
 
@@ -41,13 +41,13 @@
                 height: 46px;
                 padding: 0;
 
-                border: 5px solid $pane-bg-dark;
+                border: 5px solid $dark-light;
                 outline: none;
 
                 cursor: pointer;
 
                 &:hover, &:focus, &:active {
-                    border: 5px solid $pane-bg-hover-dark;
+                    border: 5px solid $grey;
                 }
             }
         }
@@ -73,6 +73,13 @@
 
             width: 20px;
             height: 20px;
+
+            background-color: transparent;
+
+            &:hover, &:focus {
+                outline: none;
+                cursor: pointer;
+            }
 
             &::before, &::after {
                 position: absolute;
