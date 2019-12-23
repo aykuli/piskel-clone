@@ -1,0 +1,120 @@
+@import './vars';
+
+.tool {
+    width: 46px;
+    height: 46px;
+
+    margin: 1px;
+    padding: 0;
+
+    background-color: $pane-bg-dark;
+
+    cursor: pointer;
+    
+    // outline: 1px solid blue;
+
+    &:hover, &:focus {
+        background-color: $pane-bg-hover-dark;
+    }
+}
+
+.tools {
+    max-width: 100px;
+
+    &__container {
+        display: flex;
+        flex-wrap: wrap;
+
+        margin: 0;
+        margin-bottom: 15px;
+        padding: 0;
+
+        list-style: none;
+    }
+
+    &__palette {
+        &--wrap {
+            position: relative;
+
+            & input[type="color"]::-webkit-color-swatch-wrapper {                
+                width: 46px;
+                height: 46px;
+                padding: 0;
+
+                border: 5px solid $pane-bg-dark;
+                outline: none;
+
+                cursor: pointer;
+
+                &:hover, &:focus, &:active {
+                    border: 5px solid $pane-bg-hover-dark;
+                }
+            }
+        }
+
+        &--primary, &--secondary, &--swaper {
+            position: absolute;
+            top: 0;
+            right: 25px;
+
+            padding: 0;
+
+            border: none;
+        }
+
+        &--secondary {
+            top: 25px;
+            right: 0;
+        }
+
+        &--swaper {
+            top: 55px;
+            right: 55px;
+
+            width: 20px;
+            height: 20px;
+
+            &::before, &::after {
+                position: absolute;
+                opacity: 0;
+                visibility: hidden;
+            }
+            &::before {
+                content: attr(data-tooltip);
+
+                min-width: 100px;              
+
+                font-size: 12px;
+                color: #fff;
+                line-height: 20px;
+                background: #000;
+                border-radius: 5px;
+                top: 30px;
+                left: calc(50% - 20px);
+            }
+            &::after {
+                content: "";
+                width: 0;
+                height: 0;
+                border: 5px solid transparent;
+                border-bottom-color: #000;
+                top: 20px;
+                left: calc(50% - 5px);
+            }
+
+            &:hover::before, &:hover::after {
+                opacity: 1;
+                visibility: visible;
+              }
+              
+              &:hover::before {
+                top: 30px;
+              }
+
+              &:hover::after {
+                top: 20px;
+              }
+        }
+    }
+}
+
