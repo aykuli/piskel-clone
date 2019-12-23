@@ -11,7 +11,7 @@
     <div class="page__wrap">
         <header class='header'>
             <h1 class='header__title'>Piskel</h1 class='header__title'>
-            <p class='header__text'>New piskel*</pclass='header'>
+            <p class='header__text'>New piskel*</p>
             <nav class="nav nav__user">
                 <div data-netlify-identity-menu></div>
             </nav>
@@ -20,18 +20,25 @@
             <div class="tools">            
                 <h2 class="visually-hidden">Tools for paint</h2>
                 <ul class="tools__container">
-                    <li id='pencil' class="tool"></li>
-                    <li class="tool"></li>
-                    <li class="tool"></li>
-                    <li class="tool"></li>
-                    <li class="tool"></li>
+                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)">
+                        <span class="visually-hidden">Pencil tool</span>
+                    </li>
+                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)">
+                        <span class="visually-hidden">Bucket tool</span>
+                    </li>
+                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)">
+                        <span class="visually-hidden">Picker tool</span>
+                    </li>
+                    <li id='eraser' class="tool tool-eraser tip" data-tooltip="Eraser tool(E)">
+                        <span class="visually-hidden">Eraser tool</span>
+                    </li>
                 </ul>
                 <div class="tools__palette--wrap">
                     <label for="color-switch-secondary" class="visually-hidden">Secondary color</label>
                     <input class="tools__palette--secondary" type="color" id="colorSwitchSecondary" name="color-switch-secondary" value="#ffbb44">
                     <label for="color-switch-primary" class="visually-hidden">Primary color</label>
                     <input class="tools__palette--primary" type="color" id="colorSwicthPrimary" name="color-switch-primary" value="#ff0000">
-                    <button class="tools__palette--swaper" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span>
+                    <button class="tools__palette--swaper tip" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span>
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="20" heght="20">
                             <path fill="#fff" d="M201.5,0.3L16.3,185.5h108.9c0,337.7,261.5,326.8,370.4,326.8C277.7,436.1,277.7,338,277.7,185.5h108.9L201.5,0.3z"/>
                         </svg>
@@ -50,7 +57,7 @@
                         <div class="frame">
                             <canvas class="frame__thumb" width="96" height="96"></canvas>
                         </div>
-                        <button class="frame__btn--delete"><span class="visually-hidden">Delete this canvas</span></button>
+                        <button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button>
                     </li>
                 </ul>
                 <button class="frames__btn--add">

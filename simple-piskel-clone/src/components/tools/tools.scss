@@ -1,6 +1,8 @@
 @import '../../sass/vars';
 
 .tool {
+    position: relative;
+
     width: 46px;
     height: 46px;
 
@@ -13,6 +15,12 @@
 
     &:hover, &:focus {
         background-color: $grey;
+    }
+
+    &--pen {
+        background-image: url(./img/pencil.svg);    
+        background-repeat: no-repeat;
+        background-position: 5px 5px;
     }
 }
 
@@ -82,47 +90,6 @@
                 outline: none;
                 cursor: pointer;
             }
-
-            &::before, &::after {
-                position: absolute;
-                opacity: 0;
-                visibility: hidden;
-            }
-            &::before {
-                content: attr(data-tooltip);
-
-                min-width: 100px;              
-
-                font-size: 12px;
-                color: #fff;
-                line-height: 20px;
-                background: #000;
-                border-radius: 5px;
-                top: 30px;
-                left: calc(50% - 20px);
-            }
-            &::after {
-                content: "";
-                width: 0;
-                height: 0;
-                border: 5px solid transparent;
-                border-bottom-color: #000;
-                top: 20px;
-                left: calc(50% - 5px);
-            }
-
-            &:hover::before, &:hover::after {
-                opacity: 1;
-                visibility: visible;
-              }
-              
-              &:hover::before {
-                top: 30px;
-              }
-
-              &:hover::after {
-                top: 20px;
-              }
         }
     }
 }

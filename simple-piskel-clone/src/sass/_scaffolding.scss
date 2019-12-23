@@ -69,3 +69,49 @@ body {
         outline: 1px solid red;
     }
 }
+
+.tip {
+    &::before, &::after {
+        position: absolute;
+
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+    }
+    &::before {
+        content: attr(data-tooltip);
+
+        min-width: 60px;
+        padding: 5px 10px;
+
+        font-size: 12px;
+        color: #fff;
+        line-height: 20px;
+        background: #000;
+        border-radius: 7px;
+        left: calc(50% + 25px);
+
+        z-index: 2;
+    }
+    &::after {
+        content: "";
+        width: 0;
+        height: 0;
+        border: 8px solid transparent;
+        border-right-color: #000;
+        left: calc(50% + 10px);
+    }
+
+    &:hover::before, &:hover::after {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    &:hover::before {
+        top: 10px;
+    }
+
+    &:hover::after {
+        top: 17px;
+    }
+}

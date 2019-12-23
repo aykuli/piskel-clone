@@ -6,4 +6,4 @@
 | Dec 22 22:00 | Dec 22 24:00 | 2h | HTML/CSS |
 | Dec 23 13:00 | Dec 23 13:30 | .5h | Cresting branch in school rep. Preparing environment here |
 | Dec 23 13:30 | Dec 23 14:30 | 1h | Markup HTML/CSS |
-| Dec 23 15:00 ||||
+| Dec 23 15:00 | Dec 23 17:00 | 2h | Markup HTML/CSS |
