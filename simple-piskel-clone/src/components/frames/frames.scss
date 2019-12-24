@@ -9,26 +9,29 @@
         margin-bottom: 10px;
         padding: 0;
 
-        background: url(./img/frame-bg.png) repeat;
-
         list-style: none;
     }
 
     &__btn {
         &--add {
+            width: 105px;
+            padding-left: 30px;
+
+            text-align: left;
             font-size: 16px;
-                line-height: 20px;
-                color: $grey;
+            line-height: 20px;
+            color: $grey;
 
             background-color: $dark-light;
-            border: 3px solid $grey;
+            background-image: url(./img/plus.svg);
+            background-repeat: no-repeat;
+            background-position: 0px 8px;
+            border: 3px solid $grey-light;
+            border-radius: 2px;
             
             &:hover {
                 border: 3px solid $green;
                 color: #fff;
-            }
-            & p {
-                margin: 0;   
             }
         }
     }
@@ -40,6 +43,24 @@
     &__wrap {
         position: relative;
 
+        width: 100px;
+        height: 100px;
+        
+        margin-bottom: 10px;
+
+        border: 3px solid $grey;
+        border-radius: 2px;
+
+        &:hover {
+            border-color: $grey-light;
+        }
+    }
+
+    &__thumb {        
+        background: url(./img/frame-bg.png) repeat;
+    }
+
+    &__active {
         border: 3px solid $green;
     }
 
@@ -72,10 +93,12 @@
             background-color: $green;
             border: none;
             cursor: pointer;
+            opacity: 0;
             
             &:hover {
                 box-shadow: 2px 2px 7px $green-bloom,
                             -2px -2px 7px $green-bloom;
+                opacity: 1;
             }
         }
     }

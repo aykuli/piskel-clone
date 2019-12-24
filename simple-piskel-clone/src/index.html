@@ -19,30 +19,26 @@
         <aside>
             <div class="tools">            
                 <h2 class="visually-hidden">Tools for paint</h2>
+                <ul class="tools__pen-size-list tip"  data-tooltip="Pen size from 1 to 4">
+                    <li class="tools__pen-size" data-size="1"></li>
+                    <li class="tools__pen-size" data-size="2"></li>
+                    <li class="tools__pen-size" data-size="3"></li>
+                    <li class="tools__pen-size" data-size="4"></li>
+                </ul>
                 <ul class="tools__container">
-                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)">
-                        <span class="visually-hidden">Pencil tool</span>
-                    </li>
-                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)">
-                        <span class="visually-hidden">Bucket tool</span>
-                    </li>
-                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)">
-                        <span class="visually-hidden">Picker tool</span>
-                    </li>
-                    <li id='eraser' class="tool tool-eraser tip" data-tooltip="Eraser tool(E)">
-                        <span class="visually-hidden">Eraser tool</span>
-                    </li>
+                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)"><span class="visually-hidden">Pencil tool</span></li>
+                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)"><span class="visually-hidden">Bucket tool</span></li>
+                    <li id='bucketSamePixel' class="tool tool--bucket-same-pixel tip" data-tooltip="Paint all pixels of the same color tool(A)"><span class="visually-hidden">Paint all pixels of the same color tool</span></li>
+                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)"><span class="visually-hidden">Picker tool</span></li>
+                    <li id='eraser' class="tool tool--eraser tip" data-tooltip="Eraser tool(E)"><span class="visually-hidden">Eraser tool</span></li>
+                    <li id='stroke' class="tool tool--stroke tip" data-tooltip="Line tool(L)"><span class="visually-hidden">Line tool</span></li>
                 </ul>
                 <div class="tools__palette--wrap">
                     <label for="color-switch-secondary" class="visually-hidden">Secondary color</label>
                     <input class="tools__palette--secondary" type="color" id="colorSwitchSecondary" name="color-switch-secondary" value="#ffbb44">
                     <label for="color-switch-primary" class="visually-hidden">Primary color</label>
                     <input class="tools__palette--primary" type="color" id="colorSwicthPrimary" name="color-switch-primary" value="#ff0000">
-                    <button class="tools__palette--swaper tip" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span>
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="20" heght="20">
-                            <path fill="#fff" d="M201.5,0.3L16.3,185.5h108.9c0,337.7,261.5,326.8,370.4,326.8C277.7,436.1,277.7,338,277.7,185.5h108.9L201.5,0.3z"/>
-                        </svg>
-                    </button>
+                    <button class="tools__palette--swaper tip" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span></button>
                 </div>
             </div>
             <div class="app-action">
@@ -53,17 +49,28 @@
             <div class="column frames">
                 <ul class="frames__list">
                     <li class="frame__wrap frame__active">
-                        <span class="frame__number">1</span>
                         <div class="frame">
-                            <canvas class="frame__thumb" width="96" height="96"></canvas>
+                            <canvas class="frame__thumb" width="100" height="100"></canvas>
                         </div>
                         <button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button>
+                        <span class="frame__number">1</span>
+                    </li>
+                    <li class="frame__wrap">
+                        <div class="frame">
+                            <canvas class="frame__thumb" width="100" height="100"></canvas>
+                        </div>
+                        <button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button>
+                        <span class="frame__number">2</span>
+                    </li>
+                    <li class="frame__wrap">
+                        <div class="frame">
+                            <canvas class="frame__thumb" width="100" height="100"></canvas>
+                        </div>
+                        <button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button>
+                        <span class="frame__number">3</span>
                     </li>
                 </ul>
-                <button class="frames__btn--add">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" stroke-width="4" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    <p>Add new frame</p>
-                </button>
+                <button class="frames__btn--add">Add new frame</button>
             </div>
             <div class="draw">
                 <div class="draw__canvas--wrap">

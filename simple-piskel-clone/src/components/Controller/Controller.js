@@ -1,16 +1,45 @@
 import Picture from '../../scripts/Picture.js';
 import popupToggle from '../modal/modal';
+import view from '../';
 
 export default class Controller {
-  constructor() {
+  constructor(view) {
     this.init();
+    this.toolsHandler(canvas);
+  }
+
+  toolsHandler(canvas) {
+    tools.addEventListener('click', e => {
+      const targetToolEl = e.target.closest('li');
+      console.log('tools');
+      if (targetToolEl === null) return;
+      targetTool = targetToolEl.id;
+      const prevActiveTool = document.querySelector('.tool--active');
+
+      switch (targetTool) {
+        case 'empty':
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          localStorage.removeItem('isImgLoaded');
+          localStorage.setItem('isImgLoaded', 'false');
+          targetTool = 'pencil';
+          break;
+        case 'grayscale':
+          localStorage.getItem('isImgLoaded') === 'true' ? app.grayscale() : popupToggle(true);
+          break;
+        default:
+          prevActiveTool.classList.remove('tool--active');
+          targetToolEl.classList.add('tool--active');
+          app.tools(targetTool);
+      }
+    });
   }
 
   init() {
     // Taking elements from index.html
     const canvas = document.querySelector('#canvas');
     const ctx = canvas.getContext('2d');
-    const paneTools = document.querySelector('.pane__tools');
+    const tools = document.querySelector('.tools__container');
+
     const currentColor = document.querySelector('#currentColor');
     const prevColor = document.querySelector('#prevColor');
     const colorRed = document.querySelector('.color--red');
@@ -37,31 +66,6 @@ export default class Controller {
     // and his localStorage don't have 'piskelCloneImg' and 'piskelCloneResolution'
     let targetTool = 'pencil';
     app.pencilTool(targetTool);
-
-    // pane tools
-    paneTools.addEventListener('click', e => {
-      const targetToolEl = e.target.closest('li');
-
-      if (targetToolEl === null) return;
-      targetTool = targetToolEl.id;
-      const prevActiveTool = document.querySelector('.tool--active');
-
-      switch (targetTool) {
-        case 'empty':
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          localStorage.removeItem('isImgLoaded');
-          localStorage.setItem('isImgLoaded', 'false');
-          targetTool = 'pencil';
-          break;
-        case 'grayscale':
-          localStorage.getItem('isImgLoaded') === 'true' ? app.grayscale() : popupToggle(true);
-          break;
-        default:
-          prevActiveTool.classList.remove('tool--active');
-          targetToolEl.classList.add('tool--active');
-          app.tools(targetTool);
-      }
-    });
 
     // modal popup appear when user click on grayscale but image of city doesn't loaded yet
 

@@ -1,4 +1,5 @@
 import { RGBToHex } from './functions.js';
+import { plot } from '../components/tools/draw/draw';
 
 export default class Picture {
   constructor(canvas, ctx, currentColor, size, prevColor) {
@@ -43,11 +44,11 @@ export default class Picture {
     localStorage.setItem(localStorageKey, dataURI);
   }
 
-  plot(x, y) {
-    this.ctx.imageSmoothingEnabled = false;
-    this.ctx.fillStyle = this.currentColor.value;
-    this.ctx.fillRect(x, y, 1, 1);
-  }
+  // plot(x, y) {
+  //   this.ctx.imageSmoothingEnabled = false;
+  //   this.ctx.fillStyle = this.currentColor.value;
+  //   this.ctx.fillRect(x, y, 1, 1);
+  // }
 
   // Bresenham algorithm
   bresenham = (x1, x2, y1, y2) => {
@@ -62,9 +63,9 @@ export default class Picture {
     const signY = y1 < y2 ? 1 : -1;
     let err = deltaX - deltaY;
 
-    this.plot(innerX2, innerY2);
+    plot(innerX2, innerY2);
     while (innerX1 !== innerX2 || innerY1 !== innerY2) {
-      this.plot(innerX1, innerY1);
+      plot(innerX1, innerY1);
       const err2 = err * 2;
       if (err2 > -deltaY) {
         err -= deltaY;
@@ -93,7 +94,7 @@ export default class Picture {
   drawOnMouseDown = e => {
     this.isDrawing = true;
     [this.x1, this.y1] = this.getXYCoors(e);
-    this.plot(this.x1, this.y1);
+    plot(this.x1, this.y1);
   };
 
   drawMouseUp = e => {
