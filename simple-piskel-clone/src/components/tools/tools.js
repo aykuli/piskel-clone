@@ -1,5 +1,5 @@
 import './tools.scss';
-function toolsHandler(canvas, ...tool) {
+function toolsHandler(canvas, tool) {
   const tools = document.querySelector('.tools__container');
 
   tools.addEventListener('click', e => {

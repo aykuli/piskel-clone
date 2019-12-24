@@ -13,3 +13,6 @@
 | Dec 24 13:00 | Dec 24 13:30 | .5h | Markup HTML/CSS |
 | Dec 24 14:00 | Dec 24 14:30 | .5h | Fix git some bug |
 | Dec 24 14:30 | Dec 24 15:50 | 1.5h | Make alive bresanham painting |
+| Dec 24 16:30 | Dec 24 18:00 | .5h | Talking with other student about task |
+| Dec 24 19:00 | Dec 24 20:00 | 1h | JS pencil bucket thinking on structure |
+|  | | |  |

@@ -1,5 +1,5 @@
 import { RGBToHex } from './functions.js';
-import { plot } from '../components/tools/Pencil/Pencil';
+import { plot } from '../components/tools/Pencil';
 
 export default class Picture {
   constructor(canvas, ctx, currentColor, size, prevColor) {
@@ -78,46 +78,46 @@ export default class Picture {
   //   }
   // };
 
-  getXYCoors(e) {
-    return [Math.ceil((e.offsetX / 512) * this.size), Math.ceil((e.offsetY / 512) * this.size)];
-  }
+  // getXYCoors(e) {
+  //   return [Math.ceil((e.offsetX / 512) * this.size), Math.ceil((e.offsetY / 512) * this.size)];
+  // }
 
-  draw = e => {
-    if (this.isDrawing) {
-      [this.x2, this.y2] = this.getXYCoors(e);
+  // draw = e => {
+  //   if (this.isDrawing) {
+  //     [this.x2, this.y2] = this.getXYCoors(e);
 
-      this.bresenham(this.x1, this.x2, this.y1, this.y2);
-      [this.x1, this.y1] = [this.x2, this.y2];
-    }
-  };
+  //     this.bresenham(this.x1, this.x2, this.y1, this.y2);
+  //     [this.x1, this.y1] = [this.x2, this.y2];
+  //   }
+  // };
 
-  drawOnMouseDown = e => {
-    this.isDrawing = true;
-    [this.x1, this.y1] = this.getXYCoors(e);
-    plot(this.x1, this.y1);
-  };
+  // drawOnMouseDown = e => {
+  //   this.isDrawing = true;
+  //   [this.x1, this.y1] = this.getXYCoors(e);
+  //   plot(this.x1, this.y1);
+  // };
 
-  drawMouseUp = e => {
-    [this.x2, this.y2] = this.getXYCoors(e);
-    this.bresenham(this.x1, this.x2, this.y1, this.y2);
-    this.isDrawing = false;
-    this.saveInLocalStorage('piskelCloneImg');
-  };
+  // drawMouseUp = e => {
+  //   [this.x2, this.y2] = this.getXYCoors(e);
+  //   this.bresenham(this.x1, this.x2, this.y1, this.y2);
+  //   this.isDrawing = false;
+  //   this.saveInLocalStorage('piskelCloneImg');
+  // };
 
-  pencilTool = targetTool => {
-    if (targetTool === 'pencil') {
-      this.canvas.addEventListener('mousemove', this.draw);
-      this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
-      this.canvas.addEventListener('mouseup', this.drawMouseUp);
-      this.canvas.addEventListener('mouseout', () => {
-        this.isDrawing = false;
-      });
-    } else {
-      this.canvas.removeEventListener('mousemove', this.draw);
-      this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
-      this.canvas.removeEventListener('mouseup', this.drawMouseUp);
-    }
-  };
+  // pencilTool = targetTool => {
+  //   if (targetTool === 'pencil') {
+  //     this.canvas.addEventListener('mousemove', this.draw);
+  //     this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
+  //     this.canvas.addEventListener('mouseup', this.drawMouseUp);
+  //     this.canvas.addEventListener('mouseout', () => {
+  //       this.isDrawing = false;
+  //     });
+  //   } else {
+  //     this.canvas.removeEventListener('mousemove', this.draw);
+  //     this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
+  //     this.canvas.removeEventListener('mouseup', this.drawMouseUp);
+  //   }
+  // };
 
   bucketTool(targetTool) {
     if (targetTool === 'bucket') {

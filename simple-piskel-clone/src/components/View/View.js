@@ -3,12 +3,8 @@ export default class View {
     this.canvas = document.querySelector('#canvas');
     this.ctx = canvas.getContext('2d');
 
-    this.currentColor = document.querySelector('#currentColor');
-    this.prevColor = document.querySelector('#prevColor');
-    this.colorRed = document.querySelector('.color--red');
-    this.colorBlue = document.querySelector('.color--blue');
-
-    this.cityChoiseInpit = document.querySelector('#cityChoiseInpit');
-    this.load = document.querySelector('#load');
+    this.primaryColor = document.querySelector('.tools__palette--primary');
+    this.secondaryColor = document.querySelector('.tools__palette--secondary');
+    this.swapColor = document.querySelector('.tools__palette--swapper');
   }
 }
