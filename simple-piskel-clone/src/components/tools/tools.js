@@ -1,40 +1,18 @@
 import './tools.scss';
+import { RGBToHex } from './utils';
 
-export default class Picture {
-  constructor(canvas, ctx, currentColor, size, prevColor) {
+export default class Tools {
+  constructor(canvas, ctx, currentColor, size) {
     this.canvas = canvas;
     this.ctx = ctx;
     this.isDrawing = false;
     this.currentColor = currentColor;
-    this.prevColorCache = '#ffffff';
     this.size = size;
-    this.prevColor = prevColor;
 
     if (canvas == null) {
       throw new Error('there is no canvas');
     }
   }
-
-  windowReload = () => {
-    // console.log("localStorage.getItem('piskelCloneImg'): ", localStorage.getItem('piskelCloneImg'));
-    if (localStorage.getItem('piskelCloneImg') !== null) {
-      const img = new Image();
-      const dataURI = localStorage.getItem('piskelCloneImg');
-      img.src = `data:image/png;base64,${dataURI}`;
-      img.addEventListener('load', () => this.ctx.drawImage(img, 0, 0));
-    }
-    // console.log("localStorage.getItem('piskelCloneResolution'): ", localStorage.getItem('piskelCloneResolution'));
-    if (localStorage.getItem('piskelCloneResolution') !== null) {
-      this.size = Number(localStorage.getItem('piskelCloneResolution'));
-      [this.canvas.width, this.canvas.height] = [this.size, this.size];
-      const currentRes = document.querySelector('.res-active');
-      // console.log(currentRes);
-      currentRes.classList.remove('res-active');
-
-      const target = document.querySelector(`#res${this.size}`);
-      target.classList.add('res-active');
-    }
-  };
 
   saveInLocalStorage(localStorageKey) {
     localStorage.removeItem(localStorageKey);
@@ -44,7 +22,6 @@ export default class Picture {
   }
 
   plot(x, y) {
-    this.ctx.imageSmoothingEnabled = false;
     this.ctx.fillStyle = this.currentColor.value;
     this.ctx.fillRect(x, y, 1, 1);
   }
@@ -62,9 +39,9 @@ export default class Picture {
     const signY = y1 < y2 ? 1 : -1;
     let err = deltaX - deltaY;
 
-    plot(innerX2, innerY2);
+    this.plot(innerX2, innerY2);
     while (innerX1 !== innerX2 || innerY1 !== innerY2) {
-      plot(innerX1, innerY1);
+      this.plot(innerX1, innerY1);
       const err2 = err * 2;
       if (err2 > -deltaY) {
         err -= deltaY;
@@ -78,7 +55,7 @@ export default class Picture {
   };
 
   getXYCoors(e) {
-    return [Math.ceil((e.offsetX / 512) * this.size), Math.ceil((e.offsetY / 512) * this.size)];
+    return [Math.ceil(e.offsetX / this.size), Math.ceil(e.offsetY / this.size)];
   }
 
   draw = e => {
@@ -93,17 +70,18 @@ export default class Picture {
   drawOnMouseDown = e => {
     this.isDrawing = true;
     [this.x1, this.y1] = this.getXYCoors(e);
-    plot(this.x1, this.y1);
+    this.plot(this.x1, this.y1);
   };
 
   drawMouseUp = e => {
     [this.x2, this.y2] = this.getXYCoors(e);
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
-    this.saveInLocalStorage('piskelCloneImg');
+    this.saveInLocalStorage('piskelImg');
   };
 
   pencilTool = targetTool => {
+    console.log(targetTool);
     if (targetTool === 'pencil') {
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
@@ -182,12 +160,6 @@ export default class Picture {
     Queue = [];
   };
 
-  watchColor(newColor) {
-    this.prevColor.value = this.ctx.fillStyle;
-    this.ctx.fillStyle = newColor;
-    this.currentColor.value = newColor;
-  }
-
   pickerTool(targetTool) {
     if (targetTool === 'picker') {
       this.canvas.addEventListener('click', this.colorPicker);
@@ -205,77 +177,77 @@ export default class Picture {
     this.currentColor.value = color;
   };
 
-  tools = targetTool => {
+  toolHandler = targetTool => {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
   };
 
-  downloadImage(url) {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.src = url;
+  // downloadImage(url) {
+  //   const img = new Image();
+  //   img.crossOrigin = 'Anonymous';
+  //   img.src = url;
 
-    let [currentWidth, currentHeight] = [this.canvas.width, this.canvas.height];
-    let [x, y] = [0, 0];
+  //   let [currentWidth, currentHeight] = [this.canvas.width, this.canvas.height];
+  //   let [x, y] = [0, 0];
 
-    img.addEventListener('load', () => {
-      if (img.naturalWidth > img.naturalHeight) {
-        const scaleImg = img.naturalWidth / this.canvas.width;
-        currentWidth = this.canvas.width;
-        currentHeight = img.naturalHeight / scaleImg;
-        x = 0;
-        y = (this.canvas.height - currentHeight) / 2;
-      } else if (img.naturalWidth === img.naturalHeight) {
-        currentWidth = this.canvas.width;
-        currentHeight = this.canvas.height;
-      } else {
-        const scaleImg = img.naturalHeight / this.canvas.height;
-        currentWidth = img.naturalWidth / scaleImg;
-        currentHeight = this.canvas.height;
-        x = (this.canvas.width - currentWidth) / 2;
-        y = 0;
-      }
-      this.ctx.imageSmoothingEnabled = false;
-      this.ctx.drawImage(img, x, y, currentWidth, currentHeight);
-      this.saveInLocalStorage('piskelCloneImg');
-    });
-  }
+  //   img.addEventListener('load', () => {
+  //     if (img.naturalWidth > img.naturalHeight) {
+  //       const scaleImg = img.naturalWidth / this.canvas.width;
+  //       currentWidth = this.canvas.width;
+  //       currentHeight = img.naturalHeight / scaleImg;
+  //       x = 0;
+  //       y = (this.canvas.height - currentHeight) / 2;
+  //     } else if (img.naturalWidth === img.naturalHeight) {
+  //       currentWidth = this.canvas.width;
+  //       currentHeight = this.canvas.height;
+  //     } else {
+  //       const scaleImg = img.naturalHeight / this.canvas.height;
+  //       currentWidth = img.naturalWidth / scaleImg;
+  //       currentHeight = this.canvas.height;
+  //       x = (this.canvas.width - currentWidth) / 2;
+  //       y = 0;
+  //     }
+  //     this.ctx.imageSmoothingEnabled = false;
+  //     this.ctx.drawImage(img, x, y, currentWidth, currentHeight);
+  //     this.saveInLocalStorage('piskelImg');
+  //   });
+  // }
 
-  saveCanvas() {
-    // create an "off-screen" anchor tag
-    const lnk = document.createElement('a');
-    // the key here is to set the download attribute of the a tag
-    // convert canvas content to data-uri for link.
-    lnk.setAttribute('href', this.canvas.toDataURL('image/png;base64'));
-    lnk.setAttribute('download', 'myimage.png');
-    lnk.style.display = 'none';
-    document.body.appendChild(lnk);
-    // When download attribute is set the content pointed to by link
-    // will be pushed as "download" in HTML5 capable browsers
-    lnk.click();
-    document.body.removeChild(lnk);
-  }
+  // saveCanvas() {
+  //   // create an "off-screen" anchor tag
+  //   const lnk = document.createElement('a');
+  //   // the key here is to set the download attribute of the a tag
+  //   // convert canvas content to data-uri for link.
+  //   lnk.setAttribute('href', this.canvas.toDataURL('image/png;base64'));
+  //   lnk.setAttribute('download', 'myimage.png');
+  //   lnk.style.display = 'none';
+  //   document.body.appendChild(lnk);
+  //   // When download attribute is set the content pointed to by link
+  //   // will be pushed as "download" in HTML5 capable browsers
+  //   lnk.click();
+  //   document.body.removeChild(lnk);
+  // }
 
-  grayscale() {
-    const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    const { data } = imageData;
-    for (let i = 0; i < data.length; i += 4) {
-      const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-      data[i] = avg; // red
-      data[i + 1] = avg; // green
-      data[i + 2] = avg; // blue
-    }
-    this.ctx.putImageData(imageData, 0, 0);
-  }
+  // grayscale() {
+  //   const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+  //   const { data } = imageData;
+  //   for (let i = 0; i < data.length; i += 4) {
+  //     const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+  //     data[i] = avg; // red
+  //     data[i + 1] = avg; // green
+  //     data[i + 2] = avg; // blue
+  //   }
+  //   this.ctx.putImageData(imageData, 0, 0);
+  // }
 
-  getLinkToImage(city) {
-    const url = `https://api.unsplash.com/photos/random?query=town,${city}&client_id=e2077ad31a806c894c460aec8f81bc2af4d09c4f8104ae3177bb809faf0eac17`;
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        this.downloadImage(data.urls.regular);
-      })
-      .catch(() => alert('Your limit of 50 images on unsplash.com is end'));
-  }
+  // getLinkToImage(city) {
+  //   const url = `https://api.unsplash.com/photos/random?query=town,${city}&client_id=e2077ad31a806c894c460aec8f81bc2af4d09c4f8104ae3177bb809faf0eac17`;
+  //   fetch(url)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       this.downloadImage(data.urls.regular);
+  //     })
+  //     .catch(() => alert('Your limit of 50 images on unsplash.com is end'));
+  // }
 }
