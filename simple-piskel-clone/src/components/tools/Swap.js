@@ -1,3 +1,5 @@
 function swapHandler(swapColor, primaryColor, secondaryColor) {
-  swapColor.addEventListener('click', () => {});
+  swapColor.addEventListener('click', () => {
+    console.log('swap click');
+  });
 }

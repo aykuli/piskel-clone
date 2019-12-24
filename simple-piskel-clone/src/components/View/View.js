@@ -6,5 +6,7 @@ export default class View {
     this.primaryColor = document.querySelector('.tools__palette--primary');
     this.secondaryColor = document.querySelector('.tools__palette--secondary');
     this.swapColor = document.querySelector('.tools__palette--swapper');
+
+    console.log('this.primaryColor: ', this.primaryColor, 'this.secondaryColor: ', this.secondaryColor);
   }
 }
