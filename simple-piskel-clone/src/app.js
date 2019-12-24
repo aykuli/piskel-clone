@@ -6,5 +6,5 @@ import './components/appAction/appAction';
 import './components/tools/tools';
 import Controller from './components/Controller/Controller.js';
 import View from './components/View/View';
-
+import Pencil from './components/tools/Pencil/Pencil';
 const app = new Controller(new View());

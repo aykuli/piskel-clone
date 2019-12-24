@@ -6,8 +6,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
     margin-right: 2px;
     margin-bottom: 2px;
     padding: 0;
@@ -15,10 +15,16 @@
     background-color: $dark-light;
     background-repeat: no-repeat;
     background-position: 7px 7px;
+    border: 3px solid $dark-light;
     cursor: pointer;
 
     &:hover, &:focus {
         background-color: $grey;
+        border: 3px solid $grey;
+    }
+
+    &--active {
+        border: 3px solid $green;
     }
 
     &--pen {

@@ -1,5 +1,5 @@
 import { RGBToHex } from './functions.js';
-import { plot } from '../components/tools/draw/draw';
+import { plot } from '../components/tools/Pencil/Pencil';
 
 export default class Picture {
   constructor(canvas, ctx, currentColor, size, prevColor) {
@@ -17,19 +17,19 @@ export default class Picture {
   }
 
   windowReload = () => {
-    console.log("localStorage.getItem('piskelCloneImg'): ", localStorage.getItem('piskelCloneImg'));
+    // console.log("localStorage.getItem('piskelCloneImg'): ", localStorage.getItem('piskelCloneImg'));
     if (localStorage.getItem('piskelCloneImg') !== null) {
       const img = new Image();
       const dataURI = localStorage.getItem('piskelCloneImg');
       img.src = `data:image/png;base64,${dataURI}`;
       img.addEventListener('load', () => this.ctx.drawImage(img, 0, 0));
     }
-    console.log("localStorage.getItem('piskelCloneResolution'): ", localStorage.getItem('piskelCloneResolution'));
+    // console.log("localStorage.getItem('piskelCloneResolution'): ", localStorage.getItem('piskelCloneResolution'));
     if (localStorage.getItem('piskelCloneResolution') !== null) {
       this.size = Number(localStorage.getItem('piskelCloneResolution'));
       [this.canvas.width, this.canvas.height] = [this.size, this.size];
       const currentRes = document.querySelector('.res-active');
-      console.log(currentRes);
+      // console.log(currentRes);
       currentRes.classList.remove('res-active');
 
       const target = document.querySelector(`#res${this.size}`);
@@ -50,33 +50,33 @@ export default class Picture {
   //   this.ctx.fillRect(x, y, 1, 1);
   // }
 
-  // Bresenham algorithm
-  bresenham = (x1, x2, y1, y2) => {
-    let [innerX1, innerY1] = [x1, y1];
-    const [innerX2, innerY2] = [x2, y2];
-    if (!this.isDrawing) return;
-    this.isDrawing = true;
+  // // Bresenham algorithm
+  // bresenham = (x1, x2, y1, y2) => {
+  //   let [innerX1, innerY1] = [x1, y1];
+  //   const [innerX2, innerY2] = [x2, y2];
+  //   if (!this.isDrawing) return;
+  //   this.isDrawing = true;
 
-    const deltaX = Math.abs(x2 - x1);
-    const deltaY = Math.abs(y2 - y1);
-    const signX = x1 < x2 ? 1 : -1;
-    const signY = y1 < y2 ? 1 : -1;
-    let err = deltaX - deltaY;
+  //   const deltaX = Math.abs(x2 - x1);
+  //   const deltaY = Math.abs(y2 - y1);
+  //   const signX = x1 < x2 ? 1 : -1;
+  //   const signY = y1 < y2 ? 1 : -1;
+  //   let err = deltaX - deltaY;
 
-    plot(innerX2, innerY2);
-    while (innerX1 !== innerX2 || innerY1 !== innerY2) {
-      plot(innerX1, innerY1);
-      const err2 = err * 2;
-      if (err2 > -deltaY) {
-        err -= deltaY;
-        innerX1 += signX;
-      }
-      if (err2 < deltaX) {
-        err += deltaX;
-        innerY1 += signY;
-      }
-    }
-  };
+  //   plot(innerX2, innerY2);
+  //   while (innerX1 !== innerX2 || innerY1 !== innerY2) {
+  //     plot(innerX1, innerY1);
+  //     const err2 = err * 2;
+  //     if (err2 > -deltaY) {
+  //       err -= deltaY;
+  //       innerX1 += signX;
+  //     }
+  //     if (err2 < deltaX) {
+  //       err += deltaX;
+  //       innerY1 += signY;
+  //     }
+  //   }
+  // };
 
   getXYCoors(e) {
     return [Math.ceil((e.offsetX / 512) * this.size), Math.ceil((e.offsetY / 512) * this.size)];

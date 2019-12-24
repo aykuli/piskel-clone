@@ -11,4 +11,5 @@
 | Dec 23 22:00 | Dec 23 24:00 | 2h | Markup HTML/CSS |
 |  | | |  |
 | Dec 24 13:00 | Dec 24 13:30 | .5h | Markup HTML/CSS |
-| Dec 24 14:00 | Dec 24 13:30 | .5h | Markup HTML/CSS |
+| Dec 24 14:00 | Dec 24 14:30 | .5h | Fix git some bug |
+| Dec 24 14:30 | Dec 24 15:50 | 1.5h | Make alive bresanham painting |
