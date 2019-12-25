@@ -6,6 +6,8 @@ export default class Controller {
   constructor(view, relativeSize) {
     this.view = view;
     this.size = relativeSize;
+    this.targetTool = 'pencil';
+
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.size);
     this.init();
     this.windowReload();
@@ -16,8 +18,8 @@ export default class Controller {
 
   init() {
     console.log('init process');
-    let targetTool = 'pencil';
-    this.tools.pencilTool(targetTool);
+    // let targetTool = 'pencil';
+    this.tools.pencilTool(this.targetTool);
   }
   windowReload = () => {
     // console.log("localStorage.getItem('piskelCloneImg'): ", localStorage.getItem('piskelCloneImg'));
@@ -69,38 +71,48 @@ export default class Controller {
       // console.log('toolsHandler');
       const targetToolEl = e.target.closest('li');
       if (targetToolEl === null) return;
+      this.targetTool = targetToolEl.id;
 
-      // highlighting choosed tool
-      const prevActiveTool = document.querySelector('.tool--active');
-      prevActiveTool.classList.remove('tool--active');
-      targetToolEl.classList.add('tool--active');
-
-      const targetTool = targetToolEl.id;
-      // console.log(this.tools);
-      this.tools.toolHandler(targetTool);
+      switch (this.targetTool) {
+        case 'empty':
+          this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
+          this.targetTool = 'pencil';
+          break;
+        default:
+          this.tools.chosenToolHightlight(this.targetTool);
+          this.tools.toolHandler(this.targetTool);
+      }
     });
   }
 
   keyboardShortCutHandler() {
     window.addEventListener('keydown', e => {
+      console.log(e.code);
       switch (e.code) {
         case 'KeyB':
           e.preventDefault();
-          targetTool = 'bucket';
+          this.targetTool = 'bucket';
           break;
         case 'KeyP':
           e.preventDefault();
-          targetTool = 'pencil';
+          this.targetTool = 'pencil';
           break;
         case 'KeyC':
           e.preventDefault();
-          targetTool = 'picker';
+          this.targetTool = 'picker';
           break;
-        // case 'Escape':
-        //   popupToggle();
-        //   break;
+        case 'KeyZ':
+          e.preventDefault();
+          this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
+          this.targetTool = 'pencil';
+          break;
         default:
           return;
+      }
+
+      if (this.targetTool !== 'empty') {
+        this.tools.chosenToolHightlight(this.targetTool);
+        this.tools.toolHandler(this.targetTool);
       }
     });
   }

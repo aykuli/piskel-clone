@@ -112,16 +112,16 @@ export default class Tools {
     if (targetColor === replacementColor) return;
     this.ctx.fillStyle = replacementColor;
     this.ctx.fillRect(x, y, 1, 1);
-    let Queue = [];
+    let queue = [];
 
-    Queue.push([x, y]);
-    while (Queue.length > 0) {
+    queue.push([x, y]);
+    while (queue.length > 0) {
       if (
         x + 1 > 0 &&
         x + 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
       ) {
-        Queue.push([x + 1, y]);
+        queue.push([x + 1, y]);
         this.ctx.fillRect(x + 1, y, 1, 1);
       }
 
@@ -130,7 +130,7 @@ export default class Tools {
         x - 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
       ) {
-        Queue.push([x - 1, y]);
+        queue.push([x - 1, y]);
         this.ctx.fillRect(x - 1, y, 1, 1);
       }
 
@@ -139,7 +139,7 @@ export default class Tools {
         y + 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
       ) {
-        Queue.push([x, y + 1]);
+        queue.push([x, y + 1]);
         this.ctx.fillRect(x, y + 1, 1, 1);
       }
 
@@ -148,13 +148,13 @@ export default class Tools {
         y - 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
       ) {
-        Queue.push([x, y - 1]);
+        queue.push([x, y - 1]);
         this.ctx.fillRect(x, y - 1, 1, 1);
       }
 
-      Queue.shift(0);
-      if (Queue.length > 0) {
-        [x, y] = [Queue[0][0], Queue[0][1]];
+      queue.shift(0);
+      if (queue.length > 0) {
+        [x, y] = [queue[0][0], queue[0][1]];
       }
     }
     Queue = [];
@@ -182,6 +182,13 @@ export default class Tools {
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
   };
+
+  chosenToolHightlight(targetTool) {
+    const targetToolEl = document.querySelector(`#${targetTool}`);
+    const prevActiveTool = document.querySelector('.tool--active');
+    prevActiveTool.classList.remove('tool--active');
+    targetToolEl.classList.add('tool--active');
+  }
 
   // downloadImage(url) {
   //   const img = new Image();

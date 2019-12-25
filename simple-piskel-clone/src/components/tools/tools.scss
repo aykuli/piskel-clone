@@ -52,6 +52,11 @@
     &--stroke {
         background-image: url(./img/stroke.svg);
     }
+
+    &--empty {
+        background-image: url(./img/blank.svg);
+        background-position: 2px 3px;
+    }
 }
 
 .tools {
