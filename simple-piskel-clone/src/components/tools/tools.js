@@ -157,7 +157,9 @@ export default class Tools {
         [x, y] = [queue[0][0], queue[0][1]];
       }
     }
-    Queue = [];
+    queue = [];
+
+    this.saveInLocalStorage('piskelImg');
   };
 
   pickerTool(targetTool) {
@@ -181,6 +183,9 @@ export default class Tools {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
+
+    localStorage.removeItem('piskelTool');
+    localStorage.setItem('piskelTool', targetTool);
   };
 
   chosenToolHightlight(targetTool) {

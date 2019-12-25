@@ -10,8 +10,4 @@ function RGBToHex(data) {
   return dataHex;
 }
 
-function getXYCoors(e, size) {
-  return [Math.ceil(e.offsetX / size), Math.ceil(e.offsetY / size)];
-}
-
-export { RGBToHex, getXYCoors };
+export { RGBToHex };
