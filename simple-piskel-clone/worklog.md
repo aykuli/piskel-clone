@@ -21,4 +21,5 @@
 | Dec 25 | | |  |
 | 10:30 | 11:00 | .5h | Keyboard shortcuts for working tools. Realize 'cleaning area' |
 | 11:30 | 13:00 | 1.5h | Realize frame static one |
-|  | | |  |
+| 14:30 | 16:00 | 1.5h | Frame selecting hightlight |
+| 23:00 | | |  |

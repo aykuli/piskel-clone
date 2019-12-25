@@ -40,6 +40,8 @@
 .frame {
     position: relative;
     
+    background: url(./img/frame-bg.png) repeat;
+    
     &__wrap {
         position: relative;
 
@@ -51,17 +53,21 @@
         border: 3px solid $grey;
         border-radius: 2px;
 
-        &:hover {
+        &:hover, &:focus  {
             border-color: $grey-light;
-        }
-    }
 
-    &__thumb {        
-        background: url(./img/frame-bg.png) repeat;
+            & .frame__btn--delete {
+                opacity: 1;
+            }
+        }
     }
 
     &__active {
         border: 3px solid $green;
+
+        &:hover, &:focus {
+            border: 3px solid $green;
+        }
     }
 
     &__number {
@@ -101,5 +107,5 @@
                 opacity: 1;
             }
         }
-    }
+    }    
 }

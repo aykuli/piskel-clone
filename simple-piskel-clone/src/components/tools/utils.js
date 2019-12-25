@@ -10,4 +10,11 @@ function RGBToHex(data) {
   return dataHex;
 }
 
-export { RGBToHex };
+function saveInLocalStorage(localStorageKey, canvas) {
+  localStorage.removeItem(localStorageKey);
+
+  const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+  localStorage.setItem(localStorageKey, dataURI);
+}
+
+export { RGBToHex, saveInLocalStorage };

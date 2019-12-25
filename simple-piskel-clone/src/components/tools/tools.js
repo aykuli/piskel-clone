@@ -14,12 +14,12 @@ export default class Tools {
     }
   }
 
-  saveInLocalStorage(localStorageKey) {
-    localStorage.removeItem(localStorageKey);
+  // saveInLocalStorage(localStorageKey) {
+  //   localStorage.removeItem(localStorageKey);
 
-    const dataURI = this.canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-    localStorage.setItem(localStorageKey, dataURI);
-  }
+  //   const dataURI = this.canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+  //   localStorage.setItem(localStorageKey, dataURI);
+  // }
 
   plot(x, y) {
     this.ctx.fillStyle = this.currentColor.value;
@@ -77,7 +77,7 @@ export default class Tools {
     [this.x2, this.y2] = this.getXYCoors(e);
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
-    this.saveInLocalStorage('piskelImg');
+    // this.saveInLocalStorage('piskelImg');
   };
 
   pencilTool = targetTool => {
@@ -159,7 +159,7 @@ export default class Tools {
     }
     queue = [];
 
-    this.saveInLocalStorage('piskelImg');
+    // this.saveInLocalStorage('piskelImg');
   };
 
   pickerTool(targetTool) {

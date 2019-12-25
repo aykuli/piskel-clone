@@ -2,14 +2,14 @@ import './frames.scss';
 
 export default class Frame {
   constructor() {
-    this.frame = document.querySelector('.frame__thumb');
+    this.frame = document.querySelector('.frame');
     this.frameCtx = this.frame.getContext('2d');
   }
 
-  drawFrame() {
-    console.log('frame');
+  drawFrame(currentCount) {
+    // console.log('frame');
     const img = new Image();
-    const dataURI = localStorage.getItem('piskelImg');
+    const dataURI = localStorage.getItem(`piskelImg${currentCount}`);
     img.src = `data:image/png;base64,${dataURI}`;
     if (dataURI === null) {
       this.frameCtx.clearRect(0, 0, this.frame.width, this.frame.height);

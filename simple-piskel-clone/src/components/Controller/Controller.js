@@ -1,21 +1,62 @@
 import Tools from '../tools/Tools';
 import Frame from '../frames/Frame';
 import { frameProbe } from '../frames/frameProbe';
+import { saveInLocalStorage } from '../tools/utils';
 
 export default class Controller {
   constructor(view, relativeSize) {
     this.view = view;
     this.size = relativeSize;
+    this.currentCount = 0;
 
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.size);
     this.init();
     this.paintTools();
     this.swapWatch();
     this.keyboardShortCutHandler();
+
     this.frameThumb = new Frame();
-    console.log(this.frameThumb);
-    this.frameThumb.drawFrame();
-    document.addEventListener('mouseup', () => this.frameThumb.drawFrame());
+    this.frameThumb.drawFrame(this.currentCount);
+
+    this.view.canvas.addEventListener('mouseup', () => {
+      saveInLocalStorage(`piskelImg${this.currentCount}`, this.view.canvas);
+      this.frameThumb.drawFrame(this.currentCount);
+    });
+
+    this.frameChange();
+  }
+
+  frameChange() {
+    console.log(this.view);
+    this.view.framesList.addEventListener('click', e => this.frameHandler(e));
+  }
+
+  frameHandler(e) {
+    // highlighting current frame
+    if (e.target.classList.contains('frame')) {
+      const frameActive = document.querySelector('.frame__active');
+      frameActive.classList.remove('frame__active');
+      e.target.parentNode.classList.add('frame__active');
+    }
+
+    let count = event.target.dataset.count;
+    this.currentCount = count;
+    console.log('this.currentCount: ', this.currentCount);
+    console.log(this.view);
+    // console.log(
+    //   `localStorage.getItem(piskelImg${this.currentCount}): `,
+    //   localStorage.getItem(`piskelImg${this.currentCount}`)
+    // );
+
+    if (localStorage.getItem(`piskelImg${this.currentCount}`) !== null) {
+      const img = new Image();
+      const dataURI = localStorage.getItem(`piskelImg${this.currentCount}`);
+      img.src = `data:image/png;base64,${dataURI}`;
+      img.onload = this.view.ctx.drawImage(img, 0, 0);
+    } else {
+      console.log('cleaning canvas');
+      this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
+    }
   }
 
   init() {
@@ -31,9 +72,9 @@ export default class Controller {
       this.tools.toolHandler(this.targetTool);
     }
     // get image from Local Storage if exists
-    if (localStorage.getItem('piskelImg') !== null) {
+    if (localStorage.getItem('piskelImg0') !== null) {
       const img = new Image();
-      const dataURI = localStorage.getItem('piskelImg');
+      const dataURI = localStorage.getItem('piskelImg0');
       img.src = `data:image/png;base64,${dataURI}`;
       img.addEventListener('load', () => this.view.ctx.drawImage(img, 0, 0));
     }
@@ -87,7 +128,7 @@ export default class Controller {
       switch (this.targetTool) {
         case 'empty':
           this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
-          localStorage.removeItem('piskelImg');
+          localStorage.removeItem(`piskelImg${this.currentCount}`);
           break;
         default:
           this.tools.chosenToolHightlight(this.targetTool);
@@ -114,7 +155,7 @@ export default class Controller {
         case 'KeyZ':
           e.preventDefault();
           this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
-          localStorage.removeItem('piskelImg');
+          localStorage.removeItem(`piskelImg${this.currentCount}`);
           // frameProbe();
           this.frameThumb.drawFrame();
           break;
