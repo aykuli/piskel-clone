@@ -2,42 +2,43 @@ import './frames.scss';
 
 export default class Frame {
   constructor() {
-    this.frame = document.querySelector('.frame');
-    this.frameCtx = this.frame.getContext('2d');
+    this.frame = document.querySelectorAll('.frame');
   }
 
   drawFrame(currentCount) {
     // console.log('frame');
+    const frameCtx = this.frame[currentCount].getContext('2d');
     const img = new Image();
     const dataURI = localStorage.getItem(`piskelImg${currentCount}`);
     img.src = `data:image/png;base64,${dataURI}`;
     if (dataURI === null) {
-      this.frameCtx.clearRect(0, 0, this.frame.width, this.frame.height);
+      frameCtx.clearRect(0, 0, this.frame[currentCount].width, this.frame[currentCount].height);
     } else {
       img.src = `data:image/png;base64,${dataURI}`;
-      img.onload = this.handleOnload;
+      img.addEventListener('load', this.handleOnload.bind(this, currentCount));
     }
   }
 
-  handleOnload = ({ target: img }) => {
-    let [currentWidth, currentHeight] = [this.frame.width, this.frame.height];
+  handleOnload = ({ target: img }, currentCount) => {
+    let [currentWidth, currentHeight] = [this.frame[currentCount].width, this.frame[currentCount].height];
     let [x, y] = [0, 0];
     if (img.naturalWidth > img.naturalHeight) {
       const scaleImg = img.naturalWidth / canvas.width;
-      currentWidth = this.frame.width;
+      currentWidth = this.frame[currentCount].width;
       currentHeight = img.naturalHeight / scaleImg;
       x = 0;
-      y = (this.frame.height - currentHeight) / 2;
+      y = (this.frame[currentCount].height - currentHeight) / 2;
     } else if (img.naturalWidth === img.naturalHeight) {
-      currentWidth = this.frame.width;
-      currentHeight = this.frame.height;
+      currentWidth = this.frame[currentCount].width;
+      currentHeight = this.frame[currentCount].height;
     } else {
-      const scaleImg = img.naturalHeight / this.frame.height;
+      const scaleImg = img.naturalHeight / this.frame[currentCount].height;
       currentWidth = img.naturalWidth / scaleImg;
-      currentHeight = this.frame.height;
-      x = (this.frame.width - currentWidth) / 2;
+      currentHeight = this.frame[currentCount].height;
+      x = (this.frame[currentCount].width - currentWidth) / 2;
       y = 0;
     }
-    this.frameCtx.drawImage(img, x, y, currentWidth, currentHeight);
+    const frameCtx = this.frame[currentCount].getContext('2d');
+    frameCtx.drawImage(img, x, y, currentWidth, currentHeight);
   };
 }

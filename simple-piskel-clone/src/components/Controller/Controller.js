@@ -20,18 +20,18 @@ export default class Controller {
 
     this.view.canvas.addEventListener('mouseup', () => {
       saveInLocalStorage(`piskelImg${this.currentCount}`, this.view.canvas);
-      this.frameThumb.drawFrame(this.currentCount);
+      // this.frameThumb.drawFrame(this.currentCount);
     });
 
     this.frameChange();
   }
 
   frameChange() {
-    console.log(this.view);
     this.view.framesList.addEventListener('click', e => this.frameHandler(e));
   }
 
   frameHandler(e) {
+    console.log('frameHandler clicked');
     // highlighting current frame
     if (e.target.classList.contains('frame')) {
       const frameActive = document.querySelector('.frame__active');
@@ -42,20 +42,14 @@ export default class Controller {
     let count = event.target.dataset.count;
     this.currentCount = count;
     console.log('this.currentCount: ', this.currentCount);
-    console.log(this.view);
-    // console.log(
-    //   `localStorage.getItem(piskelImg${this.currentCount}): `,
-    //   localStorage.getItem(`piskelImg${this.currentCount}`)
-    // );
 
+    this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
     if (localStorage.getItem(`piskelImg${this.currentCount}`) !== null) {
       const img = new Image();
       const dataURI = localStorage.getItem(`piskelImg${this.currentCount}`);
       img.src = `data:image/png;base64,${dataURI}`;
-      img.onload = this.view.ctx.drawImage(img, 0, 0);
-    } else {
-      console.log('cleaning canvas');
-      this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
+      img.addEventListener('load', () => this.view.ctx.drawImage(img, 0, 0));
+      // img.onload = this.view.ctx.drawImage(img, 0, 0);
     }
   }
 
