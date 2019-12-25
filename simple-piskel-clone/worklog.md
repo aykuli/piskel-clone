@@ -20,4 +20,5 @@
 | 22:00 | 23:00 | 1h | Make alive pencil, bucket, color swaper, storaging image in LS |
 | Dec 25 | | |  |
 | 10:30 | 11:00 | .5h | Keyboard shortcuts for working tools. Realize 'cleaning area' |
+| 11:30 | 13:00 | 1.5h | Realize frame static one |
 |  | | |  |

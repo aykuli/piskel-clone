@@ -1,13 +1,9 @@
-import './frames.scss';
-
-function frame() {
+function frameProbe() {
   console.log('frame');
   const frame = document.querySelector('.frame__thumb');
   const frameCtx = frame.getContext('2d');
   const img = new Image();
   const dataURI = localStorage.getItem('piskelImg');
-  img.src = `data:image/png;base64,${dataURI}`;
-
   const handleOnload = ({ target: img }) => {
     let [currentWidth, currentHeight] = [frame.width, frame.height];
     let [x, y] = [0, 0];
@@ -30,10 +26,14 @@ function frame() {
     frameCtx.drawImage(img, x, y, currentWidth, currentHeight);
   };
 
-  img.onload = handleOnload;
-  frameCtx.drawImage(img, 0, 0, 100, 100);
+  if (dataURI === null) {
+    frameCtx.clearRect(0, 0, frame.width, frame.height);
+  } else {
+    img.src = `data:image/png;base64,${dataURI}`;
+
+    console.log('dataURI: ', dataURI);
+    img.onload = handleOnload;
+  }
 }
 
-// changing canvas resolution
-
-export { frame };
+export { frameProbe };

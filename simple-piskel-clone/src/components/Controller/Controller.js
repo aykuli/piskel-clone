@@ -1,5 +1,6 @@
 import Tools from '../tools/Tools';
-import { frame } from '../frames/frames';
+import Frame from '../frames/Frame';
+import { frameProbe } from '../frames/frameProbe';
 
 export default class Controller {
   constructor(view, relativeSize) {
@@ -11,8 +12,10 @@ export default class Controller {
     this.paintTools();
     this.swapWatch();
     this.keyboardShortCutHandler();
-    frame();
-    document.addEventListener('mouseup', frame);
+    this.frameThumb = new Frame();
+    console.log(this.frameThumb);
+    this.frameThumb.drawFrame();
+    document.addEventListener('mouseup', () => this.frameThumb.drawFrame());
   }
 
   init() {
@@ -84,11 +87,11 @@ export default class Controller {
       switch (this.targetTool) {
         case 'empty':
           this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
+          localStorage.removeItem('piskelImg');
           break;
         default:
           this.tools.chosenToolHightlight(this.targetTool);
           this.tools.toolHandler(this.targetTool);
-          frame();
       }
     });
   }
@@ -111,6 +114,9 @@ export default class Controller {
         case 'KeyZ':
           e.preventDefault();
           this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
+          localStorage.removeItem('piskelImg');
+          // frameProbe();
+          this.frameThumb.drawFrame();
           break;
         case 'KeyX':
           e.preventDefault();

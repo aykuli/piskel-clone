@@ -1,5 +1,5 @@
 import './sass/style.scss';
-import './components/frames/frames';
+import './components/frames/Frame';
 import './components/drawCanvas/drawCanvas';
 import './components/preview/preview';
 import './components/appAction/appAction';
