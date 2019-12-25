@@ -20,7 +20,7 @@ export default class Controller {
 
     this.view.canvas.addEventListener('mouseup', () => {
       saveInLocalStorage(`piskelImg${this.currentCount}`, this.view.canvas);
-      // this.frameThumb.drawFrame(this.currentCount);
+      this.frameThumb.drawFrame(this.currentCount);
     });
 
     this.frameChange();

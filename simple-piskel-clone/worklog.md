@@ -18,8 +18,8 @@
 | 16:30 | 18:00 | .5h | Talking with other student about task |
 | 19:00 | 20:00 | 1h | JS pencil bucket thinking on structure |
 | 22:00 | 23:00 | 1h | Make alive pencil, bucket, color swaper, storaging image in LS |
-| Dec 25 | | |  |
+| Dec 25 | | **3.5h** |  |
 | 10:30 | 11:00 | .5h | Keyboard shortcuts for working tools. Realize 'cleaning area' |
 | 11:30 | 13:00 | 1.5h | Realize frame static one |
 | 14:30 | 16:00 | 1.5h | Frame selecting hightlight |
-| 23:00 | | |  |
+| 23:00 | 24:00| 1h | Frames every with its own thumb and storaged image  |

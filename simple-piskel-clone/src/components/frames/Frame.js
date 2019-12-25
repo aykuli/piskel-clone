@@ -3,6 +3,7 @@ import './frames.scss';
 export default class Frame {
   constructor() {
     this.frame = document.querySelectorAll('.frame');
+    console.log(this.frame);
   }
 
   drawFrame(currentCount) {
@@ -15,7 +16,7 @@ export default class Frame {
       frameCtx.clearRect(0, 0, this.frame[currentCount].width, this.frame[currentCount].height);
     } else {
       img.src = `data:image/png;base64,${dataURI}`;
-      img.addEventListener('load', this.handleOnload.bind(this, currentCount));
+      img.addEventListener('load', () => this.handleOnload({ target: img }, currentCount));
     }
   }
 
