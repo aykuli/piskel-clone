@@ -23,127 +23,32 @@ export default class Controller {
     });
 
     this.frameChange();
-    this.frameDndHandler();
-  }
-
-  frameDndHandler() {
-    let dragged;
-
-    /* events fired on the draggable target */
-    document.addEventListener(
-      'drag',
-      e => {
-        // console.log(e);
-      },
-      false
-    );
-
-    document.addEventListener(
-      'dragstart',
-      e => {
-        // console.log('dragStarted');
-        dragged = e.target; // store a ref. on the dragged elem
-        // console.log('dragged: ', dragged);
-        dragged.style.opacity = 0.3; // make darker dragged canvas
-      },
-      false
-    );
-    // back dragged canvas opacity to 1 (by removing this style)
-    document.addEventListener(
-      'dragend',
-      e => {
-        e.target.style.opacity = '';
-      },
-      false
-    );
-
-    // events fired on the drop targets. Prevent default to allow drop
-    document.addEventListener('dragover', e => e.preventDefault(), false);
-
-    document.addEventListener(
-      'dragenter',
-      e => {
-        // console.log(e.target);
-        // highlight potential drop target when the draggable element enters it
-        if (e.target.className == 'frame__item') {
-          e.target.style.border = '3px dotted rgb(34, 192, 153)';
-        }
-      },
-      false
-    );
-
-    // document.addEventListener(
-    //   'dragleave',
-    //   e => {
-    //     // reset background of potential drop target when the draggable element leaves it
-    //     if (e.target.className == 'frame__item') {
-    //       e.target.style.border = '';
-    //     }
-    //   },
-    //   false
-    // );
-
-    document.addEventListener(
-      'drop',
-      function(e) {
-        // prevent default action (open as link for some elements)
-        e.preventDefault();
-        // move dragged elem to the selected drop target
-        if (e.target.className == 'frame') {
-          const targetNumb = e.target.dataset.count;
-          const sourceNumb = dragged.children[0].dataset.count;
-
-          e.target.parentNode.style.border = '';
-          dragged.remove();
-
-          if (targetNumb > sourceNumb) {
-            e.target.parentNode.after(dragged);
-          } else {
-            e.target.parentNode.before(dragged);
-          }
-          const framesList = dragged.parentNode.children;
-          for (let i = 0; i < framesList.length; i++) {
-            sourceNumb = framesList[i].children[0].dataset.count;
-            framesList[i].children[0].dataset.count = i;
-
-            const bufSource = localStorage.getItem(`piskelImg${sourceNumb}`);
-            const bufTarget = localStorage.getItem(`piskelImg${i}`);
-            localStorage.removeItem(`piskelImg${sourceNumb}`);
-            localStorage.removeItem(`piskelImg${i}`);
-            localStorage.setItem(`piskelImg${sourceNumb}`, bufTarget);
-            localStorage.setItem(`piskelImg${i}`, bufSource);
-          }
-        }
-      },
-      false
-    );
+    this.frameThumb.frameDndHandler(this.view.canvas);
   }
 
   frameChange() {
-    this.view.framesList.addEventListener('click', e => this.frameHandler(e));
-  }
+    this.view.framesList.addEventListener('click', e => {
+      this.currentCount = this.frameThumb.frameHandler(e, this.view.canvas);
 
-  frameHandler(e) {
-    console.log('frameHandler clicked');
-    // highlighting current frame
-    if (e.target.classList.contains('frame')) {
-      const frameActive = document.querySelector('.frame__active');
-      frameActive.classList.remove('frame__active');
-      e.target.parentNode.classList.add('frame__active');
-    }
+      if (this.view.framesList.children.length === 1) return;
 
-    let count = event.target.dataset.count;
-    this.currentCount = count;
-    console.log('this.currentCount: ', this.currentCount);
-
-    this.view.ctx.clearRect(0, 0, this.view.canvas.width, this.view.canvas.height);
-    if (localStorage.getItem(`piskelImg${this.currentCount}`) !== null) {
-      const img = new Image();
-      const dataURI = localStorage.getItem(`piskelImg${this.currentCount}`);
-      img.src = `data:image/png;base64,${dataURI}`;
-      img.addEventListener('load', () => this.view.ctx.drawImage(img, 0, 0));
-      // img.onload = this.view.ctx.drawImage(img, 0, 0);
-    }
+      console.log(e.target.className);
+      if (e.target.className === this.view.frameDelBtns[0].className) {
+        console.log('совпало');
+        const count = e.target.parentNode.children[0].dataset.count;
+        localStorage.removeItem(`piskelImg${count}`);
+        e.target.parentNode.remove();
+        const frameActive = document.querySelector('.frame__active');
+        if (frameActive === null) {
+          console.log('null');
+          console.log(this.view.framesList.children[0]);
+          this.view.framesList.children[0].classList.add('frame__active');
+        }
+      }
+    });
+    this.view.frameAddBtn.addEventListener('click', () => {
+      this.currentCount = this.frameThumb.frameAdd(this.view.framesList);
+    });
   }
 
   init() {

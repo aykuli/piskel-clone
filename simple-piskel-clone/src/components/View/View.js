@@ -10,6 +10,10 @@ export default class View {
     this.swapColor = document.querySelector('.tools__palette--swapper');
 
     this.framesList = document.querySelector('.frames__list');
+    this.frameAddBtn = document.querySelector('.frames__btn--add');
+    this.frameDelBtns = Array.from(document.querySelectorAll('.frame__btn--delete'));
+    console.log(this.frameDelBtn);
+
     const len = this.framesList.children.length;
     for (let i = 0; i < len; i++) {
       const countText = document.createElement('span');

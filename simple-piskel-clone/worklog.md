@@ -25,4 +25,5 @@
 | 23:00 | 24:00| 1h | Frames every with its own thumb and storaged image  |
 | Dec 26 | | **0h** |  |
 | 12:30 | 14:00 | 1.5h | Drag and drop theory. First try. |
-| 14:30 | 15:00 | 0.5h | Drag and drop logic |
+| 14:30 | 16:30 | 2h | Drag and drop logic |
+| 21:30 | 23:00 | 1.5h | Drag and drop logic and delete button on frames |
