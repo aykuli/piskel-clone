@@ -24,6 +24,97 @@ export default class Controller {
     });
 
     this.frameChange();
+    this.frameDndHandler();
+  }
+
+  frameDndHandler() {
+    let dragged;
+
+    /* events fired on the draggable target */
+    document.addEventListener(
+      'drag',
+      e => {
+        // console.log(e);
+      },
+      false
+    );
+
+    document.addEventListener(
+      'dragstart',
+      e => {
+        // console.log('dragStarted');
+        dragged = e.target; // store a ref. on the dragged elem
+        // console.log('dragged: ', dragged);
+        dragged.style.opacity = 0.3; // make darker dragged canvas
+      },
+      false
+    );
+    // back dragged canvas opacity to 1 (by removing this style)
+    document.addEventListener(
+      'dragend',
+      e => {
+        e.target.style.opacity = '';
+      },
+      false
+    );
+
+    // events fired on the drop targets. Prevent default to allow drop
+    document.addEventListener('dragover', e => e.preventDefault(), false);
+
+    document.addEventListener(
+      'dragenter',
+      e => {
+        // console.log(e.target);
+        // highlight potential drop target when the draggable element enters it
+        if (e.target.className == 'frame__item') {
+          e.target.style.border = '3px dotted rgb(34, 192, 153)';
+        }
+      },
+      false
+    );
+
+    // document.addEventListener(
+    //   'dragleave',
+    //   e => {
+    //     // reset background of potential drop target when the draggable element leaves it
+    //     if (e.target.className == 'frame__item') {
+    //       e.target.style.border = '';
+    //     }
+    //   },
+    //   false
+    // );
+
+    document.addEventListener(
+      'drop',
+      function(e) {
+        // prevent default action (open as link for some elements)
+        e.preventDefault();
+        console.log('e.target: ', e.target);
+        console.log('dragged: ', dragged);
+        // move dragged elem to the selected drop target
+        if (e.target.className == 'frame') {
+          const targetNumb = e.target.dataset.count;
+          const sourceNumb = dragged.children[0].dataset.count;
+          console.log('targetNumb: ', targetNumb);
+          console.log('sourceNumb: ', sourceNumb);
+
+          e.target.parentNode.style.border = '';
+          dragged.remove();
+
+          if (targetNumb > sourceNumb) {
+            e.target.parentNode.after(dragged);
+          } else {
+            e.target.parentNode.before(dragged);
+          }
+          console.log(dragged.parentNode);
+          const framesList = dragged.parentNode.children;
+          for (let i = 0; i < framesList.length; i++) {
+            console.log('i: ', i, 'element: ', framesList[i].children[0]);
+          }
+        }
+      },
+      false
+    );
   }
 
   frameChange() {

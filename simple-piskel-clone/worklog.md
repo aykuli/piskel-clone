@@ -23,3 +23,6 @@
 | 11:30 | 13:00 | 1.5h | Realize frame static one |
 | 14:30 | 16:00 | 1.5h | Frame selecting hightlight |
 | 23:00 | 24:00| 1h | Frames every with its own thumb and storaged image  |
+| Dec 26 | | **0h** |  |
+| 12:30 | 14:00 | 1.5h | Drag and drop theory. First try. |
+| 14:30 | 15:00 | 0.5h | Drag and drop logic |
