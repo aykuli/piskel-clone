@@ -1,6 +1,5 @@
 import Tools from '../tools/Tools';
 import Frame from '../frames/Frame';
-import { frameProbe } from '../frames/frameProbe';
 import { saveInLocalStorage } from '../tools/utils';
 
 export default class Controller {
@@ -89,14 +88,10 @@ export default class Controller {
       function(e) {
         // prevent default action (open as link for some elements)
         e.preventDefault();
-        console.log('e.target: ', e.target);
-        console.log('dragged: ', dragged);
         // move dragged elem to the selected drop target
         if (e.target.className == 'frame') {
           const targetNumb = e.target.dataset.count;
           const sourceNumb = dragged.children[0].dataset.count;
-          console.log('targetNumb: ', targetNumb);
-          console.log('sourceNumb: ', sourceNumb);
 
           e.target.parentNode.style.border = '';
           dragged.remove();
@@ -106,10 +101,17 @@ export default class Controller {
           } else {
             e.target.parentNode.before(dragged);
           }
-          console.log(dragged.parentNode);
           const framesList = dragged.parentNode.children;
           for (let i = 0; i < framesList.length; i++) {
-            console.log('i: ', i, 'element: ', framesList[i].children[0]);
+            sourceNumb = framesList[i].children[0].dataset.count;
+            framesList[i].children[0].dataset.count = i;
+
+            const bufSource = localStorage.getItem(`piskelImg${sourceNumb}`);
+            const bufTarget = localStorage.getItem(`piskelImg${i}`);
+            localStorage.removeItem(`piskelImg${sourceNumb}`);
+            localStorage.removeItem(`piskelImg${i}`);
+            localStorage.setItem(`piskelImg${sourceNumb}`, bufTarget);
+            localStorage.setItem(`piskelImg${i}`, bufSource);
           }
         }
       },
