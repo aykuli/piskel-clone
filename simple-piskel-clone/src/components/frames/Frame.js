@@ -54,6 +54,7 @@ export default class Frame {
 
     let count = event.target.dataset.count;
 
+    console.log(count);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (localStorage.getItem(`piskelImg${count}`) !== null) {
       const img = new Image();
@@ -118,16 +119,13 @@ export default class Frame {
             e.target.parentNode.before(dragged);
           }
 
-          for (let i = 0; i < framesList.length; i++) {
-            framesList[i].lastChild.innerText = i + 1;
-            framesList[i].style.border = ''; 
-          }
-
           const frameActive = document.querySelector('.frame__active');
           frameActive.classList.remove('frame__active');
           dragged.classList.add('frame__active');
           dragged.style.border = '';
-          console.log(dragged.children[0].dataset.count);
+
+
+          
           const canvasNumb = dragged.children[0].dataset.count;
 
           // get image from Local Storage if exists
@@ -137,6 +135,12 @@ export default class Frame {
             const dataURI = localStorage.getItem(`piskelImg${canvasNumb}`);
             img.src = `data:image/png;base64,${dataURI}`;
             img.addEventListener('load', () => ctx.drawImage(img, 0, 0));
+          }
+          
+          for (let i = 0; i < framesList.length; i++) {
+            framesList[i].lastChild.innerText = i + 1;
+            framesList[i].style.border = '';
+            console.log(`framesList[${i}].dataset.count`, framesList[i].children[0].dataset.count)
           }
         }
     });
@@ -153,9 +157,5 @@ export default class Frame {
       1}</span>`;
     framesList.append(newFrame);
     return len;
-  }
-
-  frameDel() {
-    console.log('frameDel');
   }
 }

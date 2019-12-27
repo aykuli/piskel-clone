@@ -26,34 +26,7 @@ export default class Controller {
     this.frameThumb.frameDndHandler(this.view.canvas);
   }
 
-  frameChange() {
-    this.view.framesList.addEventListener('click', e => {
-      this.currentCount = this.frameThumb.frameHandler(e, this.view.canvas);
-
-      if (this.view.framesList.children.length === 1) return;
-
-      console.log(e.target.className);
-      if (e.target.className === this.view.frameDelBtns[0].className) {
-        console.log('совпало');
-        const count = e.target.parentNode.children[0].dataset.count;
-        localStorage.removeItem(`piskelImg${count}`);
-        e.target.parentNode.remove();
-        const frameActive = document.querySelector('.frame__active');
-        if (frameActive === null) {
-          console.log('null');
-          console.log(this.view.framesList.children[0]);
-          this.view.framesList.children[0].classList.add('frame__active');
-        }
-      }
-    });
-    this.view.frameAddBtn.addEventListener('click', () => {
-      this.currentCount = this.frameThumb.frameAdd(this.view.framesList);
-    });
-  }
-
   init() {
-    console.log('init process');
-
     // get drawing tool from Local Storage if exists
     if (localStorage.getItem('piskelTool') === null) {
       this.targetTool = 'pencil';
@@ -93,6 +66,27 @@ export default class Controller {
     //   const target = document.querySelector(`#res${this.size}`);
     //   target.classList.add('res-active');
     // }
+  }
+
+  frameChange() {
+    this.view.framesList.addEventListener('click', e => {
+      this.currentCount = this.frameThumb.frameHandler(e, this.view.canvas);
+
+      if (this.view.framesList.children.length === 1) return;
+
+      if (e.target.className === this.view.frameDelBtns[0].className) {
+        const count = e.target.parentNode.children[0].dataset.count;
+        localStorage.removeItem(`piskelImg${count}`);
+        e.target.parentNode.remove();
+        const frameActive = document.querySelector('.frame__active');
+        if (frameActive === null) {
+          this.view.framesList.children[0].classList.add('frame__active');
+        }
+      }
+    });
+    this.view.frameAddBtn.addEventListener('click', () => {
+      this.currentCount = this.frameThumb.frameAdd(this.view.framesList);
+    });
   }
 
   swapWatch() {

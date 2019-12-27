@@ -77,7 +77,6 @@ export default class Tools {
     [this.x2, this.y2] = this.getXYCoors(e);
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
-    // this.saveInLocalStorage('piskelImg');
   };
 
   pencilTool = targetTool => {
@@ -158,8 +157,6 @@ export default class Tools {
       }
     }
     queue = [];
-
-    // this.saveInLocalStorage('piskelImg');
   };
 
   pickerTool(targetTool) {
@@ -220,9 +217,7 @@ export default class Tools {
   //       x = (this.canvas.width - currentWidth) / 2;
   //       y = 0;
   //     }
-  //     this.ctx.imageSmoothingEnabled = false;
   //     this.ctx.drawImage(img, x, y, currentWidth, currentHeight);
-  //     this.saveInLocalStorage('piskelImg');
   //   });
   // }
 
