@@ -10,11 +10,14 @@ function RGBToHex(data) {
   return dataHex;
 }
 
-function saveInLocalStorage(localStorageKey, canvas) {
-  localStorage.removeItem(localStorageKey);
+function saveImgsInLocalStorage(arrImg, canvas, currentCount) {
+  const dataURI = canvas.toDataURL();
+  arrImg[currentCount] = dataURI;
+  localStorage.removeItem('piskelImg');
+  localStorage.setItem('piskelImg', JSON.stringify(arrImg));
 
-  const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-  localStorage.setItem(localStorageKey, dataURI);
+  // const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+  // localStorage.setItem(localStorageKey, dataURI);
 }
 
-export { RGBToHex, saveInLocalStorage };
+export { RGBToHex, saveImgsInLocalStorage };

@@ -80,7 +80,6 @@ export default class Tools {
   };
 
   pencilTool = targetTool => {
-    console.log(targetTool);
     if (targetTool === 'pencil') {
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);

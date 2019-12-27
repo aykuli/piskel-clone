@@ -3,47 +3,35 @@ import './frames.scss';
 export default class Frame {
   constructor() {
     this.frame = document.querySelectorAll('.frame');
-    console.log(this.frame);
   }
 
-  drawFrame(currentCount) {
-    // console.log('frame');
-    const frameCtx = this.frame[currentCount].getContext('2d');
+  drawFrame(arrImgs, currentCount) {
+    const frame = document.querySelectorAll('.frame');
+    if (arrImgs.length === 0) return;
+    const frameCtx = frame[currentCount].getContext('2d');
     const img = new Image();
-    const dataURI = localStorage.getItem(`piskelImg${currentCount}`);
-    img.src = `data:image/png;base64,${dataURI}`;
-    if (dataURI === null) {
-      frameCtx.clearRect(0, 0, this.frame[currentCount].width, this.frame[currentCount].height);
+
+    const dataURI = arrImgs[currentCount];
+    if (dataURI === null || dataURI === '') {
+      frameCtx.clearRect(0, 0, frame[currentCount].width, frame[currentCount].height);
     } else {
-      img.src = `data:image/png;base64,${dataURI}`;
+      img.src = arrImgs[currentCount];
       img.addEventListener('load', () => this.handleOnload({ target: img }, currentCount));
     }
   }
 
   handleOnload = ({ target: img }, currentCount) => {
-    let [currentWidth, currentHeight] = [this.frame[currentCount].width, this.frame[currentCount].height];
-    let [x, y] = [0, 0];
-    if (img.naturalWidth > img.naturalHeight) {
-      const scaleImg = img.naturalWidth / canvas.width;
-      currentWidth = this.frame[currentCount].width;
-      currentHeight = img.naturalHeight / scaleImg;
-      x = 0;
-      y = (this.frame[currentCount].height - currentHeight) / 2;
-    } else if (img.naturalWidth === img.naturalHeight) {
-      currentWidth = this.frame[currentCount].width;
-      currentHeight = this.frame[currentCount].height;
-    } else {
-      const scaleImg = img.naturalHeight / this.frame[currentCount].height;
-      currentWidth = img.naturalWidth / scaleImg;
-      currentHeight = this.frame[currentCount].height;
-      x = (this.frame[currentCount].width - currentWidth) / 2;
-      y = 0;
-    }
-    const frameCtx = this.frame[currentCount].getContext('2d');
-    frameCtx.drawImage(img, x, y, currentWidth, currentHeight);
+    const frame = document.querySelectorAll('.frame');
+
+    let [currentWidth, currentHeight] = [frame[currentCount].width, frame[currentCount].height];
+
+    currentWidth = frame[currentCount].width;
+    currentHeight = frame[currentCount].height;
+    const frameCtx = frame[currentCount].getContext('2d');
+    frameCtx.drawImage(img, 0, 0, currentWidth, currentHeight);
   };
 
-  frameHandler(e, canvas) {
+  frameHandler(e, canvas, arrImgs) {
     const ctx = canvas.getContext('2d');
     // highlighting current frame
     if (e.target.classList.contains('frame')) {
@@ -54,12 +42,11 @@ export default class Frame {
 
     let count = event.target.dataset.count;
 
-    console.log(count);
+    console.log('count: ', count);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (localStorage.getItem(`piskelImg${count}`) !== null) {
+    if (arrImgs[count]) {
       const img = new Image();
-      const dataURI = localStorage.getItem(`piskelImg${count}`);
-      img.src = `data:image/png;base64,${dataURI}`;
+      img.src = arrImgs[count];
       img.addEventListener('load', () => ctx.drawImage(img, 0, 0));
     }
     return count;
@@ -146,7 +133,8 @@ export default class Frame {
     });
   }
 
-  frameAdd(framesList) {
+  frameAdd(framesList, canvas, arrImgs) {
+    const ctx = canvas.getContext('2d');
     console.log('frameAdd');
     const len = framesList.children.length;
     const frameActive = document.querySelector('.frame__active');
@@ -156,6 +144,20 @@ export default class Frame {
     newFrame.innerHTML = `<canvas class="frame" data-count="${len}" width="100" height="100"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${len +
       1}</span>`;
     framesList.append(newFrame);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    arrImgs.push('');
+    localStorage.removeItem(`piskelImg`);
+    localStorage.setItem('piskelImg', JSON.stringify(arrImgs));
+
     return len;
+  }
+
+  frameDatasetCountSet(framesList) {
+    const len = framesList.children.length;
+    for (let i = 0; i < len; i++) {
+      framesList.children[i].children[0].dataset.count = i;
+      framesList.children[i].lastChild.innerText = i + 1;
+    }
   }
 }

@@ -27,5 +27,5 @@
 | 12:30 | 14:00 | 1.5h | Drag and drop theory. First try. |
 | 14:30 | 16:30 | 2h | Drag and drop logic |
 | 21:30 | 23:30 | 2h | Drag and drop logic and delete button on frames |
-| Dec 27 | | **5.5h** |  |
-| 19:30 | 14:00 | 1.5h | Drag and drop theory. First try. |
+| Dec 27 | | **2h** |  |
+| 22:00 | 23:30 | 2h | Frame add/del logic. Counting frames logic |
