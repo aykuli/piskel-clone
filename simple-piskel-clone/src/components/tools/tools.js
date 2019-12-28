@@ -1,5 +1,5 @@
 import './tools.scss';
-import { RGBToHex } from './utils';
+import { RGBToHex } from '../utils';
 
 export default class Tools {
   constructor(canvas, ctx, currentColor, size) {
@@ -77,9 +77,10 @@ export default class Tools {
     [this.x2, this.y2] = this.getXYCoors(e);
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
+    // this.saveInLocalStorage('piskelImg');
   };
 
-  pencilTool = targetTool => {
+  pencilTool(targetTool) {
     if (targetTool === 'pencil') {
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
@@ -92,7 +93,7 @@ export default class Tools {
       this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.removeEventListener('mouseup', this.drawMouseUp);
     }
-  };
+  }
 
   bucketTool(targetTool) {
     if (targetTool === 'bucket') {
@@ -156,6 +157,8 @@ export default class Tools {
       }
     }
     queue = [];
+
+    // this.saveInLocalStorage('piskelImg');
   };
 
   pickerTool(targetTool) {
@@ -183,6 +186,13 @@ export default class Tools {
     localStorage.removeItem('piskelTool');
     localStorage.setItem('piskelTool', targetTool);
   };
+
+  clearCanvas(piskelImg, currentCount) {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    piskelImg[currentCount] = '';
+    localStorage.removeItem(`piskelImg`);
+    localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
+  }
 
   chosenToolHightlight(targetTool) {
     const targetToolEl = document.querySelector(`#${targetTool}`);
@@ -216,7 +226,9 @@ export default class Tools {
   //       x = (this.canvas.width - currentWidth) / 2;
   //       y = 0;
   //     }
+  //     this.ctx.imageSmoothingEnabled = false;
   //     this.ctx.drawImage(img, x, y, currentWidth, currentHeight);
+  //     this.saveInLocalStorage('piskelImg');
   //   });
   // }
 

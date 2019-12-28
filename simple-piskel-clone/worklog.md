@@ -28,4 +28,6 @@
 | 14:30 | 16:30 | 2h | Drag and drop logic |
 | 21:30 | 23:30 | 2h | Drag and drop logic and delete button on frames |
 | Dec 27 | | **2h** |  |
-| 22:00 | 23:30 | 2h | Frame add/del logic. Counting frames logic |
+| 22:00 | 24:00 | 2h | Frame add/del logic. Counting frames logic |
+| Dec 28 | | **2h** |  |
+| 14:00 | 16:30 | 2.5h | Frames logic of correspond view, when delete/add frames |

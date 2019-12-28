@@ -1,16 +1,15 @@
 @import '../../sass/vars.scss';
 
-.draw {
+.canvas {
     flex-grow: 1;
+    &__wrap {
+        text-align: center;
+        
+        background-color: $grey;
+    }
 
-    &__canvas {
+    &__main {
         background-image: url(./img/canvas-bg.png);
         background-repeat: repeat;
-
-        &--wrap {
-            text-align: center;
-            
-            background-color: $grey;
-        }
     }
 }
