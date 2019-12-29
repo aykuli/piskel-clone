@@ -34,4 +34,4 @@
 | 22:00 | 23:00 | 1h | Animation via requestAnimationFrame |
 | Dec 28 | | **2h** |  |
 | 11:00 | 12:00 | 1h | Animation via requestAnimationFrame works! |
-| 12:00 | 13:35 | 1h | Animation fps changing: add input range and add EventListener for it |
+| 12:30 | 14:30 | 2h | fix bugs with animation eventListener and all of this logic |

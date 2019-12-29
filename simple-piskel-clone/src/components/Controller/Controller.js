@@ -24,54 +24,36 @@ export default class Controller {
     this.paintTools();
     this.swapWatch();
     this.keyboardShortCutHandler();
+    this.frameWatch();
 
-    this.view.canvas.addEventListener('mouseup', () => {
-      saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
-      frameDraw(this.piskelImg, this.currentCount);
-    });
-
-    this.fps = this.frameWatch();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas);
-    this.fpsWatch();
-    this.animate(i => {
-      drawOnCanvas(this.view.preview, this.piskelImg[i]);
-    }, this.piskelImg);
+
+    animate(
+      i => {
+        drawOnCanvas(this.view.preview, this.piskelImg[i]);
+      },
+      this.fpsWatch,
+      this.piskelImg,
+      this.currentCount
+    );
   }
 
-  fpsWatch() {
+  fpsWatch = () => {
     this.view.fps.addEventListener('change', () => {
       this.view.fpsValue.innerText = this.view.fps.value;
-      return this.view.fps.value;
+      this.fps = this.view.fps.value;
     });
-  }
-
-  animate(draw, piskelImg) {
-    let start = performance.now();
-    let i = 0;
-    let timeFraction = 0;
-    let prev = timeFraction;
-    requestAnimationFrame(function animate(time) {
-      let fps = document.querySelector('.fps__input').value;
-      let duration = 1000 / fps;
-      prev = timeFraction;
-      timeFraction = Math.abs(Math.floor((time - start) / duration));
-
-      if (timeFraction !== prev) {
-        draw(i); // draw frame
-        i++;
-        i %= piskelImg.length;
-      }
-      if (timeFraction >= 0) {
-        requestAnimationFrame(animate);
-      }
-    });
-  }
+    // localStorage.removeItem('piskelFps');
+    // localStorage.setItem('piskelFps', this.fps);
+    return this.fps;
+  };
 
   init() {
     // get drawing tool from Local Storage if exists
     if (localStorage.getItem('piskelTool') === null) {
       this.targetTool = 'pencil';
       this.tools.pencilTool(this.targetTool);
+      localStorage.setItem('piskelTool', this.targetTool);
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
       this.tools.chosenToolHightlight(this.targetTool);
@@ -117,6 +99,15 @@ export default class Controller {
     } else {
       localStorage.setItem('piskelSecondaryColor', this.view.secondaryColor.value);
     }
+
+    // get user fps
+    // if (localStorage.getItem('piskelFps') !== null) {
+    //   this.fps = localStorage.getItem('piskelFps');
+    // } else {
+    //   this.view.fpsValue.innerText = this.view.fps.value;
+    //   this.fps = this.view.fps.value;
+    //   localStorage.setItem('piskelFps', this.fps);
+    // }
 
     // console.log("localStorage.getItem('piskelCloneResolution'): ", localStorage.getItem('piskelCloneResolution'));
     // if (localStorage.getItem('piskelCloneResolution') !== null) {
@@ -164,7 +155,18 @@ export default class Controller {
     });
 
     this.view.frameAddBtn.addEventListener('click', () => {
+      console.log('frameAdd');
       this.currentCount = frameAdd(this.view.framesList, this.view.canvas, this.piskelImg);
+    });
+
+    this.view.canvas.addEventListener('mouseup', () => {
+      saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
+      frameDraw(this.piskelImg, this.currentCount);
+    });
+
+    this.view.canvas.addEventListener('mouseleave', () => {
+      saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
+      frameDraw(this.piskelImg, this.currentCount);
     });
   }
 

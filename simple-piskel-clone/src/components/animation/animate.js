@@ -1,16 +1,19 @@
 function animate(draw, fpsWatch, piskelImg, currentCount) {
-  // console.log(currentCount);
-  // let start = performance.now();
-  // let i = 0;
-  // let timeFraction = 0;
-  // let prev = timeFraction;
+  console.log(currentCount);
+  let start = performance.now();
+  let i = 0;
+  let timeFraction = 0;
+  let prev = timeFraction;
   // requestAnimationFrame(function animate(time) {
+  //   console.log('fpsWatch: ', fpsWatch());
   //   let fps = fpsWatch();
-  //   console.log(fps);
   //   if (+fps === 0) {
   //     console.log('fps === 0');
   //     console.log(currentCount);
-  //     draw(currentCount);
+  //     i = currentCount;
+  //     // requestAnimationFrame(animate);
+  //     draw(i);
+  //     fps = fpsWatch();
   //   } else {
   //     let duration = 1000 / fps;
   //     prev = timeFraction;
@@ -20,19 +23,12 @@ function animate(draw, fpsWatch, piskelImg, currentCount) {
   //       i++;
   //       i %= piskelImg.length;
   //     }
-  //     if (timeFraction >= 0) {
-  //       requestAnimationFrame(animate);
-  //     }
+  //   }
+  //   if (timeFraction >= 0 && +fps > 0) {
+  //     console.log(fps);
+  //     requestAnimationFrame(animate);
   //   }
   // });
 }
-
-// fpsWatch(fpsInput,fpsOnPage) {
-//   fpsInput.addEventListener('change', () => {
-//     fpsOnPage.innerText = fpsInput.value;
-//     return fpsInput.value;
-//   });
-//   return fps;
-// }
 
 export { animate };
