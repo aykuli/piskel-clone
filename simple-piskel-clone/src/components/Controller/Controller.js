@@ -30,6 +30,35 @@ export default class Controller {
 
     this.frameWatch();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas);
+
+    this.animate({
+      duration: 1000,
+      draw: i => {
+        drawOnCanvas(this.view.preview, this.piskelImg[i]);
+      },
+    });
+  }
+
+  animate({ draw, duration }) {
+    let start = performance.now();
+    let i = 0;
+    let timeFraction = 0;
+    let prev = timeFraction;
+    const piskelImg = this.piskelImg;
+    requestAnimationFrame(function animate(time) {
+      // timeFraction изменяется от 0 до 1
+      prev = timeFraction;
+      timeFraction = Math.abs(Math.floor((time - start) / duration));
+
+      if (timeFraction !== prev) {
+        draw(i); // отрисовать её
+        i++;
+        i %= piskelImg.length;
+      }
+      if (timeFraction >= 0) {
+        requestAnimationFrame(animate);
+      }
+    });
   }
 
   init() {

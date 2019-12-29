@@ -4,6 +4,7 @@ function drawOnCanvas(canvas, dataURI) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const img = new Image();
+  if (dataURI === '') return;
   img.src = dataURI;
   img.addEventListener('load', () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height));
 }
@@ -43,7 +44,7 @@ function frameHandler(e, canvas, arrImgs, drawOnCanvas) {
   }
 
   const count = event.target.dataset.count;
-  if (arrImgs[count]) {
+  if (arrImgs[count] !== undefined) {
     drawOnCanvas(canvas, arrImgs[count]);
   }
   return count;
@@ -140,6 +141,7 @@ function frameAdd(framesList, canvas, arrImgs) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   arrImgs.push('');
+  console.log('arrImgs: ', arrImgs);
   localStorage.removeItem(`piskelImg`);
   localStorage.setItem('piskelImg', JSON.stringify(arrImgs));
 

@@ -11,6 +11,8 @@ export default class View {
 
     this.framesList = document.querySelector('.frames__list');
     this.frameAddBtn = document.querySelector('.frames__btn--add');
+    this.preview = document.querySelector('#preview');
+    console.log(this.preview);
   }
 
   renderFrames(arrImg) {
