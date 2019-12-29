@@ -1,4 +1,9 @@
+@import '../../sass/vars';
+
 .preview {
+    &__wrap {
+        background-color: $grey;
+    }
     &__canvas {
         background-image: url(./img/canvas-bg.png);
         background-repeat: repeat;

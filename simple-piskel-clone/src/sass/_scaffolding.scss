@@ -116,3 +116,24 @@ body {
         top: 17px;
     }
 }
+
+.fps {
+    &__wrap {
+        display: flex;
+    }
+
+    &__value {
+        width: 50px;
+        margin: 0;
+        margin-right: 5px;
+        padding: 5px;
+
+        text-align: right;
+        font-size: 14px;
+        line-height: 20px;
+        color: $grey-light;
+    }
+    &__input {
+        cursor: pointer;
+    }
+}

@@ -12,7 +12,9 @@ export default class View {
     this.framesList = document.querySelector('.frames__list');
     this.frameAddBtn = document.querySelector('.frames__btn--add');
     this.preview = document.querySelector('#preview');
-    console.log(this.preview);
+    this.fps = document.querySelector('#fps');
+    this.fpsValue = this.fps.parentNode.children[0].children[0];
+    console.log(this.fpsValue);
   }
 
   renderFrames(arrImg) {

@@ -58,8 +58,14 @@
             </div>
             <div class="column column--right">
                 <div class="preview__wrap">
-                    <div class="preview__wrap">
-                        <canvas id="preview" class="preview__canvas" width="200" height="200">Your browser doesn't support canvas</canvas>
+                    <canvas id="preview" class="preview__canvas" width="200" height="200">Your browser doesn't support canvas</canvas>                        
+                    <div class="fps__wrap">
+                        <p class="fps__value">
+                            <span>24</span>
+                            <span>FPS</span>
+                        </p>
+                        <input class="fps__input" type="range" id="fps" name="fps-input" min="0" max="24">
+                        <label class="visually-hidden" for="fps-input">Set FPS for drawn animation</label>
                     </div>
                 </div>
             </div>

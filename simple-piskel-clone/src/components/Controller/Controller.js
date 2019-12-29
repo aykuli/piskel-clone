@@ -8,6 +8,7 @@ import {
   frameAdd,
   frameDatasetCountSet,
 } from '../frames/frame';
+import { animate } from '../animation/animate';
 
 export default class Controller {
   constructor(view, relativeSize) {
@@ -15,6 +16,7 @@ export default class Controller {
     this.size = relativeSize;
     this.currentCount = 0;
     this.piskelImg = [];
+    this.fps = 24;
 
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.size);
 
@@ -28,30 +30,34 @@ export default class Controller {
       frameDraw(this.piskelImg, this.currentCount);
     });
 
-    this.frameWatch();
+    this.fps = this.frameWatch();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas);
+    this.fpsWatch();
+    this.animate(i => {
+      drawOnCanvas(this.view.preview, this.piskelImg[i]);
+    }, this.piskelImg);
+  }
 
-    this.animate({
-      duration: 1000,
-      draw: i => {
-        drawOnCanvas(this.view.preview, this.piskelImg[i]);
-      },
+  fpsWatch() {
+    this.view.fps.addEventListener('change', () => {
+      this.view.fpsValue.innerText = this.view.fps.value;
+      return this.view.fps.value;
     });
   }
 
-  animate({ draw, duration }) {
+  animate(draw, piskelImg) {
     let start = performance.now();
     let i = 0;
     let timeFraction = 0;
     let prev = timeFraction;
-    const piskelImg = this.piskelImg;
     requestAnimationFrame(function animate(time) {
-      // timeFraction изменяется от 0 до 1
+      let fps = document.querySelector('.fps__input').value;
+      let duration = 1000 / fps;
       prev = timeFraction;
       timeFraction = Math.abs(Math.floor((time - start) / duration));
 
       if (timeFraction !== prev) {
-        draw(i); // отрисовать её
+        draw(i); // draw frame
         i++;
         i %= piskelImg.length;
       }
