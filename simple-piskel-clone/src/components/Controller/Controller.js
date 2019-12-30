@@ -13,20 +13,24 @@ import { animate } from '../animation/animate';
 export default class Controller {
   constructor(view, relativeSize) {
     this.view = view;
-    this.size = relativeSize;
+    this.pixelSize = relativeSize;
     this.currentCount = 0;
     this.piskelImg = [];
     this.fps = 0;
 
-    this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.size);
+    this.canvasResolutioWatch();
+    this.canvasSizeWatch();
+    this.pixelSize = 128;
+    console.log('this.pixelSize: ', this.pixelSize);
+
+    console.log('this.pixelSize: ', this.pixelSize);
+    this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.pixelSize);
 
     this.init();
     this.paintTools(); // tools eventListener
     this.swapWatch(); // color swap eventListener
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
-    this.canvasResolutioWatch();
-    this.canvasSizeWatch();
 
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
     animate(
@@ -40,24 +44,25 @@ export default class Controller {
   }
 
   init() {
-    console.log('\ninit');
-    console.log(
-      'начальное состояние localStorage:\n localStorage.getItem(piskelCounter): ',
-      localStorage.getItem('piskelCounter'),
-      '\nlocalStorage.getItem(piskelImg): ',
-      localStorage.getItem('piskelImg'),
-      '\nlocalStorage.getItem(piskelFps): ',
-      localStorage.getItem('piskelFps')
-    );
+    // console.log('\ninit');
+    // console.log(
+    //   'начальное состояние localStorage:\n localStorage.getItem(piskelCounter): ',
+    //   localStorage.getItem('piskelCounter'),
+    //   '\nlocalStorage.getItem(piskelImg): ',
+    //   localStorage.getItem('piskelImg'),
+    //   '\nlocalStorage.getItem(piskelFps): ',
+    //   localStorage.getItem('piskelFps')
+    // );
     // get drawing tool from Local Storage if exists
     if (localStorage.getItem('piskelTool') === null) {
       this.targetTool = 'pencil';
-      this.tools.pencilTool(this.targetTool);
+      this.tools.pencilTool(this.targetTool, this.pixelSize);
       localStorage.setItem('piskelTool', this.targetTool);
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
       this.tools.chosenToolHightlight(this.targetTool);
-      this.tools.toolHandler(this.targetTool);
+      console.log(this.piskelImg);
+      this.tools.toolHandler(this.targetTool, this.pixelSize);
     }
 
     this.currentCount =
@@ -126,31 +131,27 @@ export default class Controller {
     //   const target = document.querySelector(`#res${this.size}`);
     //   target.classList.add('res-active');
     // }
-    console.log(
-      'состояние localStorage после инициализации:\n localStorage.getItem(piskelCounter): ',
-      localStorage.getItem('piskelCounter'),
-      '\nlocalStorage.getItem(piskelImg): ',
-      localStorage.getItem('piskelImg'),
-      '\nlocalStorage.getItem(piskelFps): ',
-      localStorage.getItem('piskelFps')
-    );
-    console.log(
-      'начальное состояние всех переменных:\n this.currentCount: ',
-      this.currentCount,
-      '\nthis.piskelImg: ',
-      this.piskelImg,
-      '\nthis.fps: ',
-      this.fps
-    );
+    // console.log(
+    //   'состояние localStorage после инициализации:\n localStorage.getItem(piskelCounter): ',
+    //   localStorage.getItem('piskelCounter'),
+    //   '\nlocalStorage.getItem(piskelImg): ',
+    //   localStorage.getItem('piskelImg'),
+    //   '\nlocalStorage.getItem(piskelFps): ',
+    //   localStorage.getItem('piskelFps')
+    // );
+    // console.log(
+    //   'начальное состояние всех переменных:\n this.currentCount: ',
+    //   this.currentCount,
+    //   '\nthis.piskelImg: ',
+    //   this.piskelImg,
+    //   '\nthis.fps: ',
+    //   this.fps
+    // );
   }
 
   canvasSizeWatch() {
-    const canvasWrapHeight = this.view.canvas.parentNode.offsetHeight;
-    const canvasWrapWidth = this.view.canvas.parentNode.offsetWidth;
-    console.log('canvasWrapWidth: ', canvasWrapWidth, 'canvasWrapHeight: ', canvasWrapHeight);
-    console.log(this.view.canvas);
-    this.view.canvas.style.width = (canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight) + 'px';
-    this.view.canvas.style.height = (canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight) + 'px';
+    this.view.setCanvasSize();
+    window.addEventListener('resize', e => this.view.setCanvasSize());
   }
 
   canvasResolutioWatch() {
@@ -250,7 +251,7 @@ export default class Controller {
           break;
         default:
           this.tools.chosenToolHightlight(this.targetTool);
-          this.tools.toolHandler(this.targetTool);
+          this.tools.toolHandler(this.targetTool, this.pixelSize);
       }
     });
   }
@@ -285,7 +286,7 @@ export default class Controller {
 
       if (this.targetTool !== 'empty') {
         this.tools.chosenToolHightlight(this.targetTool);
-        this.tools.toolHandler(this.targetTool);
+        this.tools.toolHandler(this.targetTool, this.pixelSize);
       }
     });
   }

@@ -8,18 +8,12 @@ export default class Tools {
     this.isDrawing = false;
     this.currentColor = currentColor;
     this.size = size;
+    console.log(size);
 
     if (canvas == null) {
       throw new Error('there is no canvas');
     }
   }
-
-  // saveInLocalStorage(localStorageKey) {
-  //   localStorage.removeItem(localStorageKey);
-
-  //   const dataURI = this.canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-  //   localStorage.setItem(localStorageKey, dataURI);
-  // }
 
   plot(x, y) {
     this.ctx.fillStyle = this.currentColor.value;
@@ -55,7 +49,10 @@ export default class Tools {
   };
 
   getXYCoors(e) {
-    return [Math.ceil(e.offsetX / this.size), Math.ceil(e.offsetY / this.size)];
+    console.log('e.offsetX: ', e.offsetX);
+    console.log('e.offsetY: ', e.offsetY);
+    console.log(this.size);
+    return [Math.floor((e.offsetX / 500) * this.size), Math.floor((e.offsetY / 500) * this.size)];
   }
 
   draw = e => {
@@ -77,10 +74,11 @@ export default class Tools {
     [this.x2, this.y2] = this.getXYCoors(e);
     this.bresenham(this.x1, this.x2, this.y1, this.y2);
     this.isDrawing = false;
-    // this.saveInLocalStorage('piskelImg');
   };
 
   pencilTool(targetTool) {
+    // this.size = size;
+    console.log('pencilTool: this.size: ', this.size);
     if (targetTool === 'pencil') {
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
@@ -121,7 +119,7 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
       ) {
         queue.push([x + 1, y]);
-        this.ctx.fillRect(x + 1, y, 1, 1);
+        this.ctx.fillRect((x + 1)(y + 1), 1, 1);
       }
 
       if (
@@ -130,7 +128,7 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
       ) {
         queue.push([x - 1, y]);
-        this.ctx.fillRect(x - 1, y, 1, 1);
+        this.ctx.fillRect((x - 1) * this.size, (y - 1) * this.size, this.size, this.size);
       }
 
       if (
@@ -139,7 +137,8 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
       ) {
         queue.push([x, y + 1]);
-        this.ctx.fillRect(x, y + 1, 1, 1);
+        // this.ctx.fillRect(x, y + 1, 1, 1);
+        this.ctx.fillRect(x * this.size, (y + 1) * this.size, this.size, this.size);
       }
 
       if (
@@ -148,7 +147,8 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
       ) {
         queue.push([x, y - 1]);
-        this.ctx.fillRect(x, y - 1, 1, 1);
+        // this.ctx.fillRect(x, y - 1, 1, 1);
+        this.ctx.fillRect(x * this.size, (y - 1) * this.size, this.size, this.size);
       }
 
       queue.shift(0);
@@ -157,8 +157,6 @@ export default class Tools {
       }
     }
     queue = [];
-
-    // this.saveInLocalStorage('piskelImg');
   };
 
   pickerTool(targetTool) {
@@ -179,6 +177,7 @@ export default class Tools {
   };
 
   toolHandler = targetTool => {
+    // this.size = size;
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);

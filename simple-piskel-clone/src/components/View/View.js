@@ -16,11 +16,12 @@ export default class View {
     this.fpsValue = this.fps.parentNode.children[0].children[0];
 
     this.resBtns = document.querySelector('.canvas-resolutions__list');
+
+    this.mainColumn = document.querySelector('.column--main');
   }
 
   renderFrames(arrImg, currentCount) {
     const len = arrImg.length;
-    console.log('renderFrames, len:', len);
     for (let i = 0; i < len; i++) {
       const newFrame = document.createElement('LI');
       newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
@@ -29,5 +30,12 @@ export default class View {
       newFrame.className = (i === +currentCount) ? 'frame__item frame__active' : 'frame__item';
       this.framesList.append(newFrame);
     }
+  }
+  setCanvasSize() {
+    const canvasWrapHeight = this.mainColumn.offsetHeight;
+    const canvasWrapWidth = this.mainColumn.offsetWidth;
+    const size = canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight;
+    this.canvas.parentNode.style.width = `${size}px`;
+    this.canvas.parentNode.style.height = `${size}px`;
   }
 }

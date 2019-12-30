@@ -7,8 +7,7 @@ function animate(draw, fpsInput, fpsDOM, piskelImg) {
   let animReqId = requestAnimationFrame(function animate(time) {
     let fps = localStorage.getItem('piskelFps');
     let duration;
-    // debugger;
-    fpsInput.addEventListener('change', () => {
+    fpsInput.addEventListener('input', () => {
       fpsDOM.innerText = fpsInput.value;
       fps = fpsInput.value;
       localStorage.removeItem('piskelFps');
