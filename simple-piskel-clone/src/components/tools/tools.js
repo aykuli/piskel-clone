@@ -49,10 +49,8 @@ export default class Tools {
   };
 
   getXYCoors(e) {
-    console.log('e.offsetX: ', e.offsetX);
-    console.log('e.offsetY: ', e.offsetY);
-    console.log(this.size);
-    return [Math.floor((e.offsetX / 500) * this.size), Math.floor((e.offsetY / 500) * this.size)];
+    const canvasWidth = canvas.parentNode.style.width.slice(0, -2);
+    return [Math.floor((e.offsetX / canvasWidth) * this.size), Math.floor((e.offsetY / canvasWidth) * this.size)];
   }
 
   draw = e => {

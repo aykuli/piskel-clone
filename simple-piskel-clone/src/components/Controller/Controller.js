@@ -21,9 +21,6 @@ export default class Controller {
     this.canvasResolutioWatch();
     this.canvasSizeWatch();
     this.pixelSize = 128;
-    console.log('this.pixelSize: ', this.pixelSize);
-
-    console.log('this.pixelSize: ', this.pixelSize);
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.pixelSize);
 
     this.init();

@@ -35,7 +35,8 @@
 | Dec 29 | | **3h** |  |
 | 11:00 | 12:00 | 1h | Animation via requestAnimationFrame works! |
 | 12:30 | 14:30 | 2h | fix bugs with animation eventListener and all of this logic |
-| Dec 30 | | **3h** |  |
+| Dec 30 | | **5.5h** |  |
 | 11:30 | 12:00 | 1h | Animation via requestAnimationFrame works! |
 | 12:30 | 14:00 | 1.5h | Battle with animation bugs. Unfortunately, without result |
 | 21:00 | 24:00 | 3h | Canvas user defined size: css/html |
+| 01:00 | 02:00 | 1h | Pencil draw with custom canvas size |
