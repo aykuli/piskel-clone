@@ -14,7 +14,8 @@ export default class View {
     this.preview = document.querySelector('#preview');
     this.fps = document.querySelector('#fps');
     this.fpsValue = this.fps.parentNode.children[0].children[0];
-    console.log(this.fpsValue);
+
+    this.resBtns = document.querySelector('.canvas-resolutions__list');
   }
 
   renderFrames(arrImg, currentCount) {

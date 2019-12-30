@@ -51,9 +51,9 @@
                 <ul class="frames__list"></ul>
                 <button class="frames__btn--add">Add new frame</button>
             </div>
-            <div class="canvas">
+            <div class="column--main">
                 <div class="canvas__wrap">
-                    <canvas id="canvas" class="canvas__main" width="128" height="128">Your browser doesn't support canvas</canvas>
+                    <canvas id="canvas" class="canvas">Your browser doesn't support canvas</canvas>
                 </div>
             </div>
             <div class="column column--right">
@@ -67,6 +67,21 @@
                         <input class="fps__input" type="range" id="fps" name="fps-input" min="0" max="24">
                         <label class="visually-hidden" for="fps-input">Set FPS for drawn animation</label>
                     </div>
+                </div>
+                
+                <div class="canvas-resolutions">
+                    <h3 class="canvas-resolutions__title">Resize</h3>
+                    <ul class="canvas-resolutions__list">
+                        <li class="resolution">
+                            <button class="resolution__btn resolution__btn--active resolution--res36">36x36</button>
+                        </li>
+                        <li class="resolution">
+                            <button class="resolution__btn resolution--res64">64x64</button>
+                        </li>
+                        <li class="resolution">
+                            <button class="resolution__btn resolution--res128">128x128</button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </main>

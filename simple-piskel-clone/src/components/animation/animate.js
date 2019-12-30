@@ -1,4 +1,5 @@
 function animate(draw, fpsInput, fpsDOM, piskelImg) {
+  if (piskelImg.length === 0) return;
   let start = performance.now();
   let i = 0;
   let timeFraction = 0;
@@ -23,10 +24,8 @@ function animate(draw, fpsInput, fpsDOM, piskelImg) {
           i %= piskelImg.length;
         }
         if (timeFraction >= 0) {
-          // console.log('animReqId in input chenge before: ', animReqId);
           cancelAnimationFrame(animReqId - 1);
           animReqId = requestAnimationFrame(animate);
-          // console.log('animReqId in input chenge: ', animReqId);
         }
       } else {
         cancelAnimationFrame(animReqId);
@@ -45,10 +44,8 @@ function animate(draw, fpsInput, fpsDOM, piskelImg) {
         i %= piskelImg.length;
       }
       if (timeFraction >= 0) {
-        // console.log('animReqId in output chenge before: ', animReqId);
         cancelAnimationFrame(animReqId);
         animReqId = requestAnimationFrame(animate);
-        // console.log('animReqId in output chenge: ', animReqId);
       }
     }
   });

@@ -21,12 +21,14 @@ export default class Controller {
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.size);
 
     this.init();
-    this.paintTools();
-    this.swapWatch();
-    this.keyboardShortCutHandler();
-    this.frameWatch();
+    this.paintTools(); // tools eventListener
+    this.swapWatch(); // color swap eventListener
+    this.keyboardShortCutHandler(); // keyboard eventListener
+    this.frameWatch(); // frame active eventListener
+    this.canvasResolutioWatch();
+    this.canvasSizeWatch();
 
-    frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas);
+    frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
     animate(
       i => {
         drawOnCanvas(this.view.preview, this.piskelImg[i]);
@@ -39,6 +41,14 @@ export default class Controller {
 
   init() {
     console.log('\ninit');
+    console.log(
+      'начальное состояние localStorage:\n localStorage.getItem(piskelCounter): ',
+      localStorage.getItem('piskelCounter'),
+      '\nlocalStorage.getItem(piskelImg): ',
+      localStorage.getItem('piskelImg'),
+      '\nlocalStorage.getItem(piskelFps): ',
+      localStorage.getItem('piskelFps')
+    );
     // get drawing tool from Local Storage if exists
     if (localStorage.getItem('piskelTool') === null) {
       this.targetTool = 'pencil';
@@ -55,25 +65,20 @@ export default class Controller {
     // get image from Local Storage if exists
     if (localStorage.getItem('piskelImg') !== null) {
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
+      console.log(this.piskelImg);
       this.view.renderFrames(this.piskelImg, this.currentCount);
 
       for (let i = 0; i < this.piskelImg.length; i++) {
         const frame = this.view.framesList.children[i].children[0];
-        const ctx = frame.getContext('2d');
-
-        const img = new Image();
-        img.src = this.piskelImg[i];
-        img.addEventListener('load', () => ctx.drawImage(img, 0, 0, frame.width, frame.height));
+        drawOnCanvas(frame, this.piskelImg[i]);
       }
-
-      const img = new Image();
-      img.src = this.piskelImg[this.currentCount];
-      img.addEventListener('load', () => this.view.ctx.drawImage(img, 0, 0));
+      drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
     } else {
       const newFrame = document.createElement('LI');
       newFrame.className = 'frame__item frame__active';
       newFrame.innerHTML = `<canvas class="frame" data-count="${0}" width="100" height="100" draggable="true"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${1}</span>`;
       this.view.framesList.append(newFrame);
+      this.piskelImg.push('');
     }
 
     // get user colors from Local Storage if exists
@@ -92,14 +97,12 @@ export default class Controller {
     if (localStorage.getItem('piskelFps') !== null) {
       this.fps = localStorage.getItem('piskelFps');
       this.view.fps.value = +localStorage.getItem('piskelFps');
-      console.log(this.fps);
     } else {
       this.fps = this.view.fps.value;
       localStorage.setItem('piskelFps', this.fps);
     }
     this.view.fpsValue.innerText = localStorage.getItem('piskelFps');
-
-    if (+this.fps === 0) {
+    if (+this.fps === 0 || this.piskelImg.length !== 0) {
       drawOnCanvas(this.view.preview, this.piskelImg[this.currentCount]);
     } else {
       animate(
@@ -123,6 +126,41 @@ export default class Controller {
     //   const target = document.querySelector(`#res${this.size}`);
     //   target.classList.add('res-active');
     // }
+    console.log(
+      'состояние localStorage после инициализации:\n localStorage.getItem(piskelCounter): ',
+      localStorage.getItem('piskelCounter'),
+      '\nlocalStorage.getItem(piskelImg): ',
+      localStorage.getItem('piskelImg'),
+      '\nlocalStorage.getItem(piskelFps): ',
+      localStorage.getItem('piskelFps')
+    );
+    console.log(
+      'начальное состояние всех переменных:\n this.currentCount: ',
+      this.currentCount,
+      '\nthis.piskelImg: ',
+      this.piskelImg,
+      '\nthis.fps: ',
+      this.fps
+    );
+  }
+
+  canvasSizeWatch() {
+    const canvasWrapHeight = this.view.canvas.parentNode.offsetHeight;
+    const canvasWrapWidth = this.view.canvas.parentNode.offsetWidth;
+    console.log('canvasWrapWidth: ', canvasWrapWidth, 'canvasWrapHeight: ', canvasWrapHeight);
+    console.log(this.view.canvas);
+    this.view.canvas.style.width = (canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight) + 'px';
+    this.view.canvas.style.height = (canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight) + 'px';
+  }
+
+  canvasResolutioWatch() {
+    this.view.resBtns.addEventListener('click', e => {
+      if (e.target.tagName === 'BUTTON') {
+        const btnActive = document.querySelector('.resolution__btn--active');
+        btnActive.classList.remove('resolution__btn--active');
+        e.target.classList.add('resolution__btn--active');
+      }
+    });
   }
 
   frameWatch() {

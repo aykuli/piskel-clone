@@ -37,12 +37,25 @@ body {
 
 .main {
     display: flex;
+    justify-content: space-between;
     height: 100%;
     margin: 0 60px 0 110px;
 }
 
 .column {
+    &--main {
+        position: absolute;
+        top: 70px;
+        left: 235px;
+        width: calc(100% - 500px);
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        height: 100%;
+    }
+
     &--right {
+        width: 200px;
         margin-left: 10px;
     }
 }
@@ -59,14 +72,6 @@ body {
         font-size: 14px;
         line-height: 14px;
         color: rgba(0, 0, 0, 0.7);
-    }
-}
-
-.column {
-    &--right {
-        width: 200px;
-
-        outline: 1px solid red;
     }
 }
 

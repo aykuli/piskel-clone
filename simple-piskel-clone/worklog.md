@@ -38,3 +38,4 @@
 | Dec 30 | | **3h** |  |
 | 11:30 | 12:00 | 1h | Animation via requestAnimationFrame works! |
 | 12:30 | 14:00 | 1.5h | Battle with animation bugs. Unfortunately, without result |
+| 21:00 | 14:00 | 1.5h | Battle with animation bugs. Unfortunately, without result |
