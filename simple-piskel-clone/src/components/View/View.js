@@ -17,13 +17,15 @@ export default class View {
     console.log(this.fpsValue);
   }
 
-  renderFrames(arrImg) {
+  renderFrames(arrImg, currentCount) {
     const len = arrImg.length;
+    console.log('renderFrames, len:', len);
     for (let i = 0; i < len; i++) {
       const newFrame = document.createElement('LI');
-      newFrame.className = i === 0 ? 'frame__item frame__active' : 'frame__item';
       newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
         1}</span>`;
+      // prettier-ignore
+      newFrame.className = (i === +currentCount) ? 'frame__item frame__active' : 'frame__item';
       this.framesList.append(newFrame);
     }
   }

@@ -35,7 +35,7 @@ function frameDraw(arrImgs, currentCount) {
   }
 }
 
-function frameHandler(e, canvas, arrImgs, drawOnCanvas) {
+function frameHandler(e, canvas, arrImgs, drawOnCanvas, preview, fps) {
   // highlighting current frame
   if (e.target.classList.contains('frame')) {
     const frameActive = document.querySelector('.frame__active');
@@ -46,6 +46,7 @@ function frameHandler(e, canvas, arrImgs, drawOnCanvas) {
   const count = event.target.dataset.count;
   if (arrImgs[count] !== undefined) {
     drawOnCanvas(canvas, arrImgs[count]);
+    if (+fps === 0) drawOnCanvas(preview, arrImgs[count]);
   }
   return count;
 }

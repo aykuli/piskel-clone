@@ -32,6 +32,9 @@
 | Dec 28 | | **3.5h** |  |
 | 14:00 | 16:30 | 2.5h | Frames logic of correspond view, when delete/add frames |
 | 22:00 | 23:00 | 1h | Animation via requestAnimationFrame |
-| Dec 28 | | **2h** |  |
+| Dec 29 | | **3h** |  |
 | 11:00 | 12:00 | 1h | Animation via requestAnimationFrame works! |
 | 12:30 | 14:30 | 2h | fix bugs with animation eventListener and all of this logic |
+| Dec 30 | | **3h** |  |
+| 11:30 | 12:00 | 1h | Animation via requestAnimationFrame works! |
+| 12:30 | 14:00 | 1.5h | Battle with animation bugs. Unfortunately, without result |

@@ -16,7 +16,7 @@ export default class Controller {
     this.size = relativeSize;
     this.currentCount = 0;
     this.piskelImg = [];
-    this.fps = 24;
+    this.fps = 0;
 
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.size);
 
@@ -27,28 +27,18 @@ export default class Controller {
     this.frameWatch();
 
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas);
-
     animate(
       i => {
         drawOnCanvas(this.view.preview, this.piskelImg[i]);
       },
-      this.fpsWatch,
-      this.piskelImg,
-      this.currentCount
+      this.view.fps,
+      this.view.fpsValue,
+      this.piskelImg
     );
   }
 
-  fpsWatch = () => {
-    this.view.fps.addEventListener('change', () => {
-      this.view.fpsValue.innerText = this.view.fps.value;
-      this.fps = this.view.fps.value;
-    });
-    // localStorage.removeItem('piskelFps');
-    // localStorage.setItem('piskelFps', this.fps);
-    return this.fps;
-  };
-
   init() {
+    console.log('\ninit');
     // get drawing tool from Local Storage if exists
     if (localStorage.getItem('piskelTool') === null) {
       this.targetTool = 'pencil';
@@ -62,12 +52,10 @@ export default class Controller {
 
     this.currentCount =
       localStorage.getItem('piskelCounter') !== null ? localStorage.getItem('piskelCounter') : this.currentCount;
-
     // get image from Local Storage if exists
     if (localStorage.getItem('piskelImg') !== null) {
-      console.log(localStorage.getItem('piskelImg'));
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
-      this.view.renderFrames(this.piskelImg);
+      this.view.renderFrames(this.piskelImg, this.currentCount);
 
       for (let i = 0; i < this.piskelImg.length; i++) {
         const frame = this.view.framesList.children[i].children[0];
@@ -100,14 +88,29 @@ export default class Controller {
       localStorage.setItem('piskelSecondaryColor', this.view.secondaryColor.value);
     }
 
-    // get user fps
-    // if (localStorage.getItem('piskelFps') !== null) {
-    //   this.fps = localStorage.getItem('piskelFps');
-    // } else {
-    //   this.view.fpsValue.innerText = this.view.fps.value;
-    //   this.fps = this.view.fps.value;
-    //   localStorage.setItem('piskelFps', this.fps);
-    // }
+    // get user fps from localStorage
+    if (localStorage.getItem('piskelFps') !== null) {
+      this.fps = localStorage.getItem('piskelFps');
+      this.view.fps.value = +localStorage.getItem('piskelFps');
+      console.log(this.fps);
+    } else {
+      this.fps = this.view.fps.value;
+      localStorage.setItem('piskelFps', this.fps);
+    }
+    this.view.fpsValue.innerText = localStorage.getItem('piskelFps');
+
+    if (+this.fps === 0) {
+      drawOnCanvas(this.view.preview, this.piskelImg[this.currentCount]);
+    } else {
+      animate(
+        i => {
+          drawOnCanvas(this.view.preview, this.piskelImg[i]);
+        },
+        this.view.fps,
+        this.view.fpsValue,
+        this.piskelImg
+      );
+    }
 
     // console.log("localStorage.getItem('piskelCloneResolution'): ", localStorage.getItem('piskelCloneResolution'));
     // if (localStorage.getItem('piskelCloneResolution') !== null) {
@@ -150,7 +153,18 @@ export default class Controller {
           }
           break;
         default:
-          this.currentCount = frameHandler(e, this.view.canvas, this.piskelImg, drawOnCanvas);
+          console.log('this.fps in frameWatch: ', this.fps);
+          this.currentCount = frameHandler(
+            e,
+            this.view.canvas,
+            this.piskelImg,
+            drawOnCanvas,
+            this.view.preview,
+            this.fps
+          );
+          console.log('this.currentCount in frameWatch: ', this.currentCount);
+          localStorage.removeItem('piskelCounter');
+          localStorage.setItem('piskelCounter', this.currentCount);
       }
     });
 

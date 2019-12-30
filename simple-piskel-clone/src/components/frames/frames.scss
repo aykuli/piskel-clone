@@ -102,8 +102,6 @@
             opacity: 0;
             
             &:hover {
-                box-shadow: 2px 2px 7px $green-bloom,
-                            -2px -2px 7px $green-bloom;
                 opacity: 1;
                 outline: none;
             }
