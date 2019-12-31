@@ -145,6 +145,8 @@ export default class Controller {
         localStorage.removeItem('piskelPixelSize');
         localStorage.setItem('piskelPixelSize', this.pixelSize);
 
+        console.log('canvasResolutioWatch this.pixelSize: ', this.pixelSize);
+        // [this.view.canvas.width, this.view.canvas.height] = [e.target.dataset.size, e.target.dataset.size];
         drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
       }
     });
@@ -246,11 +248,8 @@ export default class Controller {
     this.view.penSizes.addEventListener('click', e => {
       if (e.target.tagName === 'LI') {
         this.view.highlightTarget(e.target, 'pen-size--active');
-
-        const size = e.target.dataset.size;
         localStorage.removeItem('piskelPenSize');
-        localStorage.setItem('piskelPenSize', size);
-        this.pixelSize = size;
+        localStorage.setItem('piskelPenSize', e.target.dataset.size);
       }
     });
   }

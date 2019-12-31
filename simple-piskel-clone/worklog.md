@@ -42,3 +42,4 @@
 | 01:00 | 02:00 | 1h | Pencil draw with custom canvas size |
 | Dec 31 | | **5.5h** |  |
 | 12:00 | 14:00 | 2h | Pen size handler |
+| 18:00 | 18:30 | .5h | Canvas size handler |

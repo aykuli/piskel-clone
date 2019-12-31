@@ -20,7 +20,15 @@ export default class Tools {
     console.log('currentSize: ', currentSize);
     this.ctx.fillStyle = this.currentColor.value;
     const penSize = localStorage.getItem('piskelPenSize') !== null ? localStorage.getItem('piskelPenSize') : 1;
-    this.ctx.fillRect(x, y, penSize, penSize);
+    const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? localStorage.getItem('piskelPixelSize') : 1;
+    console.log('pixelSize: ', pixelSize);
+    if (pixelSize > 1) {
+      x = Math.floor(x / pixelSize) * pixelSize;
+      y = Math.floor(y / pixelSize) * pixelSize;
+      this.ctx.fillRect(x, y, penSize * pixelSize, penSize * pixelSize);
+    } else {
+      this.ctx.fillRect(x, y, penSize, penSize);
+    }
   }
 
   // Bresenham algorithm
@@ -58,8 +66,8 @@ export default class Tools {
     console.log((e.offsetX / canvasWidth) * currentSize, (e.offsetY / canvasWidth) * currentSize);
     console.log(e.offsetX, e.offsetY);
     return [
-      Math.floor((e.offsetX / canvasWidth) * (this.canvas.width / currentSize)),
-      Math.floor((e.offsetY / canvasWidth) * (this.canvas.width / currentSize)),
+      Math.floor((e.offsetX / canvasWidth) * (this.canvas.width / 1)),
+      Math.floor((e.offsetY / canvasWidth) * (this.canvas.width / 1)),
     ];
   }
 
@@ -125,7 +133,7 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
       ) {
         queue.push([x + 1, y]);
-        this.ctx.fillRect((x + 1)(y + 1), 1, 1);
+        this.ctx.fillRect(x + 1, y + 1, 1, 1);
       }
 
       if (
@@ -143,7 +151,6 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
       ) {
         queue.push([x, y + 1]);
-        // this.ctx.fillRect(x, y + 1, 1, 1);
         this.ctx.fillRect(x, y + 1, 1, 1);
       }
 
@@ -153,7 +160,6 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
       ) {
         queue.push([x, y - 1]);
-        // this.ctx.fillRect(x, y - 1, 1, 1);
         this.ctx.fillRect(x, y - 1, 1, 1);
       }
 
