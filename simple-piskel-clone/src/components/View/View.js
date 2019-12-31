@@ -18,6 +18,8 @@ export default class View {
     this.resBtns = document.querySelector('.canvas-resolutions__list');
 
     this.mainColumn = document.querySelector('.column--main');
+
+    this.penSizes = document.querySelector('.pen-size__list');
   }
 
   renderFrames(arrImg, currentCount) {
@@ -31,11 +33,18 @@ export default class View {
       this.framesList.append(newFrame);
     }
   }
+
   setCanvasSize() {
     const canvasWrapHeight = this.mainColumn.offsetHeight;
     const canvasWrapWidth = this.mainColumn.offsetWidth;
     const size = canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight;
     this.canvas.parentNode.style.width = `${size}px`;
     this.canvas.parentNode.style.height = `${size}px`;
+  }
+
+  highlightTarget(target, activeClassName) {
+    const activeElement = document.querySelector(`.${activeClassName}`);
+    activeElement.classList.remove(activeClassName);
+    target.classList.add(activeClassName);
   }
 }

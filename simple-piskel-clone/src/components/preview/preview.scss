@@ -5,6 +5,8 @@
         background-color: $grey;
     }
     &__canvas {
+        image-rendering: pixelated;
+        
         background-image: url(./img/canvas-bg.png);
         background-repeat: repeat;
     }

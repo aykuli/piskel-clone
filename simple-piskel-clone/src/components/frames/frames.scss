@@ -39,7 +39,7 @@
 
 .frame {
     position: relative;
-    
+    image-rendering: pixelated;
     background: url(./img/frame-bg.png) repeat;
     
     &__item {

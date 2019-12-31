@@ -40,3 +40,5 @@
 | 12:30 | 14:00 | 1.5h | Battle with animation bugs. Unfortunately, without result |
 | 21:00 | 24:00 | 3h | Canvas user defined size: css/html |
 | 01:00 | 02:00 | 1h | Pencil draw with custom canvas size |
+| Dec 31 | | **5.5h** |  |
+| 12:00 | 14:00 | 2h | Pen size handler |

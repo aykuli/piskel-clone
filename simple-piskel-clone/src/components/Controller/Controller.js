@@ -11,25 +11,26 @@ import {
 import { animate } from '../animation/animate';
 
 export default class Controller {
-  constructor(view, relativeSize) {
+  constructor(view, initPixelSize) {
     this.view = view;
-    this.pixelSize = relativeSize;
+    this.pixelSize = initPixelSize;
     this.currentCount = 0;
     this.piskelImg = [];
     this.fps = 0;
 
     this.canvasResolutioWatch();
     this.canvasSizeWatch();
-    this.pixelSize = 128;
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.pixelSize);
 
     this.init();
+
     this.paintTools(); // tools eventListener
     this.swapWatch(); // color swap eventListener
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
-
+    this.penSizes(); // pen size eventListener
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
+
     animate(
       i => {
         drawOnCanvas(this.view.preview, this.piskelImg[i]);
@@ -41,25 +42,15 @@ export default class Controller {
   }
 
   init() {
-    // console.log('\ninit');
-    // console.log(
-    //   'начальное состояние localStorage:\n localStorage.getItem(piskelCounter): ',
-    //   localStorage.getItem('piskelCounter'),
-    //   '\nlocalStorage.getItem(piskelImg): ',
-    //   localStorage.getItem('piskelImg'),
-    //   '\nlocalStorage.getItem(piskelFps): ',
-    //   localStorage.getItem('piskelFps')
-    // );
     // get drawing tool from Local Storage if exists
     if (localStorage.getItem('piskelTool') === null) {
       this.targetTool = 'pencil';
-      this.tools.pencilTool(this.targetTool, this.pixelSize);
+      this.tools.pencilTool(this.targetTool);
       localStorage.setItem('piskelTool', this.targetTool);
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
-      this.tools.chosenToolHightlight(this.targetTool);
-      console.log(this.piskelImg);
-      this.tools.toolHandler(this.targetTool, this.pixelSize);
+      this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+      this.tools.toolHandler(this.targetTool);
     }
 
     this.currentCount =
@@ -67,7 +58,6 @@ export default class Controller {
     // get image from Local Storage if exists
     if (localStorage.getItem('piskelImg') !== null) {
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
-      console.log(this.piskelImg);
       this.view.renderFrames(this.piskelImg, this.currentCount);
 
       for (let i = 0; i < this.piskelImg.length; i++) {
@@ -117,17 +107,13 @@ export default class Controller {
       );
     }
 
-    // console.log("localStorage.getItem('piskelCloneResolution'): ", localStorage.getItem('piskelCloneResolution'));
-    // if (localStorage.getItem('piskelCloneResolution') !== null) {
-    //   this.size = Number(localStorage.getItem('piskelCloneResolution'));
-    //   [this.view.canvas.width, this.view.canvas.height] = [this.size, this.size];
-    //   const currentRes = document.querySelector('.res-active');
-    //   // console.log(currentRes);
-    //   currentRes.classList.remove('res-active');
-
-    //   const target = document.querySelector(`#res${this.size}`);
-    //   target.classList.add('res-active');
-    // }
+    if (localStorage.getItem('piskelPixelSize') !== null) {
+      this.pixelSize = Number(localStorage.getItem('piskelPixelSize'));
+      console.log('this.pixelSize: ', this.pixelSize);
+      const target = document.querySelector(`.resolution--res${this.view.canvas.width / this.pixelSize}`);
+      console.log(target);
+      this.view.highlightTarget(target, 'resolution__btn--active');
+    }
     // console.log(
     //   'состояние localStorage после инициализации:\n localStorage.getItem(piskelCounter): ',
     //   localStorage.getItem('piskelCounter'),
@@ -154,9 +140,12 @@ export default class Controller {
   canvasResolutioWatch() {
     this.view.resBtns.addEventListener('click', e => {
       if (e.target.tagName === 'BUTTON') {
-        const btnActive = document.querySelector('.resolution__btn--active');
-        btnActive.classList.remove('resolution__btn--active');
-        e.target.classList.add('resolution__btn--active');
+        this.pixelSize = this.view.canvas.width / e.target.dataset.size;
+        this.view.highlightTarget(e.target, 'resolution__btn--active');
+        localStorage.removeItem('piskelPixelSize');
+        localStorage.setItem('piskelPixelSize', this.pixelSize);
+
+        drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
       }
     });
   }
@@ -247,8 +236,21 @@ export default class Controller {
           frameDraw(this.piskelImg, this.currentCount);
           break;
         default:
-          this.tools.chosenToolHightlight(this.targetTool);
-          this.tools.toolHandler(this.targetTool, this.pixelSize);
+          this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+          this.tools.toolHandler(this.targetTool);
+      }
+    });
+  }
+
+  penSizes() {
+    this.view.penSizes.addEventListener('click', e => {
+      if (e.target.tagName === 'LI') {
+        this.view.highlightTarget(e.target, 'pen-size--active');
+
+        const size = e.target.dataset.size;
+        localStorage.removeItem('piskelPenSize');
+        localStorage.setItem('piskelPenSize', size);
+        this.pixelSize = size;
       }
     });
   }
@@ -282,8 +284,8 @@ export default class Controller {
       }
 
       if (this.targetTool !== 'empty') {
-        this.tools.chosenToolHightlight(this.targetTool);
-        this.tools.toolHandler(this.targetTool, this.pixelSize);
+        this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+        this.tools.toolHandler(this.targetTool);
       }
     });
   }

@@ -1,8 +1,8 @@
-## Codejam Canvas
+## Piskel-clone
 * student **[Aynur Shauerman](https://github.com/aykuli)**
 * mentor **[Dina Mukhametshina](https://github.com/kamec)**
 
-[Task](https://github.com/rolling-scopes-school/tasks/blob/master/tasks/stage-2/codejam-canvas/codejam-canvas.md)
+[Task](https://github.com/rolling-scopes-school/tasks/blob/master/tasks/piskel-clone.md)
 
 ## Prepare and test
 1. Open folder with the project in [Visual Studio Code](https://code.visualstudio.com/download)

@@ -8,7 +8,6 @@ export default class Tools {
     this.isDrawing = false;
     this.currentColor = currentColor;
     this.size = size;
-    console.log(size);
 
     if (canvas == null) {
       throw new Error('there is no canvas');
@@ -16,8 +15,12 @@ export default class Tools {
   }
 
   plot(x, y) {
+    const currentSize =
+      localStorage.getItem('piskelPixelSize') !== null ? localStorage.getItem('piskelPixelSize') : this.size;
+    console.log('currentSize: ', currentSize);
     this.ctx.fillStyle = this.currentColor.value;
-    this.ctx.fillRect(x, y, 1, 1);
+    const penSize = localStorage.getItem('piskelPenSize') !== null ? localStorage.getItem('piskelPenSize') : 1;
+    this.ctx.fillRect(x, y, penSize, penSize);
   }
 
   // Bresenham algorithm
@@ -50,7 +53,14 @@ export default class Tools {
 
   getXYCoors(e) {
     const canvasWidth = canvas.parentNode.style.width.slice(0, -2);
-    return [Math.floor((e.offsetX / canvasWidth) * this.size), Math.floor((e.offsetY / canvasWidth) * this.size)];
+    const currentSize =
+      localStorage.getItem('piskelPixelSize') !== null ? localStorage.getItem('piskelPixelSize') : this.size;
+    console.log((e.offsetX / canvasWidth) * currentSize, (e.offsetY / canvasWidth) * currentSize);
+    console.log(e.offsetX, e.offsetY);
+    return [
+      Math.floor((e.offsetX / canvasWidth) * (this.canvas.width / currentSize)),
+      Math.floor((e.offsetY / canvasWidth) * (this.canvas.width / currentSize)),
+    ];
   }
 
   draw = e => {
@@ -75,8 +85,6 @@ export default class Tools {
   };
 
   pencilTool(targetTool) {
-    // this.size = size;
-    console.log('pencilTool: this.size: ', this.size);
     if (targetTool === 'pencil') {
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
@@ -126,7 +134,7 @@ export default class Tools {
         targetColor === RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
       ) {
         queue.push([x - 1, y]);
-        this.ctx.fillRect((x - 1) * this.size, (y - 1) * this.size, this.size, this.size);
+        this.ctx.fillRect(x - 1, y - 1, 1, 1);
       }
 
       if (
@@ -136,7 +144,7 @@ export default class Tools {
       ) {
         queue.push([x, y + 1]);
         // this.ctx.fillRect(x, y + 1, 1, 1);
-        this.ctx.fillRect(x * this.size, (y + 1) * this.size, this.size, this.size);
+        this.ctx.fillRect(x, y + 1, 1, 1);
       }
 
       if (
@@ -146,7 +154,7 @@ export default class Tools {
       ) {
         queue.push([x, y - 1]);
         // this.ctx.fillRect(x, y - 1, 1, 1);
-        this.ctx.fillRect(x * this.size, (y - 1) * this.size, this.size, this.size);
+        this.ctx.fillRect(x, y - 1, 1, 1);
       }
 
       queue.shift(0);
@@ -175,7 +183,6 @@ export default class Tools {
   };
 
   toolHandler = targetTool => {
-    // this.size = size;
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
@@ -189,13 +196,6 @@ export default class Tools {
     piskelImg[currentCount] = '';
     localStorage.removeItem(`piskelImg`);
     localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
-  }
-
-  chosenToolHightlight(targetTool) {
-    const targetToolEl = document.querySelector(`#${targetTool}`);
-    const prevActiveTool = document.querySelector('.tool--active');
-    prevActiveTool.classList.remove('tool--active');
-    targetToolEl.classList.add('tool--active');
   }
 
   // downloadImage(url) {
