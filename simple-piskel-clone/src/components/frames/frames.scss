@@ -56,7 +56,8 @@
         &:hover, &:focus  {
             border-color: $grey-light;
 
-            & .frame__btn--delete {
+            & .frame__btn--delete,
+            & .frame__btn--copy {
                 opacity: 1;
             }
         }
@@ -85,26 +86,26 @@
     }
 
     &__btn {
-        &--delete {
-            position: absolute;
+        position: absolute;
+        right: 0;
+
+        width: 25px;
+        height: 25px;
+
+        background-image: url(./img/trash.svg);
+        background-repeat: no-repeat;
+        background-position: 3px 3px;
+        background-color: $green;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+
+        &--delete {            
+            top: 0;
+        }
+
+        &--copy {
             bottom: 0;
-            right: 0;
-
-            width: 25px;
-            height: 25px;
-
-            background-image: url(./img/trash.svg);
-            background-repeat: no-repeat;
-            background-position: 3px 3px;
-            background-color: $green;
-            border: none;
-            cursor: pointer;
-            opacity: 0;
-            
-            &:hover {
-                opacity: 1;
-                outline: none;
-            }
         }
     }    
 }

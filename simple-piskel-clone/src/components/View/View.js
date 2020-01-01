@@ -24,11 +24,11 @@ export default class View {
     this.cursor = document.querySelector('.cursor');
   }
 
-  renderFrames(arrImg, currentCount) {
-    const len = arrImg.length;
+  renderFrames(piskelImg, currentCount) {
+    const len = piskelImg.length;
     for (let i = 0; i < len; i++) {
       const newFrame = document.createElement('LI');
-      newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
+      newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn frame__btn--delete tip" data-tooltip="Delete this frame"><button class="frame__btn frame__btn--copy tip" data-tooltip="Copy this frame"><span class="visually-hidden">Copy this canvas</span></button><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
         1}</span>`;
       // prettier-ignore
       newFrame.className = (i === +currentCount) ? 'frame__item frame__active' : 'frame__item';
@@ -53,7 +53,7 @@ export default class View {
   renderFrameActive(i, piskelImg, framesList) {
     const newFrame = document.createElement('LI');
     newFrame.className = 'frame__item frame__active';
-    newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
+    newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn frame__btn--delete tip" data-tooltip="Delete this frame"><button class="frame__btn frame__btn--copy tip" data-tooltip="Copy this frame"><span class="visually-hidden">Copy this canvas</span></button><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
       1}</span>`;
     framesList.append(newFrame);
     piskelImg.push('');
