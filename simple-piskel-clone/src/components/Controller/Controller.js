@@ -45,7 +45,7 @@ export default class Controller {
   init() {
     this.currentCount =
       localStorage.getItem('piskelCounter') !== null ? localStorage.getItem('piskelCounter') : this.currentCount;
-    console.log('init: ', this.currentCount);
+
     // get image from Local Storage if exists
     if (localStorage.getItem('piskelImg') !== null) {
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
@@ -185,6 +185,7 @@ export default class Controller {
   swapHandler() {
     const buf = this.view.primaryColor.value;
     this.view.primaryColor.value = this.view.secondaryColor.value;
+
     this.view.secondaryColor.value = buf;
     this.view.ctx.fillStyle = this.view.primaryColor.value;
     localStorage.removeItem('piskelPrimaryColor');
@@ -251,14 +252,19 @@ export default class Controller {
           e.preventDefault();
           this.targetTool = 'bucket';
           break;
-        case 'KeyP':
-          e.preventDefault();
-          this.targetTool = 'pencil';
-          break;
         case 'KeyC':
           e.preventDefault();
           this.targetTool = 'picker';
           break;
+        case 'KeyE':
+          e.preventDefault();
+          this.targetTool = 'eraser';
+          break;
+        case 'KeyP':
+          e.preventDefault();
+          this.targetTool = 'pencil';
+          break;
+
         case 'KeyZ':
           e.preventDefault();
           this.tools.clearCanvas(this.piskelImg, this.currentCount);
