@@ -16,33 +16,6 @@
                 <div data-netlify-identity-menu></div>
             </nav>
         </header>
-        <aside>
-            <div class="tools">            
-                <h2 class="visually-hidden">Tools for paint</h2>
-                <ul class="pen-size__list tip"  data-tooltip="Pen size from 1 to 4">
-                    <li class="pen-size pen-size--active" data-size="1"></li>
-                    <li class="pen-size" data-size="2"></li>
-                    <li class="pen-size" data-size="3"></li>
-                    <li class="pen-size" data-size="4"></li>
-                </ul>
-                <ul class="tools__container">
-                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)"><span class="visually-hidden">Pencil tool</span></li>
-                    <li id='stroke' class="tool tool--stroke tip" data-tooltip="Line tool(L)"><span class="visually-hidden">Line tool</span></li>
-                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)"><span class="visually-hidden">Bucket tool</span></li>
-                    <li id='bucketSamePixel' class="tool tool--bucket-same-pixel tip" data-tooltip="Paint all pixels of the same color tool(A)"><span class="visually-hidden">Paint all pixels of the same color tool</span></li>
-                    <li id='eraser' class="tool tool--eraser tip" data-tooltip="Eraser tool(E)"><span class="visually-hidden">Eraser tool</span></li>
-                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)"><span class="visually-hidden">Picker tool</span></li>
-                    <li id='empty' class="tool tool--empty tip" data-tooltip="Clear canvas(Z)"><span class="visually-hidden">Clear canvas</span></li>
-                </ul>
-                <div class="tools__palette--wrap">
-                    <label for="color-switch-secondary" class="visually-hidden">Secondary color</label>
-                    <input class="tools__palette--secondary" type="color" name="color-switch-secondary" value="#ffbb44">
-                    <label for="color-switch-primary" class="visually-hidden">Primary color</label>
-                    <input class="tools__palette--primary" type="color"name="color-switch-primary" value="#ff0000">
-                    <button class="tools__palette--swapper tip" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span></button>
-                </div>
-            </div>
-        </aside>
         <main class='main'>        
             <div class="column frames">
                 <ul class="frames__list"></ul>
@@ -51,6 +24,8 @@
             <div class="column--main">
                 <div class="canvas__wrap">
                     <canvas id="canvas" width="128" height="128" class="canvas">Your browser doesn't support canvas</canvas>
+                    <canvas width="128" height="128" class="canvas--above">Your browser doesn't support canvas</canvas>
+                    <!-- <div class="cursor"></div> -->
                 </div>
             </div>
             <div class="column column--right">
@@ -82,6 +57,33 @@
                 </div>
             </div>
         </main>
+        <aside>
+            <div class="tools">            
+                <h2 class="visually-hidden">Tools for paint</h2>
+                <ul class="pen-size__list tip"  data-tooltip="Pen size from 1 to 4">
+                    <li class="pen-size pen-size--active" data-size="1"></li>
+                    <li class="pen-size" data-size="2"></li>
+                    <li class="pen-size" data-size="3"></li>
+                    <li class="pen-size" data-size="4"></li>
+                </ul>
+                <ul class="tools__container">
+                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)"><span class="visually-hidden">Pencil tool</span></li>
+                    <li id='stroke' class="tool tool--stroke tip" data-tooltip="Line tool(L)"><span class="visually-hidden">Line tool</span></li>
+                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)"><span class="visually-hidden">Bucket tool</span></li>
+                    <li id='bucketSamePixel' class="tool tool--bucket-same-pixel tip" data-tooltip="Paint all pixels of the same color tool(A)"><span class="visually-hidden">Paint all pixels of the same color tool</span></li>
+                    <li id='eraser' class="tool tool--eraser tip" data-tooltip="Eraser tool(E)"><span class="visually-hidden">Eraser tool</span></li>
+                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)"><span class="visually-hidden">Picker tool</span></li>
+                    <li id='empty' class="tool tool--empty tip" data-tooltip="Clear canvas(Z)"><span class="visually-hidden">Clear canvas</span></li>
+                </ul>
+                <div class="tools__palette--wrap">
+                    <label for="color-switch-secondary" class="visually-hidden">Secondary color</label>
+                    <input class="tools__palette--secondary" type="color" name="color-switch-secondary" value="#ffbb44">
+                    <label for="color-switch-primary" class="visually-hidden">Primary color</label>
+                    <input class="tools__palette--primary" type="color"name="color-switch-primary" value="#ff0000">
+                    <button class="tools__palette--swapper tip" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span></button>
+                </div>
+            </div>
+        </aside>
     </div>
     <!-- <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://unpkg.com/netlify-auth-providers"></script> -->

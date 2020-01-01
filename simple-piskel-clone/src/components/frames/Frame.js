@@ -13,7 +13,7 @@ function frameDraw(arrImgs, currentCount) {
   console.log(currentCount);
   const frame = document.querySelectorAll('.frame');
   if (arrImgs.length === 0) return;
-  const frameCtx = frame[currentCount].getContext('2d');
+  const frameCtx = frame[currentCount].getContext('2d', { alpha: true });
   const img = new Image();
   const dataURI = arrImgs[currentCount];
 
@@ -24,7 +24,7 @@ function frameDraw(arrImgs, currentCount) {
 
     currentWidth = frame[currentCount].width;
     currentHeight = frame[currentCount].height;
-    const frameCtx = frame[currentCount].getContext('2d');
+    const frameCtx = frame[currentCount].getContext('2d', { alpha: true });
     frameCtx.drawImage(img, 0, 0, currentWidth, currentHeight);
   };
 
@@ -131,7 +131,7 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
 }
 
 function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: true });
   const len = framesList.children.length;
   const frameActive = document.querySelector('.frame__active');
   frameActive.classList.remove('frame__active');

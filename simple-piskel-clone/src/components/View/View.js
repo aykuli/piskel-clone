@@ -1,7 +1,8 @@
 export default class View {
   constructor() {
     this.canvas = document.querySelector('#canvas');
-    this.ctx = canvas.getContext('2d');
+    this.canvasAbove = document.querySelector('.canvas--above');
+    this.ctx = canvas.getContext('2d', { alpha: true });
 
     this.tools = document.querySelector('.tools__container');
 
@@ -20,6 +21,7 @@ export default class View {
     this.mainColumn = document.querySelector('.column--main');
 
     this.penSizes = document.querySelector('.pen-size__list');
+    this.cursor = document.querySelector('.cursor');
   }
 
   renderFrames(arrImg, currentCount) {

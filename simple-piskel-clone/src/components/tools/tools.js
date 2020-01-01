@@ -21,12 +21,12 @@ export default class Tools {
     this.ctx.fillStyle = this.currentColor.value;
     x = Math.round(x / pixelSize) * pixelSize;
     y = Math.round(y / pixelSize) * pixelSize;
-    const delta = Math.round((penSize * pixelSize) / 2);
+    const delta = Math.floor((penSize * pixelSize) / 2);
 
     if (this.isEraser) {
-      this.ctx.clearRect(x - delta, y - delta, delta * 2, delta * 2);
+      this.ctx.clearRect(x - delta, y - delta, penSize * pixelSize, penSize * pixelSize);
     } else {
-      this.ctx.fillRect(x - delta, y - delta, delta * 2, delta * 2);
+      this.ctx.fillRect(x - delta, y - delta, penSize * pixelSize, penSize * pixelSize);
     }
   }
 
@@ -34,6 +34,7 @@ export default class Tools {
   bresenham = (x1, x2, y1, y2) => {
     let [innerX1, innerY1] = [x1, y1];
     const [innerX2, innerY2] = [x2, y2];
+    console.log(this.isDrawing);
     if (!this.isDrawing) return;
     this.isDrawing = true;
 
@@ -87,9 +88,8 @@ export default class Tools {
   };
 
   pencilTool(targetTool) {
-    if (targetTool === 'eraser') this.isEraser = true;
     if (targetTool === 'pencil' || targetTool === 'eraser') {
-      if (targetTool === 'pencil') this.isEraser = false;
+      this.isEraser = targetTool === 'eraser' ? true : false;
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.addEventListener('mouseup', this.drawMouseUp);
@@ -120,17 +120,17 @@ export default class Tools {
     if (targetColor === replacementColor) return;
     this.ctx.fillStyle = replacementColor;
     this.ctx.fillRect(x, y, 1, 1);
-    let queue = [];
+    let Queue = [];
 
-    queue.push([x, y]);
-    while (queue.length > 0) {
+    Queue.push([x, y]);
+    while (Queue.length > 0) {
       if (
         x + 1 > 0 &&
         x + 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
       ) {
-        queue.push([x + 1, y]);
-        this.ctx.fillRect(x + 1, y + 1, 1, 1);
+        Queue.push([x + 1, y]);
+        this.ctx.fillRect(x + 1, y, 1, 1);
       }
 
       if (
@@ -138,8 +138,8 @@ export default class Tools {
         x - 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
       ) {
-        queue.push([x - 1, y]);
-        this.ctx.fillRect(x - 1, y - 1, 1, 1);
+        Queue.push([x - 1, y]);
+        this.ctx.fillRect(x - 1, y, 1, 1);
       }
 
       if (
@@ -147,7 +147,7 @@ export default class Tools {
         y + 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
       ) {
-        queue.push([x, y + 1]);
+        Queue.push([x, y + 1]);
         this.ctx.fillRect(x, y + 1, 1, 1);
       }
 
@@ -156,16 +156,16 @@ export default class Tools {
         y - 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
       ) {
-        queue.push([x, y - 1]);
+        Queue.push([x, y - 1]);
         this.ctx.fillRect(x, y - 1, 1, 1);
       }
 
-      queue.shift(0);
-      if (queue.length > 0) {
-        [x, y] = [queue[0][0], queue[0][1]];
+      Queue.shift(0);
+      if (Queue.length > 0) {
+        [x, y] = [Queue[0][0], Queue[0][1]];
       }
     }
-    queue = [];
+    Queue = [];
   };
 
   pickerTool(targetTool) {
@@ -185,10 +185,46 @@ export default class Tools {
     this.currentColor.value = color;
   };
 
+  strokeTool(targetTool) {
+    if (targetTool === 'stroke') {
+      this.canvas.addEventListener('click', this.strokeDraw);
+    } else {
+      this.canvas.removeEventListener('click', this.strokeDraw);
+    }
+  }
+
+  strokeDraw = e => {
+    // const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
+    // const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
+    // console.log(penSize, pixelSize);
+    // const canvasWidth = canvas.parentNode.style.width.slice(0, -2);
+    // this.ctx.lineWidth = (penSize * pixelSize * this.canvas.width) / canvasWidth;
+    // let x1, y1;
+    // if (!this.isDrawing) {
+    //   this.isDrawing = true;
+    //   const [x, y] = this.getXYCoors(e);
+    //   this.ctx.moveTo(x, y);
+    // } else {
+    //   const [x, y] = this.getXYCoors(e);
+    //   this.ctx.lineTo(x, y); // Рисует линию до точки (150, 100)
+    //   this.ctx.stroke();
+    //   this.isDrawing = false;
+    // }
+    // console.log(this.ctx);
+    // const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
+    // const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
+    // // this.ctx.beginPath(); // Начинает новый путь
+    // this.ctx.moveTo(30, 50); // Рередвигает перо в точку (30, 50)
+    // this.ctx.lineTo(150, 100); // Рисует линию до точки (150, 100)
+    // this.ctx.lineWidth = 1;
+    // this.ctx.stroke();
+  };
+
   toolHandler = targetTool => {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
+    this.strokeTool(targetTool);
 
     localStorage.removeItem('piskelTool');
     localStorage.setItem('piskelTool', targetTool);

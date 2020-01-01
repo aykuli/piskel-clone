@@ -8,6 +8,7 @@
 
     background-image: url(./img/canvas-bg.png);
     background-repeat: repeat;
+
     &__wrap {
         position: absolute;
         top: 50%;
@@ -37,6 +38,15 @@
 
             list-style: none;
         }
+    }
+
+    &--above{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        outline: 1px solid red;;
     }
 }
 

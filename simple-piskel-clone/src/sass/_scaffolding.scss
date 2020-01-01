@@ -142,3 +142,14 @@ body {
         cursor: pointer;
     }
 }
+
+.cursor {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    opacity: 0.5;
+    
+}

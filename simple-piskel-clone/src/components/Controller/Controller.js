@@ -30,6 +30,7 @@ export default class Controller {
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
+    this.cursorOnCanvas();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
     animate(
@@ -283,5 +284,33 @@ export default class Controller {
         this.tools.toolHandler(this.targetTool);
       }
     });
+  }
+
+  cursorOnCanvas() {
+    // this.view.canvas.addEventListener('mousemove', e => {
+    //   if (!this.tools.isDrawing) {
+    //     // console.log(this.tools.isDrawing);
+    //     // console.log('this.view.canvas.addEventListener(mousemove)');
+    //     // console.log(e.offsetX);
+    //     // console.log(this.view.canvas.parentNode.style.width);
+    //     const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
+    //     const pixelSize =
+    //       localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
+    //     const scale = this.view.canvas.parentNode.style.width.slice(0, -2) / this.view.canvas.width;
+    //     console.log('scale: ', scale);
+    //     this.view.cursor.style.width = `${penSize * pixelSize * scale}px`;
+    //     this.view.cursor.style.height = `${penSize * pixelSize * scale}px`;
+    //     const x = Math.round(e.offsetX / pixelSize) * pixelSize;
+    //     const y = Math.round(e.offsetY / pixelSize) * pixelSize;
+    //     this.view.cursor.style.top = `${y - (penSize * pixelSize * scale) / 2}px`;
+    //     this.view.cursor.style.left = `${x - (penSize * pixelSize * scale) / 2}px`;
+    //   }
+    // });
+    // this.view.cursor.addEventListener('click', () => {
+    //   console.log('click on cursor');
+    //   this.tools.isDrawing = true;
+    //   this.view.cursor.style.width = 0;
+    //   this.view.cursor.style.height = 0;
+    // });
   }
 }
