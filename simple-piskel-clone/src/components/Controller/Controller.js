@@ -1,4 +1,5 @@
 import Tools from '../tools/Tools';
+import { toolsMap } from './toolsMap';
 import { saveImgsInLocalStorage } from '../utils';
 import {
   drawOnCanvas,
@@ -248,35 +249,15 @@ export default class Controller {
 
   keyboardShortCutHandler() {
     document.addEventListener('keydown', e => {
-      switch (e.code) {
-        case 'KeyB':
-          e.preventDefault();
-          this.targetTool = 'bucket';
-          break;
-        case 'KeyC':
-          e.preventDefault();
-          this.targetTool = 'picker';
-          break;
-        case 'KeyE':
-          e.preventDefault();
-          this.targetTool = 'eraser';
-          break;
-        case 'KeyP':
-          e.preventDefault();
-          this.targetTool = 'pencil';
-          break;
+      this.targetTool = toolsMap.has(e.code) ? toolsMap.get(e.code) : this.targetTool;
 
-        case 'KeyZ':
-          e.preventDefault();
-          this.tools.clearCanvas(this.piskelImg, this.currentCount);
-          frameDraw(this.piskelImg, this.currentCount);
-          break;
-        case 'KeyX':
-          e.preventDefault();
-          this.swapHandler();
-          break;
-        default:
-          return;
+      if (e.code === 'KeyZ') {
+        e.preventDefault();
+        this.tools.clearCanvas(this.piskelImg, this.currentCount);
+        frameDraw(this.piskelImg, this.currentCount);
+      } else if (e.code === 'KeyX') {
+        e.preventDefault();
+        this.swapHandler();
       }
 
       if (this.targetTool !== 'empty') {

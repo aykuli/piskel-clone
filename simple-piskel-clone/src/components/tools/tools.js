@@ -120,16 +120,16 @@ export default class Tools {
     if (targetColor === replacementColor) return;
     this.ctx.fillStyle = replacementColor;
     this.ctx.fillRect(x, y, 1, 1);
-    let Queue = [];
+    let queue = [];
 
-    Queue.push([x, y]);
-    while (Queue.length > 0) {
+    queue.push([x, y]);
+    while (queue.length > 0) {
       if (
         x + 1 > 0 &&
         x + 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x + 1, y, 1, 1).data)
       ) {
-        Queue.push([x + 1, y]);
+        queue.push([x + 1, y]);
         this.ctx.fillRect(x + 1, y, 1, 1);
       }
 
@@ -138,7 +138,7 @@ export default class Tools {
         x - 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x - 1, y, 1, 1).data)
       ) {
-        Queue.push([x - 1, y]);
+        queue.push([x - 1, y]);
         this.ctx.fillRect(x - 1, y, 1, 1);
       }
 
@@ -147,7 +147,7 @@ export default class Tools {
         y + 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x, y + 1, 1, 1).data)
       ) {
-        Queue.push([x, y + 1]);
+        queue.push([x, y + 1]);
         this.ctx.fillRect(x, y + 1, 1, 1);
       }
 
@@ -156,16 +156,38 @@ export default class Tools {
         y - 1 < this.canvas.width &&
         targetColor === RGBToHex(this.ctx.getImageData(x, y - 1, 1, 1).data)
       ) {
-        Queue.push([x, y - 1]);
+        queue.push([x, y - 1]);
         this.ctx.fillRect(x, y - 1, 1, 1);
       }
 
-      Queue.shift(0);
-      if (Queue.length > 0) {
-        [x, y] = [Queue[0][0], Queue[0][1]];
+      queue.shift(0);
+      if (queue.length > 0) {
+        [x, y] = [queue[0][0], queue[0][1]];
       }
     }
-    Queue = [];
+    queue = [];
+  };
+
+  bucketSamePixelTool(targetTool) {
+    if (targetTool === 'bucketSamePixel') {
+      this.canvas.addEventListener('mousedown', this.floodFillSamePixel);
+    } else {
+      this.canvas.removeEventListener('mousedown', this.floodFillSamePixel);
+    }
+  }
+
+  floodFillSamePixel = e => {
+    let [x, y] = this.getXYCoors(e);
+    const replacementColor = this.currentColor.value;
+    const prevColor = RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
+    this.ctx.fillStyle = replacementColor;
+
+    for (let x = 0; x < this.canvas.width; x++) {
+      for (let y = 0; y < this.canvas.height; y++) {
+        const currentColor = RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
+        if (currentColor === prevColor) this.ctx.fillRect(x, y, 1, 1);
+      }
+    }
   };
 
   pickerTool(targetTool) {
@@ -224,7 +246,7 @@ export default class Tools {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
-    this.strokeTool(targetTool);
+    this.bucketSamePixelTool(targetTool);
 
     localStorage.removeItem('piskelTool');
     localStorage.setItem('piskelTool', targetTool);
