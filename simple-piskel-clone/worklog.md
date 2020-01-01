@@ -47,3 +47,4 @@
 | 12:00 | 14:00 | 2h | Refactor code. CSS display flex make bug for canvas width - fixed |
 | 15:00 | 17:00 | 2h | Restore bucket, try stroke,create one more canvas for it | 
 | 18:00 | 19:00 | 2h | bucketSamePixelTool realized | 
+| 20:00 | 22:00 | 2h | stroke tool realized | 

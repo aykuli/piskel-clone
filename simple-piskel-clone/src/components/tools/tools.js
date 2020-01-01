@@ -15,26 +15,25 @@ export default class Tools {
     }
   }
 
-  plot(x, y) {
+  plot(x, y, ctx) {
     const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
     const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
-    this.ctx.fillStyle = this.currentColor.value;
+    ctx.fillStyle = this.currentColor.value;
     x = Math.round(x / pixelSize) * pixelSize;
     y = Math.round(y / pixelSize) * pixelSize;
     const delta = Math.floor((penSize * pixelSize) / 2);
 
     if (this.isEraser) {
-      this.ctx.clearRect(x - delta, y - delta, penSize * pixelSize, penSize * pixelSize);
+      ctx.clearRect(x - delta, y - delta, penSize * pixelSize, penSize * pixelSize);
     } else {
-      this.ctx.fillRect(x - delta, y - delta, penSize * pixelSize, penSize * pixelSize);
+      ctx.fillRect(x - delta, y - delta, penSize * pixelSize, penSize * pixelSize);
     }
   }
 
   // Bresenham algorithm
-  bresenham = (x1, x2, y1, y2) => {
+  bresenham = (x1, x2, y1, y2, ctx) => {
     let [innerX1, innerY1] = [x1, y1];
     const [innerX2, innerY2] = [x2, y2];
-    console.log(this.isDrawing);
     if (!this.isDrawing) return;
     this.isDrawing = true;
 
@@ -44,9 +43,9 @@ export default class Tools {
     const signY = y1 < y2 ? 1 : -1;
     let err = deltaX - deltaY;
 
-    this.plot(innerX2, innerY2);
+    this.plot(innerX2, innerY2, ctx);
     while (innerX1 !== innerX2 || innerY1 !== innerY2) {
-      this.plot(innerX1, innerY1);
+      this.plot(innerX1, innerY1, ctx);
       const err2 = err * 2;
       if (err2 > -deltaY) {
         err -= deltaY;
@@ -70,7 +69,7 @@ export default class Tools {
   draw = e => {
     if (this.isDrawing) {
       [this.x2, this.y2] = this.getXYCoors(e);
-      this.bresenham(this.x1, this.x2, this.y1, this.y2);
+      this.bresenham(this.x1, this.x2, this.y1, this.y2, this.ctx);
       [this.x1, this.y1] = [this.x2, this.y2];
     }
   };
@@ -78,12 +77,12 @@ export default class Tools {
   drawOnMouseDown = e => {
     this.isDrawing = true;
     [this.x1, this.y1] = this.getXYCoors(e);
-    this.plot(this.x1, this.y1);
+    this.plot(this.x1, this.y1, this.ctx);
   };
 
   drawMouseUp = e => {
     [this.x2, this.y2] = this.getXYCoors(e);
-    this.bresenham(this.x1, this.x2, this.y1, this.y2);
+    this.bresenham(this.x1, this.x2, this.y1, this.y2, this.ctx);
     this.isDrawing = false;
   };
 
@@ -178,9 +177,8 @@ export default class Tools {
 
   floodFillSamePixel = e => {
     let [x, y] = this.getXYCoors(e);
-    const replacementColor = this.currentColor.value;
     const prevColor = RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
-    this.ctx.fillStyle = replacementColor;
+    this.ctx.fillStyle = this.currentColor.value;
 
     for (let x = 0; x < this.canvas.width; x++) {
       for (let y = 0; y < this.canvas.height; y++) {
@@ -207,45 +205,54 @@ export default class Tools {
     this.currentColor.value = color;
   };
 
-  strokeTool(targetTool) {
+  strokeTool(targetTool, currentCount, frameDraw) {
+    const canvasAbove = document.querySelector('.canvas--above');
+    const ctxAbove = canvasAbove.getContext('2d');
+    ctxAbove.imageSmoothingEnabled = false;
+
     if (targetTool === 'stroke') {
-      this.canvas.addEventListener('click', this.strokeDraw);
+      canvasAbove.style.display = 'block';
+      this.isDrawing = false;
+      let x1, y1;
+      let x0, y0;
+
+      canvasAbove.addEventListener('mousedown', e => {
+        this.isDrawing = true;
+        [x0, y0] = this.getXYCoors(e);
+      });
+
+      canvasAbove.addEventListener('mousemove', e => {
+        if (this.isDrawing) {
+          [x1, y1] = this.getXYCoors(e);
+          ctxAbove.clearRect(0, 0, canvasAbove.width, canvasAbove.height);
+          this.bresenham(x0, x1, y0, y1, ctxAbove);
+        }
+      });
+
+      canvasAbove.addEventListener('mouseup', e => {
+        [x1, y1] = this.getXYCoors(e);
+        ctxAbove.clearRect(0, 0, canvasAbove.width, canvasAbove.height);
+        this.bresenham(x0, x1, y0, y1, this.ctx);
+        this.isDrawing = false;
+
+        const dataURI = this.canvas.toDataURL();
+        let piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
+        piskelImg[currentCount] = dataURI;
+
+        localStorage.removeItem('piskelImg');
+        localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
+        frameDraw(piskelImg, currentCount);
+      });
     } else {
-      this.canvas.removeEventListener('click', this.strokeDraw);
+      canvasAbove.style.display = '';
     }
   }
 
-  strokeDraw = e => {
-    // const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
-    // const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
-    // console.log(penSize, pixelSize);
-    // const canvasWidth = canvas.parentNode.style.width.slice(0, -2);
-    // this.ctx.lineWidth = (penSize * pixelSize * this.canvas.width) / canvasWidth;
-    // let x1, y1;
-    // if (!this.isDrawing) {
-    //   this.isDrawing = true;
-    //   const [x, y] = this.getXYCoors(e);
-    //   this.ctx.moveTo(x, y);
-    // } else {
-    //   const [x, y] = this.getXYCoors(e);
-    //   this.ctx.lineTo(x, y); // Рисует линию до точки (150, 100)
-    //   this.ctx.stroke();
-    //   this.isDrawing = false;
-    // }
-    // console.log(this.ctx);
-    // const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
-    // const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
-    // // this.ctx.beginPath(); // Начинает новый путь
-    // this.ctx.moveTo(30, 50); // Рередвигает перо в точку (30, 50)
-    // this.ctx.lineTo(150, 100); // Рисует линию до точки (150, 100)
-    // this.ctx.lineWidth = 1;
-    // this.ctx.stroke();
-  };
-
-  toolHandler = targetTool => {
+  toolHandler = (targetTool, currentCount, frameDraw) => {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
+    this.strokeTool(targetTool, currentCount, frameDraw);
     this.bucketSamePixelTool(targetTool);
 
     localStorage.removeItem('piskelTool');

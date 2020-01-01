@@ -4,6 +4,7 @@ const toolsMap = new Map([
   ['KeyC', 'picker'],
   ['KeyE', 'eraser'],
   ['KeyP', 'pencil'],
+  ['KeyL', 'stroke'],
 ]);
 
 export { toolsMap };

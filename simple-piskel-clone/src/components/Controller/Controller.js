@@ -20,6 +20,7 @@ export default class Controller {
     this.fps = 0;
     this.penSize = 1;
 
+    this.swapWatch(); // color swap eventListener
     this.canvasResolutioWatch();
     this.canvasSizeWatch();
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.pixelSize);
@@ -27,7 +28,7 @@ export default class Controller {
     this.init();
 
     this.paintTools(); // tools eventListener
-    this.swapWatch(); // color swap eventListener
+
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
@@ -165,6 +166,12 @@ export default class Controller {
       saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
       frameDraw(this.piskelImg, this.currentCount);
     });
+
+    // save image from additive canvas when using stroke tool
+    // this.view.canvasAbove.addEventListener('mouseup', () => {
+    //   saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
+    //   frameDraw(this.piskelImg, this.currentCount);
+    // });
   }
 
   swapWatch() {
@@ -182,6 +189,15 @@ export default class Controller {
     }
 
     this.view.swapColor.addEventListener('click', this.swapHandler.bind(this));
+    this.view.primaryColor.addEventListener('change', () => {
+      localStorage.removeItem('piskelPrimaryColor');
+      localStorage.setItem('piskelPrimaryColor', this.view.primaryColor.value);
+    });
+
+    this.view.secondaryColor.addEventListener('change', () => {
+      localStorage.removeItem('piskelSecondaryColor');
+      localStorage.setItem('piskelSecondaryColor', this.view.secondaryColor.value);
+    });
   }
 
   swapHandler() {
@@ -205,7 +221,7 @@ export default class Controller {
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
       this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-      this.tools.toolHandler(this.targetTool);
+      this.tools.toolHandler(this.targetTool, this.currentCount, frameDraw);
     }
 
     this.view.tools.addEventListener('click', e => {
@@ -220,7 +236,7 @@ export default class Controller {
           break;
         default:
           this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-          this.tools.toolHandler(this.targetTool);
+          this.tools.toolHandler(this.targetTool, this.currentCount, frameDraw);
       }
     });
   }
@@ -262,7 +278,7 @@ export default class Controller {
 
       if (this.targetTool !== 'empty') {
         this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-        this.tools.toolHandler(this.targetTool);
+        this.tools.toolHandler(this.targetTool, this.currentCount, frameDraw);
       }
     });
   }

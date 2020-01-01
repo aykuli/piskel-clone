@@ -9,13 +9,12 @@ function drawOnCanvas(canvas, dataURI) {
   img.addEventListener('load', () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height));
 }
 
-function frameDraw(arrImgs, currentCount) {
-  console.log(currentCount);
+function frameDraw(piskelImg, currentCount) {
   const frame = document.querySelectorAll('.frame');
-  if (arrImgs.length === 0) return;
+  if (piskelImg.length === 0) return;
   const frameCtx = frame[currentCount].getContext('2d', { alpha: true });
   const img = new Image();
-  const dataURI = arrImgs[currentCount];
+  const dataURI = piskelImg[currentCount];
 
   const frameHandleOnload = ({ target: img }) => {
     const frame = document.querySelectorAll('.frame');
@@ -31,12 +30,12 @@ function frameDraw(arrImgs, currentCount) {
   if (dataURI === null || dataURI === '') {
     frameCtx.clearRect(0, 0, frame[currentCount].width, frame[currentCount].height);
   } else {
-    img.src = arrImgs[currentCount];
+    img.src = piskelImg[currentCount];
     img.addEventListener('load', () => frameHandleOnload({ target: img }, currentCount));
   }
 }
 
-function frameHandler(e, canvas, arrImgs, drawOnCanvas, preview, fps) {
+function frameHandler(e, canvas, piskelImg, drawOnCanvas, preview, fps) {
   // highlighting current frame
   if (e.target.classList.contains('frame')) {
     const frameActive = document.querySelector('.frame__active');
@@ -45,9 +44,9 @@ function frameHandler(e, canvas, arrImgs, drawOnCanvas, preview, fps) {
   }
 
   const count = event.target.dataset.count;
-  if (arrImgs[count] !== undefined) {
-    drawOnCanvas(canvas, arrImgs[count]);
-    if (+fps === 0) drawOnCanvas(preview, arrImgs[count]);
+  if (piskelImg[count] !== undefined) {
+    drawOnCanvas(canvas, piskelImg[count]);
+    if (+fps === 0) drawOnCanvas(preview, piskelImg[count]);
   }
   return count;
 }
@@ -138,10 +137,8 @@ function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
   renderFrameActive(len, piskelImg, framesList);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // arrImgs.push('');
   localStorage.removeItem(`piskelImg`);
   localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
-  console.log(len);
   return len;
 }
 

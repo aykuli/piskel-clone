@@ -44,9 +44,13 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 100px;
-        height: 100px;
-        outline: 1px solid red;;
+        
+        width: 100%;
+        height: 100%;
+
+        image-rendering: pixelated;
+        display: none;
+        outline: 2px solid rgb(11, 197, 141);
     }
 }
 
