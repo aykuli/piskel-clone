@@ -8,6 +8,7 @@ export default class Tools {
     this.isDrawing = false;
     this.currentColor = currentColor;
     this.size = size;
+    this.isEraser = false;
 
     if (canvas == null) {
       throw new Error('there is no canvas');
@@ -15,16 +16,14 @@ export default class Tools {
   }
 
   plot(x, y) {
-    const currentSize =
-      localStorage.getItem('piskelPixelSize') !== null ? localStorage.getItem('piskelPixelSize') : this.size;
-    console.log('currentSize: ', currentSize);
     this.ctx.fillStyle = this.currentColor.value;
-    const penSize = localStorage.getItem('piskelPenSize') !== null ? localStorage.getItem('piskelPenSize') : 1;
-    const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? localStorage.getItem('piskelPixelSize') : 1;
-    console.log('pixelSize: ', pixelSize);
+    console.log(this.currentColor.value);
+    const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
+    const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
+
     if (pixelSize > 1) {
-      x = Math.floor(x / pixelSize) * pixelSize;
-      y = Math.floor(y / pixelSize) * pixelSize;
+      x = Math.round(x / pixelSize) * pixelSize;
+      y = Math.round(y / pixelSize) * pixelSize;
       this.ctx.fillRect(x, y, penSize * pixelSize, penSize * pixelSize);
     } else {
       this.ctx.fillRect(x, y, penSize, penSize);
@@ -61,20 +60,17 @@ export default class Tools {
 
   getXYCoors(e) {
     const canvasWidth = canvas.parentNode.style.width.slice(0, -2);
-    const currentSize =
-      localStorage.getItem('piskelPixelSize') !== null ? localStorage.getItem('piskelPixelSize') : this.size;
-    console.log((e.offsetX / canvasWidth) * currentSize, (e.offsetY / canvasWidth) * currentSize);
-    console.log(e.offsetX, e.offsetY);
+    console.log(canvasWidth);
+    console.log([e.offsetX, e.offsetY]);
     return [
-      Math.floor((e.offsetX / canvasWidth) * (this.canvas.width / 1)),
-      Math.floor((e.offsetY / canvasWidth) * (this.canvas.width / 1)),
+      Math.floor((e.offsetX / canvasWidth) * this.canvas.width),
+      Math.floor((e.offsetY / canvasWidth) * this.canvas.width),
     ];
   }
 
   draw = e => {
     if (this.isDrawing) {
       [this.x2, this.y2] = this.getXYCoors(e);
-
       this.bresenham(this.x1, this.x2, this.y1, this.y2);
       [this.x1, this.y1] = [this.x2, this.y2];
     }
@@ -93,7 +89,8 @@ export default class Tools {
   };
 
   pencilTool(targetTool) {
-    if (targetTool === 'pencil') {
+    if (targetTool === 'eraser') this.isEraser = true;
+    if (targetTool === 'pencil' || targetTool === 'eraser') {
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.addEventListener('mouseup', this.drawMouseUp);
@@ -101,6 +98,7 @@ export default class Tools {
         this.isDrawing = false;
       });
     } else {
+      this.isEraser = false;
       this.canvas.removeEventListener('mousemove', this.draw);
       this.canvas.removeEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.removeEventListener('mouseup', this.drawMouseUp);

@@ -34,7 +34,7 @@ export default class View {
     }
   }
 
-  setCanvasSize() {
+  setCanvasWrapSize() {
     const canvasWrapHeight = this.mainColumn.offsetHeight;
     const canvasWrapWidth = this.mainColumn.offsetWidth;
     const size = canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight;
@@ -46,5 +46,14 @@ export default class View {
     const activeElement = document.querySelector(`.${activeClassName}`);
     activeElement.classList.remove(activeClassName);
     target.classList.add(activeClassName);
+  }
+
+  renderFrameActive(i, piskelImg, framesList) {
+    const newFrame = document.createElement('LI');
+    newFrame.className = 'frame__item frame__active';
+    newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
+      1}</span>`;
+    framesList.append(newFrame);
+    piskelImg.push('');
   }
 }

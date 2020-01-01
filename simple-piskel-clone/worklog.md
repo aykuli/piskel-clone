@@ -43,3 +43,5 @@
 | Dec 31 | | **5.5h** |  |
 | 12:00 | 14:00 | 2h | Pen size handler |
 | 18:00 | 18:30 | .5h | Canvas size handler |
+| Jan 1 | | **5.5h** |  |
+| 12:00 | 14:00 | 2h | Refactor code. CSS display flex make bug for canvas width - fixed |

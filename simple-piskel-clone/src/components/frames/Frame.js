@@ -10,6 +10,7 @@ function drawOnCanvas(canvas, dataURI) {
 }
 
 function frameDraw(arrImgs, currentCount) {
+  console.log(currentCount);
   const frame = document.querySelectorAll('.frame');
   if (arrImgs.length === 0) return;
   const frameCtx = frame[currentCount].getContext('2d');
@@ -129,23 +130,18 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
   });
 }
 
-function frameAdd(framesList, canvas, arrImgs) {
+function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
   const ctx = canvas.getContext('2d');
   const len = framesList.children.length;
   const frameActive = document.querySelector('.frame__active');
   frameActive.classList.remove('frame__active');
-  const newFrame = document.createElement('LI');
-  newFrame.className = 'frame__item frame__active';
-  newFrame.innerHTML = `<canvas class="frame" data-count="${len}" width="100" height="100" draggable="true"></canvas><button class="frame__btn--delete tip" data-tooltip="Delete this frame"><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${len +
-    1}</span>`;
-  framesList.append(newFrame);
+  renderFrameActive(len, piskelImg, framesList);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  arrImgs.push('');
-  console.log('arrImgs: ', arrImgs);
+  // arrImgs.push('');
   localStorage.removeItem(`piskelImg`);
-  localStorage.setItem('piskelImg', JSON.stringify(arrImgs));
-
+  localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
+  console.log(len);
   return len;
 }
 
