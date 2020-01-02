@@ -1,4 +1,5 @@
-
+## Worklog for task [Piskel-clone](https://github.com/rolling-scopes-school/tasks/blob/master/tasks/piskel-clone.md)
+project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 
 | Start time  | End time | time spent | feature |
 |-----------|-------------|-------------|-------------|
@@ -54,3 +55,4 @@
 | 14:00 | 16:00 | 2h | Fix CSS moving block when frames a lot |
 | 16:30 | 17:00 | 1.5h | Refactor functions of frame delete and add |
 | 17:30 | 18:00 | 0.5h | Fullscreen |
+| 18:30 | 19:00 | 0.5h | after stroke tool image saving in localStorage |

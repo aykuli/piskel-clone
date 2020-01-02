@@ -205,7 +205,7 @@ export default class Tools {
     this.currentColor.value = color;
   };
 
-  strokeTool(targetTool, currentCount, frameDraw) {
+  strokeTool(targetTool, frameDraw) {
     const canvasAbove = document.querySelector('.canvas--above');
     const ctxAbove = canvasAbove.getContext('2d');
     ctxAbove.imageSmoothingEnabled = false;
@@ -230,6 +230,7 @@ export default class Tools {
       });
 
       canvasAbove.addEventListener('mouseup', e => {
+        console.log('mouseup happens');
         [x1, y1] = this.getXYCoors(e);
         ctxAbove.clearRect(0, 0, canvasAbove.width, canvasAbove.height);
         this.bresenham(x0, x1, y0, y1, this.ctx);
@@ -237,6 +238,7 @@ export default class Tools {
 
         const dataURI = this.canvas.toDataURL();
         let piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
+        const currentCount = localStorage.getItem('piskelCounter');
         piskelImg[currentCount] = dataURI;
 
         localStorage.removeItem('piskelImg');
@@ -248,11 +250,11 @@ export default class Tools {
     }
   }
 
-  toolHandler = (targetTool, currentCount, frameDraw) => {
+  toolHandler = (targetTool, frameDraw) => {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
-    this.strokeTool(targetTool, currentCount, frameDraw);
+    this.strokeTool(targetTool, frameDraw);
     this.bucketSamePixelTool(targetTool);
 
     localStorage.removeItem('piskelTool');

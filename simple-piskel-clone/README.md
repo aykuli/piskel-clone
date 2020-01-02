@@ -1,4 +1,9 @@
 ## Piskel-clone
+| Deadline  | Folder name | Branch name |
+|-----------|-------------|-------------|
+| 23:59 08.01.2020 | simple-piskel-clone | simple-piskel-clone |
+
+
 * student **[Aynur Shauerman](https://github.com/aykuli)**
 * mentor **[Dina Mukhametshina](https://github.com/kamec)**
 

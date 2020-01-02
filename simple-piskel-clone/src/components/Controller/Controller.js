@@ -209,7 +209,7 @@ export default class Controller {
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
       this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-      this.tools.toolHandler(this.targetTool, this.currentCount, frameDraw);
+      this.tools.toolHandler(this.targetTool, frameDraw);
     }
 
     this.view.tools.addEventListener('click', e => {
@@ -224,7 +224,7 @@ export default class Controller {
           break;
         default:
           this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-          this.tools.toolHandler(this.targetTool, this.currentCount, frameDraw);
+          this.tools.toolHandler(this.targetTool, frameDraw);
       }
     });
   }
@@ -266,7 +266,7 @@ export default class Controller {
 
       if (this.targetTool !== 'empty') {
         this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-        this.tools.toolHandler(this.targetTool, this.currentCount, frameDraw);
+        this.tools.toolHandler(this.targetTool, frameDraw);
       }
     });
   }
