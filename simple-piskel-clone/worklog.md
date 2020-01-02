@@ -49,3 +49,6 @@
 | 18:00 | 19:00 | 2h | bucketSamePixelTool realized | 
 | 20:00 | 22:00 | 2h | stroke tool realized | 
 | 22:30 | 24:00 | 1.5h | copy frame html markup in View.js. Thinking on losic of copying frame | 
+| Jan 2 | | **9.5h** |  |
+| 13:00 | 14:00 | 1h | Add copy frame functionality |
+| 14:00 | 16:00 | 2h | Fix CSS moving block when frames a lot |

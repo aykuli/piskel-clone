@@ -1,5 +1,5 @@
 import Tools from '../tools/Tools';
-import { toolsMap } from './toolsMap';
+import { toolsMap } from '../tools/toolsMap';
 import { saveImgsInLocalStorage } from '../utils';
 import {
   drawOnCanvas,
@@ -12,13 +12,9 @@ import {
 import { animate } from '../animation/animate';
 
 export default class Controller {
-  constructor(view, initPixelSize) {
+  constructor(view, options) {
     this.view = view;
-    this.pixelSize = initPixelSize;
-    this.currentCount = 0;
-    this.piskelImg = [];
-    this.fps = 0;
-    this.penSize = 1;
+    [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
 
     this.swapWatch(); // color swap eventListener
     this.canvasResolutioWatch();
@@ -35,19 +31,20 @@ export default class Controller {
     this.cursorOnCanvas();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
-    animate(
-      i => {
-        drawOnCanvas(this.view.preview, this.piskelImg[i]);
-      },
-      this.view.fps,
-      this.view.fpsValue,
-      this.piskelImg
-    );
+    // animate(
+    //   i => {
+    //     drawOnCanvas(this.view.preview, this.piskelImg[i]);
+    //   },
+    //   this.view.fps,
+    //   this.view.fpsValue,
+    //   this.piskelImg
+    // );
+    this.clearSession();
   }
 
   init() {
-    this.currentCount =
-      localStorage.getItem('piskelCounter') !== null ? localStorage.getItem('piskelCounter') : this.currentCount;
+    const lSCount = localStorage.getItem('piskelCounter');
+    this.currentCount = lSCount !== null && lSCount !== 'undefined' ? lSCount : this.currentCount;
 
     // get image from Local Storage if exists
     if (localStorage.getItem('piskelImg') !== null) {
@@ -75,14 +72,14 @@ export default class Controller {
     if (+this.fps === 0 || this.piskelImg.length !== 0) {
       drawOnCanvas(this.view.preview, this.piskelImg[this.currentCount]);
     } else {
-      animate(
-        i => {
-          drawOnCanvas(this.view.preview, this.piskelImg[i]);
-        },
-        this.view.fps,
-        this.view.fpsValue,
-        this.piskelImg
-      );
+      // animate(
+      //   i => {
+      //     drawOnCanvas(this.view.preview, this.piskelImg[i]);
+      //   },
+      //   this.view.fps,
+      //   this.view.fpsValue,
+      //   this.piskelImg
+      // );
     }
   }
 
@@ -96,7 +93,10 @@ export default class Controller {
 
     this.view.setCanvasWrapSize();
 
-    window.addEventListener('resize', e => this.view.setCanvasWrapSize());
+    window.addEventListener('resize', e => {
+      console.log('window resizing');
+      this.view.setCanvasWrapSize();
+    });
   }
 
   canvasResolutioWatch() {
@@ -114,68 +114,91 @@ export default class Controller {
 
   frameWatch() {
     this.view.framesList.addEventListener('click', e => {
-      if (this.view.framesList.children.length === 1) return;
-      const frameDelBtns = Array.from(document.querySelectorAll('.frame__btn--delete'));
+      if (e.target.className.includes('frame__btn--delete')) {
+        if (this.view.framesList.children.length === 1) return;
+        console.log('delete');
+        const count = e.target.parentNode.children[0].dataset.count;
+        // remove LI of deleted frame and all of it's children
+        e.target.parentNode.remove();
 
-      switch (e.target.className) {
-        case frameDelBtns[0].className:
-          const count = e.target.parentNode.children[0].dataset.count;
+        // remove correspond img data in piskelImg array and refresh localStorage
+        this.piskelImg.splice(count, 1);
+        localStorage.removeItem(`piskelImg`);
+        localStorage.setItem(`piskelImg`, JSON.stringify(this.piskelImg));
 
-          // remove LI of deleted frame and all of it's children
-          e.target.parentNode.remove();
+        // refresh frames count
+        frameDatasetCountSet();
 
-          // remove correspond img data in piskelImg array and refresh localStorage
-          this.piskelImg.splice(count, 1);
-          localStorage.removeItem(`piskelImg`);
-          localStorage.setItem(`piskelImg`, JSON.stringify(this.piskelImg));
+        //set active frame if it was deleted
+        const frameActive = document.querySelector('.frame__active');
+        if (frameActive === null) {
+          drawOnCanvas(this.view.canvas, this.piskelImg[0]);
+          this.view.framesList.children[0].classList.add('frame__active');
+        }
+      } else if (e.target.className.includes('frame__btn--copy')) {
+        // берем значение фрейма, котрый копируем
+        const countFrom = +e.target.parentNode.children[0].dataset.count;
 
-          // refresh frames count
-          frameDatasetCountSet();
+        // 1. рендер одного фрейма сразу после currentCount
+        const newFrame = document.createElement('LI');
+        newFrame.className = 'frame__item';
+        newFrame.innerHTML = `<canvas class="frame" data-count="${countFrom +
+          1}" width="100" height="100" draggable="true"></canvas><button class="frame__btn frame__btn--delete tip" data-tooltip="Delete this frame"><button class="frame__btn frame__btn--copy tip" data-tooltip="Copy this frame"><span class="visually-hidden">Copy this canvas</span></button><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${countFrom +
+          2}</span>`;
+        e.target.parentNode.after(newFrame);
 
-          //set active frame if it was deleted
-          const frameActive = document.querySelector('.frame__active');
-          if (frameActive === null) {
-            drawOnCanvas(this.view.canvas, this.piskelImg[0]);
-            this.view.framesList.children[0].classList.add('frame__active');
-          }
-          break;
-        default:
-          this.currentCount = frameHandler(
-            e,
-            this.view.canvas,
-            this.piskelImg,
-            drawOnCanvas,
-            this.view.preview,
-            this.fps
-          );
-          localStorage.removeItem('piskelCounter');
-          localStorage.setItem('piskelCounter', this.currentCount);
+        // 2. активным фреймом посветить новый фрейм
+        this.view.highlightTarget(newFrame, 'frame__active');
+
+        // 3. Восстанавливаем правильную нумерацию фреймов в разметке
+        frameDatasetCountSet();
+
+        // 2. Нарисовать на этом новом фрейме this.piskelImg[this.currentCount]
+        drawOnCanvas(newFrame.children[0], this.piskelImg[countFrom]);
+
+        // 3. Разрезать this.piskelImg, добавив туда после this.currentCount еще один эелмент this.piskelImg[this.currentCount]
+        this.piskelImg.splice(countFrom, 0, this.piskelImg[countFrom]);
+        // 4. this.currentCount++. То есть обновить this.currentCount, this.piskelImg
+        this.currentCount = countFrom + 1;
+        // очистить основной канвас и нарисовать на нем активный фрейм
+        drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
+      } else {
+        this.currentCount = frameHandler(
+          e,
+          this.view.canvas,
+          this.piskelImg,
+          drawOnCanvas,
+          this.view.preview,
+          this.fps
+        );
       }
+      localStorage.removeItem('piskelImg');
+      localStorage.setItem('piskelImg', JSON.stringify(this.piskelImg));
+      localStorage.removeItem('piskelCounter');
+      localStorage.setItem('piskelCounter', this.currentCount);
     });
 
     this.view.frameAddBtn.addEventListener('click', () => {
-      this.currentCount = frameAdd(this.view.renderFrameActive, this.view.framesList, this.view.canvas, this.piskelImg);
+      frameAdd(this.view.renderFrameActive, this.view.framesList, this.view.canvas, this.piskelImg);
+      this.currentCount = +localStorage.getItem('piskelCounter');
     });
 
     this.view.canvas.addEventListener('mouseup', () => {
       saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
+
       frameDraw(this.piskelImg, this.currentCount);
     });
 
-    this.view.canvas.addEventListener('mouseleave', () => {
-      saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
-      frameDraw(this.piskelImg, this.currentCount);
-    });
-
-    // save image from additive canvas when using stroke tool
-    // this.view.canvasAbove.addEventListener('mouseup', () => {
+    // this.view.canvas.addEventListener('mouseleave', () => {
+    //   // console.log('mouseLeave');
+    //   // console.log(this.piskelImg, this.view.canvas, this.currentCount);
     //   saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
     //   frameDraw(this.piskelImg, this.currentCount);
     // });
   }
 
   swapWatch() {
-    // set swaper color at app loading
+    // set swaper color at app loading or
     // get user colors from Local Storage if exists
     if (localStorage.getItem('piskelPrimaryColor') !== null) {
       this.view.primaryColor.value = localStorage.getItem('piskelPrimaryColor');
@@ -309,5 +332,18 @@ export default class Controller {
     //   this.view.cursor.style.width = 0;
     //   this.view.cursor.style.height = 0;
     // });
+  }
+
+  clearSession() {
+    this.view.clearSessionBtn.addEventListener('click', () => {
+      console.log('clear');
+      localStorage.removeItem('piskelImg');
+      localStorage.removeItem('piskelPrimaryColor');
+      localStorage.removeItem('piskelSecondaryColor');
+      localStorage.removeItem('piskelTool');
+      localStorage.removeItem('piskelFps');
+      localStorage.removeItem('piskelCounter');
+      location.reload();
+    });
   }
 }

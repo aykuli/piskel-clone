@@ -33,30 +33,41 @@ body {
 
 .page__wrap {
     position: relative;
+    width: 100vw;
+    height: 100vh;
 }
 
 .main {
-    display: flex;
-    justify-content: space-between;
-    height: calc(100vh - 200px);
-    margin: 0 60px 0 110px;
+    position: absolute;
+    top: 60px;
+    left: 110px;
+    width: calc(100vw - 130px);
+    // height: calc(100vh - 200px);
+    // margin: 0 20px 0 110px;
 }
 
 .column {
     &--main {
         position: absolute;
-        top: 70px;
-        bottom: 0;
-        left: 235px;
+        top: 0;
+        left: 130px;
 
-        width: calc(100% - 520px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: calc(100vw - 470px);
+        height: calc(100vh - 130px);
 
         background-color: $grey;
     }
 
     &--right {
+        position: absolute;
+        top: 0;
+        right: 0;
+
         width: 200px;
-        margin-left: 10px;
     }
 }
 
@@ -120,6 +131,9 @@ body {
     &:hover::after {
         top: 17px;
     }
+    &:focus::after, &:focus::before {
+        outline: none;
+    }
 }
 
 .fps {
@@ -152,4 +166,24 @@ body {
     background-color: #fff;
     opacity: 0.5;
     
+}
+
+.session {
+    &__clear {
+        padding: 0 10px;
+
+        font-family: Roboto, Arial, serif;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 32px;
+
+        background-color: $grey-light;
+        border: none;
+
+        &:hover, &:focus {
+            background-color: $green;
+            box-shadow: 1px 1px 4px $green, -1px -1px 4px $green;
+            cursor: pointer;
+        }
+    }
 }

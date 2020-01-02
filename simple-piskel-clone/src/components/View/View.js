@@ -1,8 +1,8 @@
 export default class View {
   constructor() {
     this.canvas = document.querySelector('#canvas');
-    this.canvasAbove = document.querySelector('.canvas--above');
     this.ctx = canvas.getContext('2d', { alpha: true });
+    this.canvasAbove = document.querySelector('.canvas--above');
 
     this.tools = document.querySelector('.tools__container');
 
@@ -12,6 +12,8 @@ export default class View {
 
     this.framesList = document.querySelector('.frames__list');
     this.frameAddBtn = document.querySelector('.frames__btn--add');
+    // this.frameCopyBtn = document.querySelector('.frame__btn--copy');
+
     this.preview = document.querySelector('#preview');
     this.fps = document.querySelector('#fps');
     this.fpsValue = this.fps.parentNode.children[0].children[0];
@@ -22,6 +24,8 @@ export default class View {
 
     this.penSizes = document.querySelector('.pen-size__list');
     this.cursor = document.querySelector('.cursor');
+
+    this.clearSessionBtn = document.querySelector('.session__clear');
   }
 
   renderFrames(piskelImg, currentCount) {
@@ -39,6 +43,7 @@ export default class View {
   setCanvasWrapSize() {
     const canvasWrapHeight = this.mainColumn.offsetHeight;
     const canvasWrapWidth = this.mainColumn.offsetWidth;
+    console.log(canvasWrapWidth, canvasWrapHeight);
     const size = canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight;
     this.canvas.parentNode.style.width = `${size}px`;
     this.canvas.parentNode.style.height = `${size}px`;

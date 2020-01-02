@@ -65,6 +65,8 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
   document.addEventListener('dragend', e => {
     dragged.style.opacity = '';
     e.target.style.border = '';
+    localStorage.removeItem('piskelImg');
+    localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
   });
 
   // events fired on the drop targets. Prevent default to allow drop
@@ -124,6 +126,9 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
           
           // make dataset.count and visual count text of frames consecutive          
           frameDatasetCountSet();
+
+          localStorage.removeItem('piskelCounter');
+          localStorage.setItem('piskelCounter', targetNumb);
         }
       }
   });
@@ -139,7 +144,8 @@ function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   localStorage.removeItem(`piskelImg`);
   localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
-  return len;
+  localStorage.removeItem('piskelCounter');
+  localStorage.setItem('piskelCounter', len);
 }
 
 // make dataset.count and visual count text of frames consecutive

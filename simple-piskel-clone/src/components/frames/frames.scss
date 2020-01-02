@@ -92,7 +92,6 @@
         width: 25px;
         height: 25px;
 
-        background-image: url(./img/trash.svg);
         background-repeat: no-repeat;
         background-position: 3px 3px;
         background-color: $green;
@@ -102,10 +101,16 @@
 
         &--delete {            
             top: 0;
+            background-image: url(./img/trash.svg);
         }
 
         &--copy {
             bottom: 0;
+            background-image: url(./img/copy.svg);
+        }
+        
+        &:focus {
+            outline: none;
         }
     }    
 }
