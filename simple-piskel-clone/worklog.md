@@ -52,3 +52,4 @@
 | Jan 2 | | **9.5h** |  |
 | 13:00 | 14:00 | 1h | Add copy frame functionality |
 | 14:00 | 16:00 | 2h | Fix CSS moving block when frames a lot |
+| 16:30 | 17:00 | 2h | Refactor functions of frame delete and add |

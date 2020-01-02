@@ -148,6 +148,60 @@ function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
   localStorage.setItem('piskelCounter', len);
 }
 
+function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCountSet, drawOnCanvas) {
+  // get the count of copied frame
+  const countFrom = +target.parentNode.children[0].dataset.count;
+
+  // render new  frame right after copied frame
+  const newFrame = document.createElement('LI');
+  newFrame.className = 'frame__item';
+  newFrame.innerHTML = `<canvas class="frame" data-count="${countFrom +
+    1}" width="100" height="100" draggable="true"></canvas><button class="frame__btn frame__btn--delete tip" data-tooltip="Delete this frame"><button class="frame__btn frame__btn--copy tip" data-tooltip="Copy this frame"><span class="visually-hidden">Copy this canvas</span></button><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${countFrom +
+    2}</span>`;
+  target.parentNode.after(newFrame);
+
+  // highlightTarget new frame and set it as active
+  highlightTarget(newFrame, 'frame__active');
+
+  // set dataset.count and visual count text of frames consecutive
+  frameDatasetCountSet();
+
+  // draw on main canvas this.piskelImg[countFrom]
+  drawOnCanvas(newFrame.children[0], piskelImg[countFrom]);
+
+  // splice piskelImg to add new frame in frame appropriate place
+  piskelImg.splice(countFrom, 0, piskelImg[countFrom]);
+
+  // clear main canvas and draw current active frame
+  drawOnCanvas(canvas, piskelImg[countFrom]);
+
+  // return new currentCount
+  return countFrom + 1;
+}
+
+function frameDel(target, piskelImg, canvas, framesList) {
+  if (framesList.children.length === 1) return;
+  console.log('delete');
+  const count = target.parentNode.children[0].dataset.count;
+  // remove LI of deleted frame and all of it's children
+  target.parentNode.remove();
+
+  // remove correspond img data in piskelImg array and refresh localStorage
+  piskelImg.splice(count, 1);
+  localStorage.removeItem(`piskelImg`);
+  localStorage.setItem(`piskelImg`, JSON.stringify(piskelImg));
+
+  // refresh frames count
+  frameDatasetCountSet();
+
+  //set active frame if it was deleted
+  const frameActive = document.querySelector('.frame__active');
+  if (frameActive === null) {
+    drawOnCanvas(canvas, piskelImg[0]);
+    framesList.children[0].classList.add('frame__active');
+  }
+}
+
 // make dataset.count and visual count text of frames consecutive
 function frameDatasetCountSet() {
   const framesList = document.querySelector('.frames__list');
@@ -158,4 +212,4 @@ function frameDatasetCountSet() {
   }
 }
 
-export { drawOnCanvas, frameDraw, frameHandler, frameDndHandler, frameAdd, frameDatasetCountSet };
+export { drawOnCanvas, frameDraw, frameHandler, frameDndHandler, frameAdd, frameDatasetCountSet, frameCopy, frameDel };

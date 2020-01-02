@@ -8,6 +8,8 @@ import {
   frameDndHandler,
   frameAdd,
   frameDatasetCountSet,
+  frameCopy,
+  frameDel,
 } from '../frames/frame';
 import { animate } from '../animation/animate';
 
@@ -115,53 +117,16 @@ export default class Controller {
   frameWatch() {
     this.view.framesList.addEventListener('click', e => {
       if (e.target.className.includes('frame__btn--delete')) {
-        if (this.view.framesList.children.length === 1) return;
-        console.log('delete');
-        const count = e.target.parentNode.children[0].dataset.count;
-        // remove LI of deleted frame and all of it's children
-        e.target.parentNode.remove();
-
-        // remove correspond img data in piskelImg array and refresh localStorage
-        this.piskelImg.splice(count, 1);
-        localStorage.removeItem(`piskelImg`);
-        localStorage.setItem(`piskelImg`, JSON.stringify(this.piskelImg));
-
-        // refresh frames count
-        frameDatasetCountSet();
-
-        //set active frame if it was deleted
-        const frameActive = document.querySelector('.frame__active');
-        if (frameActive === null) {
-          drawOnCanvas(this.view.canvas, this.piskelImg[0]);
-          this.view.framesList.children[0].classList.add('frame__active');
-        }
+        frameDel(e.target, this.piskelImg, this.view.canvas, this.view.framesList);
       } else if (e.target.className.includes('frame__btn--copy')) {
-        // берем значение фрейма, котрый копируем
-        const countFrom = +e.target.parentNode.children[0].dataset.count;
-
-        // 1. рендер одного фрейма сразу после currentCount
-        const newFrame = document.createElement('LI');
-        newFrame.className = 'frame__item';
-        newFrame.innerHTML = `<canvas class="frame" data-count="${countFrom +
-          1}" width="100" height="100" draggable="true"></canvas><button class="frame__btn frame__btn--delete tip" data-tooltip="Delete this frame"><button class="frame__btn frame__btn--copy tip" data-tooltip="Copy this frame"><span class="visually-hidden">Copy this canvas</span></button><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${countFrom +
-          2}</span>`;
-        e.target.parentNode.after(newFrame);
-
-        // 2. активным фреймом посветить новый фрейм
-        this.view.highlightTarget(newFrame, 'frame__active');
-
-        // 3. Восстанавливаем правильную нумерацию фреймов в разметке
-        frameDatasetCountSet();
-
-        // 2. Нарисовать на этом новом фрейме this.piskelImg[this.currentCount]
-        drawOnCanvas(newFrame.children[0], this.piskelImg[countFrom]);
-
-        // 3. Разрезать this.piskelImg, добавив туда после this.currentCount еще один эелмент this.piskelImg[this.currentCount]
-        this.piskelImg.splice(countFrom, 0, this.piskelImg[countFrom]);
-        // 4. this.currentCount++. То есть обновить this.currentCount, this.piskelImg
-        this.currentCount = countFrom + 1;
-        // очистить основной канвас и нарисовать на нем активный фрейм
-        drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
+        this.currentCount = frameCopy(
+          e.target,
+          this.piskelImg,
+          this.view.canvas,
+          this.view.highlightTarget,
+          frameDatasetCountSet,
+          drawOnCanvas
+        );
       } else {
         this.currentCount = frameHandler(
           e,

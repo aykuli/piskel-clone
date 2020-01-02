@@ -12,7 +12,6 @@ export default class View {
 
     this.framesList = document.querySelector('.frames__list');
     this.frameAddBtn = document.querySelector('.frames__btn--add');
-    // this.frameCopyBtn = document.querySelector('.frame__btn--copy');
 
     this.preview = document.querySelector('#preview');
     this.fps = document.querySelector('#fps');
@@ -43,7 +42,6 @@ export default class View {
   setCanvasWrapSize() {
     const canvasWrapHeight = this.mainColumn.offsetHeight;
     const canvasWrapWidth = this.mainColumn.offsetWidth;
-    console.log(canvasWrapWidth, canvasWrapHeight);
     const size = canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight;
     this.canvas.parentNode.style.width = `${size}px`;
     this.canvas.parentNode.style.height = `${size}px`;
