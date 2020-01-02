@@ -1,3 +1,5 @@
+import './animation.scss';
+
 function animate(draw, fpsInput, fpsDOM, piskelImg) {
   if (piskelImg.length === 0) return;
   let start = performance.now();
@@ -50,4 +52,10 @@ function animate(draw, fpsInput, fpsDOM, piskelImg) {
   });
 }
 
-export { animate };
+function animationFullscreen(fullscreenBtn, previewCanvas) {
+  fullscreenBtn.addEventListener('click', e => {
+    previewCanvas.requestFullscreen();
+  });
+}
+
+export { animate, animationFullscreen };

@@ -25,6 +25,8 @@ export default class View {
     this.cursor = document.querySelector('.cursor');
 
     this.clearSessionBtn = document.querySelector('.session__clear');
+
+    this.fullscreenBtn = document.querySelector('.animate__fullscreen');
   }
 
   renderFrames(piskelImg, currentCount) {

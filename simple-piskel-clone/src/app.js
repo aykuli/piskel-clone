@@ -1,6 +1,5 @@
 import './sass/style.scss';
 import './components/drawCanvas/drawCanvas';
-import './components/preview/preview';
 import './components/appAction/appAction';
 import Controller from './components/Controller/Controller';
 import View from './components/View/View';

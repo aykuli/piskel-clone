@@ -11,7 +11,7 @@ import {
   frameCopy,
   frameDel,
 } from '../frames/frame';
-import { animate } from '../animation/animate';
+import { animate, animationFullscreen } from '../animation/animate';
 
 export default class Controller {
   constructor(view, options) {
@@ -33,15 +33,16 @@ export default class Controller {
     this.cursorOnCanvas();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
-    // animate(
-    //   i => {
-    //     drawOnCanvas(this.view.preview, this.piskelImg[i]);
-    //   },
-    //   this.view.fps,
-    //   this.view.fpsValue,
-    //   this.piskelImg
-    // );
+    animate(
+      i => {
+        drawOnCanvas(this.view.preview, this.piskelImg[i]);
+      },
+      this.view.fps,
+      this.view.fpsValue,
+      this.piskelImg
+    );
     this.clearSession();
+    animationFullscreen(this.view.fullscreenBtn, this.view.preview);
   }
 
   init() {
@@ -74,14 +75,14 @@ export default class Controller {
     if (+this.fps === 0 || this.piskelImg.length !== 0) {
       drawOnCanvas(this.view.preview, this.piskelImg[this.currentCount]);
     } else {
-      // animate(
-      //   i => {
-      //     drawOnCanvas(this.view.preview, this.piskelImg[i]);
-      //   },
-      //   this.view.fps,
-      //   this.view.fpsValue,
-      //   this.piskelImg
-      // );
+      animate(
+        i => {
+          drawOnCanvas(this.view.preview, this.piskelImg[i]);
+        },
+        this.view.fps,
+        this.view.fpsValue,
+        this.piskelImg
+      );
     }
   }
 
@@ -96,7 +97,6 @@ export default class Controller {
     this.view.setCanvasWrapSize();
 
     window.addEventListener('resize', e => {
-      console.log('window resizing');
       this.view.setCanvasWrapSize();
     });
   }
