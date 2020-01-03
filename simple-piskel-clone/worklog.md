@@ -58,4 +58,6 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 18:30 | 19:00 | 0.5h | after stroke tool image saving in localStorage |
 | 22:00 | 01:00 | 3h | webpack configure to load from landing page and help another studet with animation |
 | Jan 3 | | **7.5h** |  |
-| 16:00 | 16:30 | 0.5h | webpack for landing page |
+| 16:00 | 16:30 | 0.5h | webpack configure for landing page |
+| 16:30 | 18:30 | 2h | landing page markup |
+| 19:00 | 21:00 | 2h | landing page content: preparing images |

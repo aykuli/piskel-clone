@@ -15,6 +15,51 @@ body {
     color: $font-for-dark-bg;
 }
 
+.btn {
+    padding: 0 5px;
+    margin-right: 10px;
+
+    background-color: rgba($color: $grey-light, $alpha: 1);
+    border: none;
+
+    font-family: Roboto, Arial, serif;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 22px;
+
+    &s__container {
+        display: flex;
+        margin: 0;
+        margin-bottom: 20px;
+        padding: 0;
+
+        list-style: none;
+    }
+
+    &s__title {
+        margin: 0;
+        margin-bottom: 5px;
+        padding: 0;
+
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 22px;
+    }
+
+    &:hover, &:focus, &--active {
+        background-color: $green;
+
+        outline: none;
+    }
+    &:hover, &:focus {
+        box-shadow: 1px 1px 4px $green, -1px -1px 4px $green;
+        cursor: pointer;
+    }
+    &:active {
+        box-shadow: none;
+    }
+}
+
 .visually-hidden {
 	position: absolute;
 
@@ -135,18 +180,7 @@ body {
     &__clear {
         padding: 0 10px;
 
-        font-family: Roboto, Arial, serif;
         font-size: 16px;
-        font-weight: normal;
         line-height: 32px;
-
-        background-color: $grey-light;
-        border: none;
-
-        &:hover, &:focus {
-            background-color: $green;
-            box-shadow: 1px 1px 4px $green, -1px -1px 4px $green;
-            cursor: pointer;
-        }
     }
 }

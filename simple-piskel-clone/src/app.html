@@ -11,7 +11,7 @@
     <div class="page__wrap">
         <header class='header'>
             <h1 class='header__title'>
-                <a href="./landing.html" class="header__landing">
+                <a href="./index.html" class="header__landing">
                         Piskel
                 </a>
             </h1>
@@ -46,20 +46,22 @@
                     </div>
                 </div>                
                 <div class="canvas-resolutions">
-                    <h3 class="canvas-resolutions__title">Resize</h3>
-                    <ul class="canvas-resolutions__list">
-                        <li class="resolution">
-                            <button class="resolution__btn resolution__btn--active resolution--res32" data-size="32">32x32</button>
-                        </li>
-                        <li class="resolution">
-                            <button class="resolution__btn resolution--res64" data-size="64">64x64</button>
-                        </li>
-                        <li class="resolution">
-                            <button class="resolution__btn resolution--res128" data-size="128">128x128</button>
-                        </li>
-                    </ul>
+                    <h3 class="btns__title">Resize</h3>
+                    <div class="btns__container canvas-resolutions__list">
+                        <button class="btn resolution__btn--active resolution--res32" data-size="32">32x32</button>
+                        <button class="btn resolution--res64" data-size="64">64x64</button>
+                        <button class="btn resolution--res128" data-size="128">128x128</button>
+                    </div>
                 </div>
-                <div class="session"><button class="session__clear">Clear user session</button></div>
+                <div class="btns__container"><button class="btn session__clear">Clear user session</button></div>
+                <div class="save">
+                    <p class="btns__title">Save as</p>
+                    <div class="btns__container">
+                        <button class="btn save__apng">.apng</button>
+                        <button class="btn save__gif">.gif</button>
+                        <button class="btn save__piskel">.piskel</button>
+                    </div>
+                </div>
             </div>
         </main>
         <aside>

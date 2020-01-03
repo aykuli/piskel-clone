@@ -2,11 +2,13 @@ import './frames.scss';
 
 function drawOnCanvas(canvas, dataURI) {
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   const img = new Image();
   if (dataURI === '') return;
   img.src = dataURI;
-  img.addEventListener('load', () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height));
+  img.addEventListener('load', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  });
 }
 
 function frameDraw(piskelImg, currentCount) {
