@@ -5,88 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Piskel from RSSchool</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="landing/style.css"> -->
 </head>
 <body>
-    <div class="page__wrap">
-        <header class='header'>
-            <h1 class='header__title'>Piskel</h1 class='header__title'>
-            <p class='header__text'>New piskel*</p>
-            <nav class="nav nav__user">
-                <div data-netlify-identity-menu></div>
-            </nav>
-        </header>
-        <main class='main'>        
-            <div class="column frames">
-                <ul class="frames__list"></ul>
-                <button class="frames__btn--add">Add new frame</button>
-            </div>
-            <div class="column--main">
-                <div class="canvas__wrap">
-                    <canvas id="canvas" width="128" height="128" class="canvas">Your browser doesn't support canvas</canvas>
-                    <canvas width="128" height="128" class="canvas--above">Your browser doesn't support canvas</canvas>
-                    <!-- <div class="cursor"></div> -->
-                </div>
-            </div>
-            <div class="column column--right">
-                <div class="animate__wrap">
-                    <canvas id="preview" class="animate__canvas" width="200" height="200">Your browser doesn't support canvas</canvas>                        
-                    <button class="animate__fullscreen"></button>
-                    <div class="fps__wrap">
-                        <p class="fps__value">
-                            <span></span>
-                            <span>FPS</span>
-                        </p>
-                        <input class="fps__input" type="range" id="fps" name="fps-input" min="0" max="24">
-                        <label class="visually-hidden" for="fps-input">Set FPS for drawn animation</label>
-                    </div>
-                </div>                
-                <div class="canvas-resolutions">
-                    <h3 class="canvas-resolutions__title">Resize</h3>
-                    <ul class="canvas-resolutions__list">
-                        <li class="resolution">
-                            <button class="resolution__btn resolution__btn--active resolution--res32" data-size="32">32x32</button>
-                        </li>
-                        <li class="resolution">
-                            <button class="resolution__btn resolution--res64" data-size="64">64x64</button>
-                        </li>
-                        <li class="resolution">
-                            <button class="resolution__btn resolution--res128" data-size="128">128x128</button>
-                        </li>
-                    </ul>
-                </div>
-                <div class="session"><button class="session__clear">Clear user session</button></div>
-            </div>
-        </main>
-        <aside>
-            <div class="tools">            
-                <h2 class="visually-hidden">Tools for paint</h2>
-                <ul class="pen-size__list tip"  data-tooltip="Pen size from 1 to 4">
-                    <li class="pen-size pen-size--active" data-size="1"></li>
-                    <li class="pen-size" data-size="2"></li>
-                    <li class="pen-size" data-size="3"></li>
-                    <li class="pen-size" data-size="4"></li>
-                </ul>
-                <ul class="tools__container">
-                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)"><span class="visually-hidden">Pencil tool</span></li>
-                    <li id='stroke' class="tool tool--stroke tip" data-tooltip="Line tool(L)"><span class="visually-hidden">Line tool</span></li>
-                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)"><span class="visually-hidden">Bucket tool</span></li>
-                    <li id='bucketSamePixel' class="tool tool--bucket-same-pixel tip" data-tooltip="Paint all pixels of the same color tool(A)"><span class="visually-hidden">Paint all pixels of the same color tool</span></li>
-                    <li id='eraser' class="tool tool--eraser tip" data-tooltip="Eraser tool(E)"><span class="visually-hidden">Eraser tool</span></li>
-                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)"><span class="visually-hidden">Picker tool</span></li>
-                    <li id='empty' class="tool tool--empty tip" data-tooltip="Clear canvas(Z)"><span class="visually-hidden">Clear canvas</span></li>
-                </ul>
-                <div class="tools__palette--wrap">
-                    <label for="color-switch-secondary" class="visually-hidden">Secondary color</label>
-                    <input class="tools__palette--secondary" type="color" name="color-switch-secondary" value="#ffbb44">
-                    <label for="color-switch-primary" class="visually-hidden">Primary color</label>
-                    <input class="tools__palette--primary" type="color"name="color-switch-primary" value="#ff0000">
-                    <button class="tools__palette--swapper tip" data-tooltip="Swap color(X)"><span class="visually-hidden">Swap color</span></button>
-                </div>
-            </div>
-        </aside>
-    </div>
-    <!-- <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script src="https://unpkg.com/netlify-auth-providers"></script> -->
+    <a href="app.html">Create sprite</a>
 </body>
 </html>

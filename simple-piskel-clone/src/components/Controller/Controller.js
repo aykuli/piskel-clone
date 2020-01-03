@@ -31,6 +31,7 @@ export default class Controller {
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
     this.cursorOnCanvas();
+    this.framesScroll();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
     animate(
@@ -68,7 +69,7 @@ export default class Controller {
       this.fps = localStorage.getItem('piskelFps');
       this.view.fps.value = +localStorage.getItem('piskelFps');
     } else {
-      this.fps = this.view.fps.value;
+      this.view.fps.value = this.fps;
       localStorage.setItem('piskelFps', this.fps);
     }
     this.view.fpsValue.innerText = localStorage.getItem('piskelFps');
@@ -84,6 +85,31 @@ export default class Controller {
         this.piskelImg
       );
     }
+  }
+
+  framesScroll() {
+    // document.body.style.overflow = 'hidden';
+    console.log(
+      '\ndocument.body.scrollHeight: ',
+      document.body.scrollHeight,
+      '\ndocument.documentElement.scrollHeight: ',
+      document.documentElement.scrollHeight,
+      '\ndocument.body.offsetHeight: ',
+      document.body.offsetHeight,
+      '\ndocument.documentElement.offsetHeight: ',
+      document.documentElement.offsetHeight,
+      '\ndocument.body.clientHeight: ',
+      document.body.clientHeight,
+      '\ndocument.documentElement.clientHeight: ',
+      document.documentElement.clientHeight
+    );
+    let sLeft = this.view.framesList.scrollBottom;
+    if (this.view.framesList.clientHeight > document.body.clientHeight) {
+      console.log('ono');
+      this.view.framesList.style.overflowY = 'auto';
+      this.view.framesList.style.overflowX = 'hidden';
+    }
+    // console.log(this.view.framesList.clientHeight);
   }
 
   canvasSizeWatch() {
@@ -117,7 +143,9 @@ export default class Controller {
   frameWatch() {
     this.view.framesList.addEventListener('click', e => {
       if (e.target.className.includes('frame__btn--delete')) {
-        frameDel(e.target, this.piskelImg, this.view.canvas, this.view.framesList);
+        console.log('до this.currentCount: ', this.currentCount);
+        this.currentCount = frameDel(e.target, this.piskelImg, this.view.canvas, this.view.framesList);
+        console.log('после this.currentCount: ', this.currentCount);
       } else if (e.target.className.includes('frame__btn--copy')) {
         this.currentCount = frameCopy(
           e.target,

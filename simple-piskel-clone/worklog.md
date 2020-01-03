@@ -50,9 +50,12 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 18:00 | 19:00 | 2h | bucketSamePixelTool realized | 
 | 20:00 | 22:00 | 2h | stroke tool realized | 
 | 22:30 | 24:00 | 1.5h | copy frame html markup in View.js. Thinking on losic of copying frame | 
-| Jan 2 | | **9.5h** |  |
+| Jan 2 | | **7.5h** |  |
 | 13:00 | 14:00 | 1h | Add copy frame functionality |
 | 14:00 | 16:00 | 2h | Fix CSS moving block when frames a lot |
 | 16:30 | 17:00 | 1.5h | Refactor functions of frame delete and add |
 | 17:30 | 18:00 | 0.5h | Fullscreen |
 | 18:30 | 19:00 | 0.5h | after stroke tool image saving in localStorage |
+| 22:00 | 01:00 | 3h | webpack configure to load from landing page and help another studet with animation |
+| Jan 3 | | **7.5h** |  |
+| 16:00 | 14:00 | 1h | Add copy frame functionality |

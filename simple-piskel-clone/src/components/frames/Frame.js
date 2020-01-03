@@ -182,7 +182,8 @@ function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCount
 function frameDel(target, piskelImg, canvas, framesList) {
   if (framesList.children.length === 1) return;
   console.log('delete');
-  const count = target.parentNode.children[0].dataset.count;
+  let count = target.parentNode.children[0].dataset.count;
+  console.log('номер удаляемого фрейма: ', count);
   // remove LI of deleted frame and all of it's children
   target.parentNode.remove();
 
@@ -199,7 +200,15 @@ function frameDel(target, piskelImg, canvas, framesList) {
   if (frameActive === null) {
     drawOnCanvas(canvas, piskelImg[0]);
     framesList.children[0].classList.add('frame__active');
+    localStorage.removeItem('piskelCounter');
+    localStorage.setItem('piskelCounter', 0);
+    count = 1;
+  } else {
+    count = localStorage.getItem('piskelCounter');
+    localStorage.removeItem('piskelCounter');
+    localStorage.setItem('piskelCounter', count - 1);
   }
+  return count - 1;
 }
 
 // make dataset.count and visual count text of frames consecutive

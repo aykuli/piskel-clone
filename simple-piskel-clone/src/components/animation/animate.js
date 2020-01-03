@@ -19,17 +19,17 @@ function animate(draw, fpsInput, fpsDOM, piskelImg) {
         duration = 1000 / fps;
         prev = timeFraction;
         timeFraction = Math.abs(Math.floor((time - start) / duration));
-        if (timeFraction !== prev) {
-          draw(i); // draw frame
-          i++;
-          i %= piskelImg.length;
-        }
+        // if (timeFraction !== prev) {
+        draw(i); // draw frame
+        i++;
+        i %= piskelImg.length;
+        // }
         if (timeFraction >= 0) {
           cancelAnimationFrame(animReqId - 1);
           animReqId = requestAnimationFrame(animate);
         }
       } else {
-        cancelAnimationFrame(animReqId);
+        // cancelAnimationFrame(animReqId);
         const currentCount = localStorage.getItem('piskelCounter');
         draw(currentCount);
       }
@@ -45,7 +45,7 @@ function animate(draw, fpsInput, fpsDOM, piskelImg) {
         i %= piskelImg.length;
       }
       if (timeFraction >= 0) {
-        cancelAnimationFrame(animReqId);
+        // cancelAnimationFrame(animReqId);
         animReqId = requestAnimationFrame(animate);
       }
     }

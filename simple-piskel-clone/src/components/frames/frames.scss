@@ -1,13 +1,18 @@
 @import '../../sass/vars.scss';
 
 .frames {
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 125px;
+
+    outline: 1px solid red;
 
     &__list {
         margin: 0;
         margin-bottom: 10px;
         padding: 0;
-
+        
         list-style: none;
     }
 

@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/app.js',
+  entry: { app: './src/app.js', landing: './src/landing/landing.js' },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'main.js',
@@ -72,13 +72,23 @@ module.exports = {
 
   plugins: [
     new HtmlWebPackPlugin({
+      title: 'landing page',
       template: './src/index.html',
       filename: './index.html',
+      favicon: './src/favicon.ico',
+      // chunks: ['app'],
     }),
-
+    new HtmlWebPackPlugin({
+      title: 'piskel application',
+      template: './src/app.html',
+      filename: './piskel-clone',
+      favicon: './src/favicon.ico',
+      chunks: ['app'],
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
+      allChunks: true,
     }),
   ],
 

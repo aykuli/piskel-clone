@@ -230,7 +230,6 @@ export default class Tools {
       });
 
       canvasAbove.addEventListener('mouseup', e => {
-        console.log('mouseup happens');
         [x1, y1] = this.getXYCoors(e);
         ctxAbove.clearRect(0, 0, canvasAbove.width, canvasAbove.height);
         this.bresenham(x0, x1, y0, y1, this.ctx);
