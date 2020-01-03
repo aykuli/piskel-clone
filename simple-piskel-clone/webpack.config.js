@@ -6,7 +6,7 @@ module.exports = {
   entry: { app: './src/app.js', landing: './src/landing/landing.js' },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js',
+    filename: '[name].js',
   },
   mode: 'development',
   module: {
@@ -72,23 +72,21 @@ module.exports = {
 
   plugins: [
     new HtmlWebPackPlugin({
-      title: 'landing page',
-      template: './src/index.html',
+      template: './src/landing/landing.html',
       filename: './index.html',
       favicon: './src/favicon.ico',
-      // chunks: ['app'],
+      chunks: ['landing'],
     }),
     new HtmlWebPackPlugin({
-      title: 'piskel application',
       template: './src/app.html',
-      filename: './piskel-clone',
+      filename: './app.html',
       favicon: './src/favicon.ico',
       chunks: ['app'],
     }),
+
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
-      allChunks: true,
     }),
   ],
 
