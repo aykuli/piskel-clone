@@ -105,6 +105,12 @@
     }
 
     &__canvas {
+        &:hover, &:focus {
+            box-shadow: 1px 1px 7px $green, -1px -1px 7px $green;
+        }
+    }
+
+    &__canvas {
         border: 2px solid $grey;
     }
 }

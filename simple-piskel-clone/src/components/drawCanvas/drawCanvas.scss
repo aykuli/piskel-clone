@@ -32,4 +32,10 @@
 
 .resolution {
     margin-right: 10px;
+
+    &__btn {
+        &--active {
+            background-color: $green;
+        }
+    }
 }

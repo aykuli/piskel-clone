@@ -13,9 +13,14 @@ function renderGalleryItems(drawOnCanvas, animate, list, imgsArr) {
     item.setAttribute('href', 'app.html');
     item.dataset.count = i;
     list.append(item);
-    animate(j => {
-      drawOnCanvas(item.children[0], imgsArr[i][j]);
-    }, imgsArr[i]);
+    animate(
+      j => {
+        drawOnCanvas(item.children[0], imgsArr[i][j]);
+      },
+      imgsArr[i],
+      false,
+      true
+    );
   }
 }
 

@@ -51,6 +51,7 @@ export default class View {
 
   highlightTarget(target, activeClassName) {
     const activeElement = document.querySelector(`.${activeClassName}`);
+    console.log(activeElement);
     activeElement.classList.remove(activeClassName);
     target.classList.add(activeClassName);
   }

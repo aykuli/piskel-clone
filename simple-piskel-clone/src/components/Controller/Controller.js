@@ -38,10 +38,11 @@ export default class Controller {
       i => {
         drawOnCanvas(this.view.preview, this.piskelImg[i]);
       },
-      this.view.fps,
-      this.view.fpsValue,
-      this.piskelImg
+      this.piskelImg,
+      this.fpsWatch,
+      false
     );
+
     this.clearSession();
     animationFullscreen(this.view.fullscreenBtn, this.view.preview);
   }
@@ -80,12 +81,28 @@ export default class Controller {
         i => {
           drawOnCanvas(this.view.preview, this.piskelImg[i]);
         },
-        this.view.fps,
-        this.view.fpsValue,
-        this.piskelImg
+        this.piskelImg,
+        this.fpsWatch,
+        false
       );
     }
   }
+
+  fpsWatch = (draw, animateFrame) => {
+    this.view.fps.addEventListener('input', () => {
+      this.view.fpsValue.innerText = this.view.fps.value;
+      let fps = this.view.fps.value;
+      localStorage.removeItem('piskelFps');
+      localStorage.setItem('piskelFps', fps);
+
+      if (+fps !== 0) {
+        requestAnimationFrame(animateFrame);
+      } else {
+        const currentCount = localStorage.getItem('piskelCounter');
+        draw(currentCount);
+      }
+    });
+  };
 
   framesScroll() {
     // document.body.style.overflow = 'hidden';
@@ -117,7 +134,9 @@ export default class Controller {
     if (localStorage.getItem('piskelPixelSize') !== null) {
       this.pixelSize = Number(localStorage.getItem('piskelPixelSize'));
       const target = document.querySelector(`.resolution--res${this.view.canvas.width / this.pixelSize}`);
+      console.log(target);
       this.view.highlightTarget(target, 'resolution__btn--active');
+      console.log(target);
     }
 
     this.view.setCanvasWrapSize();
