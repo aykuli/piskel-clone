@@ -65,3 +65,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | Jan 4 | | **7.5h** |  |
 | 11:00 | 12:00 | 1h | landing page styles and js |
 | 13:00 | 14:30 | 1.5h | animation bug and refactoring |
+| 15:00 | 14:30 | 1.5h | animation bug and refactoring |
+| 16:00 | 14:30 | 1.5h | reading aout apng |

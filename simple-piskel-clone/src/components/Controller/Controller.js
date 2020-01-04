@@ -12,6 +12,10 @@ import {
   frameDel,
 } from '../frames/frame';
 import { animate, animationFullscreen } from '../animation/animate';
+import '../appAction/libs/GIFEncoder';
+import UPNG from 'upng-js';
+const apng = require('node-apng');
+const fs = require('fs-extra');
 
 export default class Controller {
   constructor(view, options) {
@@ -45,6 +49,7 @@ export default class Controller {
 
     this.clearSession();
     animationFullscreen(this.view.fullscreenBtn, this.view.preview);
+    this.saveBtnsWatch();
   }
 
   init() {
@@ -103,6 +108,52 @@ export default class Controller {
       }
     });
   };
+
+  saveBtnsWatch() {
+    this.view.saveBtns.addEventListener('click', e => {
+      const type = e.target.dataset.save;
+      switch (e.target.dataset.save) {
+        case 'gif':
+          console.log('gif');
+          break;
+        case 'apng':
+          //         const imgs = localStorage.getItem('piskelImg');
+          //         console.log(imgs);
+
+          //         // UPNG.encode(imgs, 32, 32, 0, [200]);
+          //         const buffers = imgs;
+          //         const buffer = apng(buffers, index => ({ numerator: 1, denominator: 10 }));
+          // await fs.writeFile('apng.png', buffer);
+          console.log('apng');
+          void (async function() {
+            const buffers = localStorage.getItem('piskelImg'); // Buffers of PNG image data
+            // The callback is for frame duration: `numeration/denominator` seconds
+            const buffer = apng(buffers, index => ({ numerator: 1, denominator: 10 }));
+            await fs.writeFile('apng.png', buffer);
+          })();
+          break;
+        case 'piskel':
+          console.log('piskel');
+          break;
+        default:
+          return;
+      }
+      // if (type === 'gif') {
+      //   console.log('gif');
+      //   // var encoder = new GIFEncoder();
+      //   // encoder.setRepeat(0); //0  -> loop forever
+      //   // //1+ -> loop n times then stop
+      //   // encoder.setDelay(500); //go to next frame every n milliseconds
+      //   // encoder.start();
+      //   // encoder.addFrame(this.view.ctx);
+      //   // encoder.finish();
+      //   // var binary_gif = encoder.stream().getData(); //notice this is different from the as3gif package!
+      //   // var data_url = 'data:image/gif;base64,' + encode64(binary_gif);
+      //   // console.log(data_url);
+      //   // encoder.download('download.gif');
+      // }
+    });
+  }
 
   framesScroll() {
     // document.body.style.overflow = 'hidden';

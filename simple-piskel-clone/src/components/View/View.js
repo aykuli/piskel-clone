@@ -27,6 +27,8 @@ export default class View {
     this.clearSessionBtn = document.querySelector('.session__clear');
 
     this.fullscreenBtn = document.querySelector('.animate__fullscreen');
+
+    this.saveBtns = document.querySelector('.save');
   }
 
   renderFrames(piskelImg, currentCount) {
@@ -51,7 +53,6 @@ export default class View {
 
   highlightTarget(target, activeClassName) {
     const activeElement = document.querySelector(`.${activeClassName}`);
-    console.log(activeElement);
     activeElement.classList.remove(activeClassName);
     target.classList.add(activeClassName);
   }
