@@ -63,4 +63,4 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 19:00 | 21:00 | 2h | landing page content: preparing images |
 | 21:30 | 24:00 | 1.5h | draw piskel images for landing page |
 | Jan 4 | | **7.5h** |  |
-| 11:00 | 11:06 | 0.1h | landing page styles |
+| 11:00 | 12:00 | 1h | landing page styles and js |

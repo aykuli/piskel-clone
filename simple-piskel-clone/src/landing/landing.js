@@ -1,49 +1,23 @@
 import './landing.scss';
 import { drawOnCanvas } from '../components/frames/frame';
-import { megaMan, snow, psycho, pikachu, face } from './dataURIs';
+// import { megaMan, snow, psycho, pikachu, face } from './dataURIs';
+import { imagesArr } from './modules/dataURIs';
+import animate from './modules/landingAnimate';
+import { getLandingElements, renderGalleryItems } from './modules/landingView';
 
-function animate(draw, imgDataURIArr) {
-  if (imgDataURIArr.length === 0) return;
-  let start = performance.now();
-  let i = 0;
-  let timeFraction = 0;
-  let prev = timeFraction;
-  requestAnimationFrame(function animateFrame(time) {
-    let duration = 1000 / 4;
-    prev = timeFraction;
-    timeFraction = Math.abs(Math.floor((time - start) / duration));
-    if (timeFraction !== prev) {
-      draw(i); // draw frame
-      i++;
-      i %= imgDataURIArr.length;
-    }
-    if (timeFraction >= 0) {
-      requestAnimationFrame(animateFrame);
-    }
-  });
-}
+const [canvasMain, gallery, functionalityPreview] = getLandingElements();
 
-function renderGalleryItems(list, ...args) {
-  for (let i = 0; i < args.length; i++) {
-    const item = document.createElement('DIV');
-    item.innerHTML = `<canvas class="gallery__canvas" width="200" height="200"></canvas>`;
-    item.className = 'gallery__item';
-    list.append(item);
-    animate(j => {
-      drawOnCanvas(item.children[0], args[i][j]);
-    }, args[i]);
-  }
-}
-
-const canvasMain = document.querySelector('.canvas-main');
-const gallery = document.querySelector('.gallery');
-const functionalityPreview = document.querySelector('.functionality__preview');
-
+// animate on screenshot of app
 animate(i => {
-  drawOnCanvas(canvasMain, megaMan[i]);
-}, megaMan);
-animate(i => {
-  drawOnCanvas(functionalityPreview, psycho[i]);
-}, psycho);
+  drawOnCanvas(canvasMain, imagesArr[0][i]);
+}, imagesArr[0]);
 
-renderGalleryItems(gallery, snow, pikachu, face);
+// animate in functionality list
+animate(i => {
+  drawOnCanvas(functionalityPreview, imagesArr[1][i]);
+}, imagesArr[1]);
+
+const galleryItems = imagesArr.slice(2);
+
+// animate in example gallery
+renderGalleryItems(drawOnCanvas, animate, gallery, galleryItems);

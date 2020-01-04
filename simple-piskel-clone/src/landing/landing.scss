@@ -147,7 +147,6 @@
 .function {
     &-desc {
         &__wrap {
-            max-width: 250px;
             width: calc(100% - 150px);
             margin: 0 10px;
         }
@@ -160,8 +159,8 @@
         }
 
         &__txt {
-            font-size: 12px;
-            line-height: 14px;
+            font-size: 14px;
+            line-height: 16px;
         }
     }
 }
