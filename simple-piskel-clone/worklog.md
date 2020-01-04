@@ -61,3 +61,6 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 16:00 | 16:30 | 0.5h | webpack configure for landing page |
 | 16:30 | 18:30 | 2h | landing page markup |
 | 19:00 | 21:00 | 2h | landing page content: preparing images |
+| 21:30 | 24:00 | 1.5h | draw piskel images for landing page |
+| Jan 4 | | **7.5h** |  |
+| 11:00 | 11:06 | 0.1h | landing page styles |
