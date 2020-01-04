@@ -3,7 +3,7 @@ import { drawOnCanvas } from '../components/frames/frame';
 // import { megaMan, snow, psycho, pikachu, face } from './dataURIs';
 import { imagesArr } from './modules/dataURIs';
 import animate from './modules/landingAnimate';
-import { getLandingElements, renderGalleryItems } from './modules/landingView';
+import { getLandingElements, renderGalleryItems, galleryItemsEdit } from './modules/landingView';
 
 const [canvasMain, gallery, functionalityPreview] = getLandingElements();
 
@@ -17,7 +17,7 @@ animate(i => {
   drawOnCanvas(functionalityPreview, imagesArr[1][i]);
 }, imagesArr[1]);
 
-const galleryItems = imagesArr.slice(2);
-
 // animate in example gallery
-renderGalleryItems(drawOnCanvas, animate, gallery, galleryItems);
+renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr);
+
+galleryItemsEdit(gallery, imagesArr);
