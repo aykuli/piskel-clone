@@ -13,11 +13,13 @@ function RGBToHex(data) {
 function saveImgsInLocalStorage(piskelImg, canvas, currentCount) {
   const dataURI = canvas.toDataURL();
   piskelImg[currentCount] = dataURI;
+
+  // const ctx = canvas.getContext('2d');
+  // const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  // piskelImg[currentCount] = imgData;
+
   localStorage.removeItem('piskelImg');
   localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
-
-  // const dataURI = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-  // localStorage.setItem(localStorageKey, dataURI);
 }
 
 export { RGBToHex, saveImgsInLocalStorage };
