@@ -71,3 +71,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | Jan 5 | | **7.5h** |  |
 | 13:00 | 14:00 | 1h | reading PNG spec https://www.w3.org/TR/PNG/ |
 | 14:00 | 17:00 | 1h | make gif export with jsgif |
+| 19:00 | 21:00 | 2h | refactor code |
+| 21:00 | 23:00 | 2h | apng download |

@@ -13,6 +13,7 @@ import {
 } from '../frames/frame';
 import { animate, animationFullscreen } from '../animation/animate';
 import gifSave from '../appAction/gifSave';
+import apngSave from '../appAction/apngSave';
 
 export default class Controller {
   constructor(view, options) {
@@ -108,17 +109,12 @@ export default class Controller {
 
   saveBtnsWatch() {
     this.view.saveBtns.addEventListener('click', e => {
-      const type = e.target.dataset.save;
       switch (e.target.dataset.save) {
         case 'gif':
           gifSave(this.view.canvas);
           break;
         case 'apng':
-          console.log('apng');
-
-          break;
-        case 'piskel':
-          console.log('piskel');
+          apngSave(this.view.canvas);
           break;
         default:
           return;
@@ -219,16 +215,8 @@ export default class Controller {
 
     this.view.canvas.addEventListener('mouseup', () => {
       saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
-
       frameDraw(this.piskelImg, this.currentCount);
     });
-
-    // this.view.canvas.addEventListener('mouseleave', () => {
-    //   // console.log('mouseLeave');
-    //   // console.log(this.piskelImg, this.view.canvas, this.currentCount);
-    //   saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
-    //   frameDraw(this.piskelImg, this.currentCount);
-    // });
   }
 
   swapWatch() {

@@ -41,10 +41,11 @@
     "@babel/helper-plugin-utils": "^7.0.0",
     "apng-js": "^1.1.0",
     "babel-loader": "^8.0.6",
+    "downloadjs": "^1.4.7",
     "fibers": "^4.0.2",
     "fs-extra": "^8.1.0",
-    "node-apng": "git+https://github.com/TomasHubelbauer/node-apng.git",
-    "sass": "^1.23.3"
+    "sass": "^1.23.3",
+    "upng-js": "^2.1.0"
   },
   "repository": {
     "type": "git",
