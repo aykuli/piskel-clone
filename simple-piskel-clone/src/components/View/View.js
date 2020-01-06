@@ -29,6 +29,10 @@ export default class View {
     this.fullscreenBtn = document.querySelector('.animate__fullscreen');
 
     this.saveBtns = document.querySelector('.save');
+
+    this.authLoginBtn = document.querySelector('.auth__login');
+    this.authPhoto = document.querySelector('.auth__photo');
+    this.authName = document.querySelector('.auth__name');
   }
 
   renderFrames(piskelImg, currentCount) {

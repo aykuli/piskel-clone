@@ -15,6 +15,8 @@ import { animate, animationFullscreen } from '../animation/animate';
 import gifSave from '../appAction/gifSave';
 import apngSave from '../appAction/apngSave';
 
+import authWithFirebase from '../authentification/firebaseFromGoogle';
+
 export default class Controller {
   constructor(view, options) {
     this.view = view;
@@ -48,6 +50,7 @@ export default class Controller {
     this.clearSession();
     animationFullscreen(this.view.fullscreenBtn, this.view.preview);
     this.saveBtnsWatch();
+    this.authWatch();
   }
 
   init() {
@@ -89,6 +92,13 @@ export default class Controller {
         false
       );
     }
+  }
+
+  authWatch() {
+    this.view.authLoginBtn.addEventListener('click', e => {
+      console.log('click to auth');
+      authWithFirebase(this.view.authPhoto, this.view.authName);
+    });
   }
 
   fpsWatch = (draw, animateFrame) => {
@@ -358,7 +368,6 @@ export default class Controller {
 
   clearSession() {
     this.view.clearSessionBtn.addEventListener('click', () => {
-      console.log('clear');
       localStorage.removeItem('piskelImg');
       localStorage.removeItem('piskelPrimaryColor');
       localStorage.removeItem('piskelSecondaryColor');

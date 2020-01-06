@@ -68,8 +68,10 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 15:00 | 14:30 | 1.5h | animation bug and refactoring |
 | 16:00 | 18:30 | 1.5h | reading about apng, try to find some library |
 | 21:00 | 24:00 | 3h | Fancy-weather refatoring while mentor checking |
-| Jan 5 | | **7.5h** |  |
+| Jan 5 | | **6h** | **80h** |
 | 13:00 | 14:00 | 1h | reading PNG spec https://www.w3.org/TR/PNG/ |
 | 14:00 | 17:00 | 1h | make gif export with jsgif |
 | 19:00 | 21:00 | 2h | refactor code |
 | 21:00 | 23:00 | 2h | apng download |
+| Jan 6 | | **6h** | **80h** |
+| 12:00 | 13:30 | 1.5h | Google authentification |
