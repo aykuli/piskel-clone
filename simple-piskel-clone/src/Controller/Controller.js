@@ -1,15 +1,25 @@
+// TODO make scroller for the frames when frames list number become a lot
+
 // DOM elements changing functions
-import { setCanvasWrapSize, renderFrames, renderFrameActive, highlightTarget } from '../components/dom/domUtils';
+import {
+  setCanvasWrapSize,
+  renderFrames,
+  renderFrameActive,
+  highlightTarget,
+  createPopup,
+} from '../components/dom/domUtils';
+
+// canvas draw function
+import { drawOnCanvas } from '../components/drawCanvas/drawCanvas';
+import clearCanvas from '../components/drawCanvas/clearCanvas';
 
 // tools
 import Tools from '../components/tools/Tools';
 import { toolsMap } from '../components/tools/toolsMap';
-
-import { saveImgsInLocalStorage } from '../components/utils';
+import { swapHandler } from '../components/tools/swapColors';
 
 // work with frames
 import {
-  drawOnCanvas,
   frameDraw,
   frameHandler,
   frameDndHandler,
@@ -23,11 +33,11 @@ import {
 import { animate, animationFullscreen } from '../components/animation/animate';
 
 // export pictures
-import gifSave from '../components/appAction/gifSave';
-import apngSave from '../components/appAction/apngSave';
+import gifSave from '../components/exportImg/gifSave';
+import apngSave from '../components/exportImg/apngSave';
 
 // session
-import clearSession from '../components/sessionActions/sessionClear';
+import { clearSession, saveImgsInLocalStorage } from '../components/sessionActions/sessionActions';
 
 // auth
 import {
@@ -42,7 +52,7 @@ export default class Controller {
     this.ctx = this.dom.canvas.getContext('2d');
     [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
 
-    this.swapWatch(); // color swap eventListener
+    this.colorSwapWatch(); // color swap eventListener
     this.canvasResolutionWatch(); // canvas resolution eventListener
     this.canvasSizeWatch();
 
@@ -54,7 +64,6 @@ export default class Controller {
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
-    this.framesScroll();
     frameDndHandler(this.dom.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
     animate(
@@ -66,19 +75,18 @@ export default class Controller {
       false
     );
 
-    this.eventListeners();
+    this.authBtnsWatch();
+    this.clearSessionBtnWatch();
     animationFullscreen(this.dom.fullscreenBtn, this.dom.preview);
     this.saveBtnsWatch();
-
-    // TODO: pixel that tracks the cursor
-    // this.cursorOnCanvas();
   }
 
   init() {
+    // get current number of active frame
     const lSCount = localStorage.getItem('piskelCounter');
     this.currentCount = lSCount !== null && lSCount !== 'undefined' ? lSCount : this.currentCount;
 
-    // get image from Local Storage if exists
+    // get image from Local Storage if exists and draw accordingly frames
     if (localStorage.getItem('piskelImg') !== null) {
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
       renderFrames(this.piskelImg, this.currentCount, this.dom.framesList);
@@ -89,6 +97,7 @@ export default class Controller {
       }
       drawOnCanvas(this.dom.canvas, this.piskelImg[this.currentCount]);
     } else {
+      // if there is no image render one empty frame
       renderFrameActive(0, this.piskelImg, this.dom.framesList);
     }
 
@@ -114,6 +123,7 @@ export default class Controller {
       );
     }
 
+    // init for authentification
     firebaseInit();
   }
 
@@ -146,32 +156,6 @@ export default class Controller {
           return;
       }
     });
-  }
-
-  // TODO make scroller for the frames when frames list number become a lot
-  framesScroll() {
-    // document.body.style.overflow = 'hidden';
-    // console.log(
-    //   '\ndocument.body.scrollHeight: ',
-    //   document.body.scrollHeight,
-    //   '\ndocument.documentElement.scrollHeight: ',
-    //   document.documentElement.scrollHeight,
-    //   '\ndocument.body.offsetHeight: ',
-    //   document.body.offsetHeight,
-    //   '\ndocument.documentElement.offsetHeight: ',
-    //   document.documentElement.offsetHeight,
-    //   '\ndocument.body.clientHeight: ',
-    //   document.body.clientHeight,
-    //   '\ndocument.documentElement.clientHeight: ',
-    //   document.documentElement.clientHeight
-    // );
-    // let sLeft = this.dom.framesList.scrollBottom;
-    // if (this.dom.framesList.clientHeight > document.body.clientHeight) {
-    //   console.log('ono');
-    //   this.dom.framesList.style.overflowY = 'auto';
-    //   this.dom.framesList.style.overflowX = 'hidden';
-    // }
-    // console.log(this.dom.framesList.clientHeight);
   }
 
   canvasSizeWatch() {
@@ -207,9 +191,7 @@ export default class Controller {
   frameWatch() {
     this.dom.framesList.addEventListener('click', e => {
       if (e.target.className.includes('frame__btn--delete')) {
-        console.log('до this.currentCount: ', this.currentCount);
-        this.currentCount = frameDel(e.target, this.piskelImg, this.dom.canvas, this.dom.framesList);
-        console.log('после this.currentCount: ', this.currentCount);
+        this.currentCount = frameDel(e.target, this.piskelImg, this.dom.canvas, this.dom.framesList, drawOnCanvas);
       } else if (e.target.className.includes('frame__btn--copy')) {
         this.currentCount = frameCopy(
           e.target,
@@ -222,6 +204,7 @@ export default class Controller {
       } else {
         this.currentCount = frameHandler(e, this.dom.canvas, this.piskelImg, drawOnCanvas, this.dom.preview, this.fps);
       }
+
       localStorage.removeItem('piskelImg');
       localStorage.setItem('piskelImg', JSON.stringify(this.piskelImg));
       localStorage.removeItem('piskelCounter');
@@ -239,7 +222,7 @@ export default class Controller {
     });
   }
 
-  swapWatch() {
+  colorSwapWatch() {
     // set swaper color at app loading or
     // get user colors from Local Storage if exists
     if (localStorage.getItem('piskelPrimaryColor') !== null) {
@@ -253,7 +236,10 @@ export default class Controller {
       localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
     }
 
-    this.dom.swapColor.addEventListener('click', this.swapHandler.bind(this));
+    this.dom.swapColor.addEventListener('click', () =>
+      swapHandler(this.dom.primaryColor.value, this.dom.secondaryColor, this.ctx)
+    );
+
     this.dom.primaryColor.addEventListener('change', () => {
       localStorage.removeItem('piskelPrimaryColor');
       localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
@@ -263,18 +249,6 @@ export default class Controller {
       localStorage.removeItem('piskelSecondaryColor');
       localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
     });
-  }
-
-  swapHandler() {
-    const buf = this.dom.primaryColor.value;
-    this.dom.primaryColor.value = this.dom.secondaryColor.value;
-
-    this.dom.secondaryColor.value = buf;
-    this.ctx.fillStyle = this.dom.primaryColor.value;
-    localStorage.removeItem('piskelPrimaryColor');
-    localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
-    localStorage.removeItem('piskelSecondaryColor');
-    localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
   }
 
   paintTools() {
@@ -296,7 +270,7 @@ export default class Controller {
 
       switch (this.targetTool) {
         case 'empty':
-          this.tools.clearCanvas(this.piskelImg, this.currentCount);
+          clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
           frameDraw(this.piskelImg, this.currentCount);
           break;
         default:
@@ -307,7 +281,7 @@ export default class Controller {
   }
 
   penSizes() {
-    // get pen size from local|Storage when app loaded
+    // get pen size from localStorage when app loaded
     if (localStorage.getItem('piskelPenSize') !== null) {
       this.pixelSize = Number(localStorage.getItem('piskelPenSize'));
       this.penSize = localStorage.getItem('piskelPenSize');
@@ -318,6 +292,7 @@ export default class Controller {
       }
     }
 
+    // change pen size if according btn clicked
     this.dom.penSizes.addEventListener('click', e => {
       if (e.target.tagName === 'LI') {
         highlightTarget(e.target, 'pen-size--active');
@@ -334,11 +309,11 @@ export default class Controller {
 
       if (e.code === 'KeyZ') {
         e.preventDefault();
-        this.tools.clearCanvas(this.piskelImg, this.currentCount);
+        clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
         frameDraw(this.piskelImg, this.currentCount);
       } else if (e.code === 'KeyX') {
         e.preventDefault();
-        this.swapHandler();
+        swapHandler(this.dom.primaryColor.value, this.dom.secondaryColor, this.ctx);
       }
 
       if (this.targetTool !== 'empty') {
@@ -348,17 +323,20 @@ export default class Controller {
     });
   }
 
-  eventListeners() {
+  authBtnsWatch() {
+    const authElements = [this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn];
     // Button "Login"
     this.dom.authLoginBtn.addEventListener('click', () => {
-      loginGoogleAccount(this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn);
+      loginGoogleAccount(authElements, createPopup);
     });
 
     // Button "Logout"
     this.dom.authLogoutBtn.addEventListener('click', () => {
-      logoutGoogleAccount(this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn);
+      logoutGoogleAccount(authElements);
     });
+  }
 
+  clearSessionBtnWatch() {
     // Button "Clear user session"
     this.dom.clearSessionBtn.addEventListener('click', () => clearSession());
   }

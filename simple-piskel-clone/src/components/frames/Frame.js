@@ -1,36 +1,24 @@
 import './frames.scss';
 
-function drawOnCanvas(canvas, dataURI) {
-  const ctx = canvas.getContext('2d');
-  const img = new Image();
-  if (dataURI === '') return;
-  img.src = dataURI;
-  img.addEventListener('load', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  });
-}
-
 function frameDraw(piskelImg, currentCount) {
-  const frame = document.querySelectorAll('.frame');
+  const frames = document.querySelectorAll('.frame');
+
   if (piskelImg.length === 0) return;
-  const frameCtx = frame[currentCount].getContext('2d', { alpha: true });
+  const frameCtx = frames[currentCount].getContext('2d', { alpha: true });
   const img = new Image();
   const dataURI = piskelImg[currentCount];
 
   const frameHandleOnload = ({ target: img }) => {
-    const frame = document.querySelectorAll('.frame');
+    let [currentWidth, currentHeight] = [frames[currentCount].width, frames[currentCount].height];
 
-    let [currentWidth, currentHeight] = [frame[currentCount].width, frame[currentCount].height];
-
-    currentWidth = frame[currentCount].width;
-    currentHeight = frame[currentCount].height;
-    const frameCtx = frame[currentCount].getContext('2d', { alpha: true });
+    currentWidth = frames[currentCount].width;
+    currentHeight = frames[currentCount].height;
+    const frameCtx = frames[currentCount].getContext('2d', { alpha: true });
     frameCtx.drawImage(img, 0, 0, currentWidth, currentHeight);
   };
 
   if (dataURI === null || dataURI === '') {
-    frameCtx.clearRect(0, 0, frame[currentCount].width, frame[currentCount].height);
+    frameCtx.clearRect(0, 0, frames[currentCount].width, frames[currentCount].height);
   } else {
     img.src = piskelImg[currentCount];
     img.addEventListener('load', () => frameHandleOnload({ target: img }, currentCount));
@@ -73,25 +61,23 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
 
   // events fired on the drop targets. Prevent default to allow drop
   document.addEventListener('dragover', e => {
-    if (e.target.className === 'frame__item') {
-      e.target.style.border = '3px dotted rgb(34, 192, 153)';
-    }
     e.preventDefault();
   });
 
   document.addEventListener('dragenter', e => {
-    // console.log(e.target);
     // highlight potential drop target when the draggable element enters it
-    if (e.target.className === 'frame__item') {
-      e.target.style.border = '3px dotted rgb(34, 192, 153)';
+    if (e.target.tagName.includes('CANVAS')) {
+      console.log('dragenter');
+      e.target.parentNode.classList.add('frame__below');
     }
   });
 
   document.addEventListener('dragleave', e => {
     // reset background of potential drop target when the draggable element leaves it
-    if (e.target.className === 'frame__item') {
-      // e.target.style.border = '';
-      // console.log('dragleave');
+    if (e.target.tagName.includes('CANVAS')) {
+      const framesLeaved = document.querySelectorAll('.frame__below');
+      if (framesLeaved === null) return;
+      framesLeaved.forEach(frame => frame.classList.remove('frame__below'));
     }
   });
 
@@ -116,6 +102,11 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
         frameActive.classList.remove('frame__active');
         dragged.classList.add('frame__active');
         dragged.style.border = '';
+
+        // remove dotted style of leaved frame
+        const frameLeaved = document.querySelector('.frame__below');
+        if (frameLeaved === null) return;
+        frameLeaved.classList.remove('frame__below');
 
         // get image from Local Storage if exists
         if (localStorage.getItem(`piskelImg`) !== null) {
@@ -144,6 +135,7 @@ function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
   renderFrameActive(len, piskelImg, framesList);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   localStorage.removeItem(`piskelImg`);
   localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
   localStorage.removeItem('piskelCounter');
@@ -181,7 +173,7 @@ function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCount
   return countFrom + 1;
 }
 
-function frameDel(target, piskelImg, canvas, framesList) {
+function frameDel(target, piskelImg, canvas, framesList, drawOnCanvas) {
   if (framesList.children.length === 1) return;
   console.log('delete');
   let count = target.parentNode.children[0].dataset.count;
@@ -223,4 +215,4 @@ function frameDatasetCountSet() {
   }
 }
 
-export { drawOnCanvas, frameDraw, frameHandler, frameDndHandler, frameAdd, frameDatasetCountSet, frameCopy, frameDel };
+export { frameDraw, frameHandler, frameDndHandler, frameAdd, frameDatasetCountSet, frameCopy, frameDel };

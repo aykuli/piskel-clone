@@ -1,5 +1,5 @@
 import './tools.scss';
-import { RGBToHex } from '../utils';
+import { RGBToHex } from './utils';
 
 export default class Tools {
   constructor(canvas, ctx, currentColor, size) {
@@ -205,7 +205,7 @@ export default class Tools {
     this.currentColor.value = color;
   };
 
-  strokeTool(targetTool, frameDraw) {
+  strokeTool(targetTool, frames, frameDraw) {
     const canvasAbove = document.querySelector('.canvas--above');
     const ctxAbove = canvasAbove.getContext('2d');
     ctxAbove.imageSmoothingEnabled = false;
@@ -242,28 +242,21 @@ export default class Tools {
 
         localStorage.removeItem('piskelImg');
         localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
-        frameDraw(piskelImg, currentCount);
+        frameDraw(piskelImg, currentCount, frames);
       });
     } else {
       canvasAbove.style.display = '';
     }
   }
 
-  toolHandler = (targetTool, frameDraw) => {
+  toolHandler = (targetTool, frames, frameDraw) => {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
-    this.strokeTool(targetTool, frameDraw);
+    this.strokeTool(targetTool, frames, frameDraw);
     this.bucketSamePixelTool(targetTool);
 
     localStorage.removeItem('piskelTool');
     localStorage.setItem('piskelTool', targetTool);
   };
-
-  clearCanvas(piskelImg, currentCount) {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    piskelImg[currentCount] = '';
-    localStorage.removeItem(`piskelImg`);
-    localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
-  }
 }

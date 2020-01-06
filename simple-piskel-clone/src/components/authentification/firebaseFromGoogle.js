@@ -4,7 +4,6 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
-import { createPopup } from '../utils';
 function firebaseInit() {
   // Firebase project configuration from google-firebase
   const firebaseConfig = {
@@ -21,7 +20,8 @@ function firebaseInit() {
   firebase.initializeApp(firebaseConfig);
 }
 
-function loginGoogleAccount(authName, authPhoto, authLoginBtn, authLogoutBtn) {
+function loginGoogleAccount(authElements, createPopup) {
+  const [authName, authPhoto, authLoginBtn, authLogoutBtn] = authElements;
   var provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().useDeviceLanguage();
   firebase
@@ -42,7 +42,8 @@ function loginGoogleAccount(authName, authPhoto, authLoginBtn, authLogoutBtn) {
     });
 }
 
-function logoutGoogleAccount(authName, authPhoto, authLoginBtn, authLogoutBtn) {
+function logoutGoogleAccount(authElements) {
+  const [authName, authPhoto, authLoginBtn, authLogoutBtn] = authElements;
   firebase.auth().signOut();
   authPhoto.setAttribute('src', '');
   authName.innerText = '';

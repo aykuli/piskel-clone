@@ -74,6 +74,10 @@
         }
     }
 
+    &__below {
+        border: 3px dotted rgb(34, 192, 153);
+    }
+
     &__number {
         position: absolute;
         top: 0;
@@ -115,5 +119,5 @@
         &:focus {
             outline: none;
         }
-    }    
+    } 
 }

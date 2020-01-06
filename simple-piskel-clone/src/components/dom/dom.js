@@ -11,15 +11,22 @@ const domElements = {
   frameAddBtn: document.querySelector('.frames__btn--add'),
 
   preview: document.querySelector('#preview'),
+
   fps: document.querySelector('#fps'),
   fpsValue: document.querySelector('.fps__value'),
+
   resBtns: document.querySelector('.canvas-resolutions__list'),
+
   mainColumn: document.querySelector('.column--main'),
+
   penSizes: document.querySelector('.pen-size__list'),
-  cursor: document.querySelector('.cursor'),
+
   clearSessionBtn: document.querySelector('.session__clear'),
+
   fullscreenBtn: document.querySelector('.animate__fullscreen'),
+
   saveBtns: document.querySelector('.save'),
+
   authLoginBtn: document.querySelector('.auth__login'),
   authPhoto: document.querySelector('.auth__photo'),
   authName: document.querySelector('.auth__name'),

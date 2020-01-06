@@ -24,4 +24,5 @@ export default function gifSave(canvas) {
       }
     });
   });
+  return 'image saved as .gif';
 }

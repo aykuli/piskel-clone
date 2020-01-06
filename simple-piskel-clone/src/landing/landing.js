@@ -1,5 +1,5 @@
 import './landing.scss';
-import { drawOnCanvas } from '../components/frames/frame';
+import { drawOnCanvas } from '../components/drawCanvas/drawCanvas';
 import { imagesArr } from './modules/dataURIs';
 import { animate } from '../components/animation/animate';
 import { getLandingElements, renderGalleryItems, galleryItemsEdit } from './modules/landingView';

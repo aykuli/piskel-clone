@@ -24,4 +24,5 @@ export default function apngSave(canvas) {
       }
     });
   });
+  return 'image saved as .apng';
 }
