@@ -75,3 +75,4 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 21:00 | 23:00 | 2h | apng download |
 | Jan 6 | | **6h** | **80h** |
 | 12:00 | 13:30 | 1.5h | Google authentification |
+| 14:00 | 15:30 | 2h | authentification styling |

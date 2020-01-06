@@ -8,20 +8,17 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet"> 
 </head>
 <body>
-    <div class="page__wrap">
+    
         <header class='header'>
-            <h1 class='header__title'>
-                <a href="./index.html" class="header__landing">
-                        Piskel
-                </a>
-            </h1>
+            <h1 class='header__title'><a href="./index.html" class="header__landing">Piskel</a></h1>
             <p class='header__text'>New piskel*</p>
-            <nav class="nav nav__user">
-                <img src="" alt="" class="auth__photo" width="20" height="20">
-                <span class="auth__name"></span>
-                <button class="auth__login">Sign in</button>
-                <button class="auth__logout">Sign out</button>
-                <div data-netlify-identity-menu></div>
+            <nav class="nav">
+                <div class="nav__user" title ="">
+                    <img src="#" alt="" class="auth__photo" width="28" height="28">
+                    <span class="auth__name"></span>
+                </div>
+                <button class="btn auth__login">Sign in</button>
+                <button class="btn auth__logout" style='display: none'>Sign out</button>
             </nav>
         </header>
         <main class='main'>        
@@ -33,6 +30,7 @@
                 <div class="canvas__wrap">
                     <canvas id="canvas" width="128" height="128" class="canvas">Your browser doesn't support canvas</canvas>
                     <canvas width="128" height="128" class="canvas--above">Your browser doesn't support canvas</canvas>
+                    <!-- TODO: pixel that tracks the cursor -->
                     <!-- <div class="cursor"></div> -->
                 </div>
             </div>
@@ -95,6 +93,7 @@
             </div>
         </aside>
     </div>
+    <div class="popup visually-hidden"></div>
     <!-- authorization trowgh netlify works bad because of RosKomNadzor -->
     <!-- <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://unpkg.com/netlify-auth-providers"></script> -->

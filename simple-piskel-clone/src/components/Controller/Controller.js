@@ -15,7 +15,7 @@ import { animate, animationFullscreen } from '../animation/animate';
 import gifSave from '../appAction/gifSave';
 import apngSave from '../appAction/apngSave';
 
-import authWithFirebase from '../authentification/firebaseFromGoogle';
+import { firebaseInit, authWithFirebase } from '../authentification/firebaseFromGoogle';
 
 export default class Controller {
   constructor(view, options) {
@@ -92,12 +92,13 @@ export default class Controller {
         false
       );
     }
+
+    firebaseInit();
   }
 
   authWatch() {
-    this.view.authLoginBtn.addEventListener('click', e => {
-      console.log('click to auth');
-      authWithFirebase(this.view.authPhoto, this.view.authName);
+    this.view.authLoginBtn.addEventListener('click', () => {
+      authWithFirebase(this.view.authName, this.view.authPhoto, this.view.authLoginBtn, this.view.authLogoutBtn);
     });
   }
 

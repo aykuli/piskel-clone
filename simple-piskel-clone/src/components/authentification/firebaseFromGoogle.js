@@ -1,14 +1,15 @@
+import './auth.scss';
 // Firebase App (the core Firebase SDK) for google authentification
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
-export default function authWithFirebase(authPhoto, authName) {
+import { createPopup } from '../utils';
+function firebaseInit() {
   // Firebase project configuration from google-firebase
   const firebaseConfig = {
     apiKey: 'AIzaSyARJwn4pidGuuTH8d0Cwq6iKkofYZZzW3c',
     authDomain: 'aykuli-simple-piskel-clone.firebaseapp.com',
-    //   authDomain: 'http://localhost:3000/app.html',
     databaseURL: 'https://aykuli-simple-piskel-clone.firebaseio.com',
     projectId: 'aykuli-simple-piskel-clone',
     storageBucket: 'aykuli-simple-piskel-clone.appspot.com',
@@ -18,40 +19,38 @@ export default function authWithFirebase(authPhoto, authName) {
 
   // Initialize Firebase
   const myproj = firebase.initializeApp(firebaseConfig);
-  console.log('initAuth = ', myproj);
+}
 
+function authWithFirebase(authName, authPhoto, authLoginBtn, authLogoutBtn) {
   var provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().useDeviceLanguage();
   firebase
     .auth()
     .signInWithPopup(provider)
     .then(function(result) {
-      console.log('inside firebase auth');
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = result.credential.accessToken;
       // The signed-in user info.
-      var user = result.user;
-      console.log('user: ', user.providerData[0]);
-      console.log(authName);
+      const user = result.user;
+
       authPhoto.setAttribute('src', user.providerData[0].photoURL);
       authPhoto.setAttribute('aria-label', user.providerData[0].displayName);
       authName.innerText = user.providerData[0].displayName;
+      authName.parentNode.title = user.email;
+      authLoginBtn.style.display = 'none';
+      authLogoutBtn.style.display = 'block';
     })
-    .catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      // ...
+    .catch(e => {
+      createPopup(e.message);
     });
 
-  // realtime authentification listener
-  firebase.auth().onAuthStateChanged(firebaseUser => {
-    if (firebaseUser) {
-      console.log('firebaseUser: ', firebaseUser);
-    }
+  authLogoutBtn.addEventListener('click', e => {
+    firebase.auth().signOut();
+    authPhoto.setAttribute('src', '');
+    authPhoto.setAttribute('aria-label', '');
+    authName.innerText = '';
+
+    authLoginBtn.style.display = 'block';
+    authLogoutBtn.style.display = 'none';
   });
 }
+
+export { firebaseInit, authWithFirebase };

@@ -33,6 +33,7 @@ export default class View {
     this.authLoginBtn = document.querySelector('.auth__login');
     this.authPhoto = document.querySelector('.auth__photo');
     this.authName = document.querySelector('.auth__name');
+    this.authLogoutBtn = document.querySelector('.auth__logout');
   }
 
   renderFrames(piskelImg, currentCount) {

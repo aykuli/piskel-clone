@@ -1,37 +1,13 @@
 @import './vars';
 
-.netlify-identity-menu {
+.nav {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
 
-    list-style: none;
-}
-
-.netlify-identity-item a {
-    display: block;
-    padding: 0 10px;
-
-    font-family: Roboto, Arial, serif;
-    font-size: 16px;
-    line-height: 24px;
-    font-style: normal;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.4);
-    text-decoration: none;
-
-    background-color: $green;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-
-    &:hover, &:focus {
-        color: rgb(230, 230, 230);
-
-        background-color: $green;
-        box-shadow: 2px 2px 7px $green-bloom,
-        -2px -2px 7px $green-bloom;
+    &__user {
+        display: flex;
+        align-items: center;
+        height: 30px;
+        margin-right: 15px;
     }
-
-}
-
-.netlify-identity-item:first-child {
-    margin-right: 15px;
 }
