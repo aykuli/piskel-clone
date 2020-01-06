@@ -1,6 +1,13 @@
-import Tools from '../tools/Tools';
-import { toolsMap } from '../tools/toolsMap';
-import { saveImgsInLocalStorage } from '../utils';
+// DOM elements changing functions
+import { setCanvasWrapSize, renderFrames, renderFrameActive, highlightTarget } from '../View/viewUtils';
+
+// tools
+import Tools from '../components/tools/Tools';
+import { toolsMap } from '../components/tools/toolsMap';
+
+import { saveImgsInLocalStorage } from '../components/utils';
+
+// work with frames
 import {
   drawOnCanvas,
   frameDraw,
@@ -10,12 +17,24 @@ import {
   frameDatasetCountSet,
   frameCopy,
   frameDel,
-} from '../frames/frame';
-import { animate, animationFullscreen } from '../animation/animate';
-import gifSave from '../appAction/gifSave';
-import apngSave from '../appAction/apngSave';
+} from '../components/frames/frame';
 
-import { firebaseInit, authWithFirebase } from '../authentification/firebaseFromGoogle';
+// animation functions
+import { animate, animationFullscreen } from '../components/animation/animate';
+
+// export pictures
+import gifSave from '../components/appAction/gifSave';
+import apngSave from '../components/appAction/apngSave';
+
+// session
+import clearSession from '../components/sessionActions/sessionClear';
+
+// auth
+import {
+  firebaseInit,
+  loginGoogleAccount,
+  logoutGoogleAccount,
+} from '../components/authentification/firebaseFromGoogle';
 
 export default class Controller {
   constructor(view, options) {
@@ -23,18 +42,17 @@ export default class Controller {
     [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
 
     this.swapWatch(); // color swap eventListener
-    this.canvasResolutioWatch();
+    this.canvasResolutionWatch(); // canvas resolution eventListener
     this.canvasSizeWatch();
+
     this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.pixelSize);
 
     this.init();
 
     this.paintTools(); // tools eventListener
-
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
-    this.cursorOnCanvas();
     this.framesScroll();
     frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
@@ -47,10 +65,12 @@ export default class Controller {
       false
     );
 
-    this.clearSession();
+    this.eventListeners();
     animationFullscreen(this.view.fullscreenBtn, this.view.preview);
     this.saveBtnsWatch();
-    this.authWatch();
+
+    // TODO: pixel that tracks the cursor
+    // this.cursorOnCanvas();
   }
 
   init() {
@@ -60,7 +80,7 @@ export default class Controller {
     // get image from Local Storage if exists
     if (localStorage.getItem('piskelImg') !== null) {
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
-      this.view.renderFrames(this.piskelImg, this.currentCount);
+      renderFrames(this.piskelImg, this.currentCount, this.view.framesList);
 
       for (let i = 0; i < this.piskelImg.length; i++) {
         const frame = this.view.framesList.children[i].children[0];
@@ -68,7 +88,7 @@ export default class Controller {
       }
       drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
     } else {
-      this.view.renderFrameActive(0, this.piskelImg, this.view.framesList);
+      renderFrameActive(0, this.piskelImg, this.view.framesList);
     }
 
     // get user fps from localStorage
@@ -94,12 +114,6 @@ export default class Controller {
     }
 
     firebaseInit();
-  }
-
-  authWatch() {
-    this.view.authLoginBtn.addEventListener('click', () => {
-      authWithFirebase(this.view.authName, this.view.authPhoto, this.view.authLoginBtn, this.view.authLogoutBtn);
-    });
   }
 
   fpsWatch = (draw, animateFrame) => {
@@ -133,28 +147,29 @@ export default class Controller {
     });
   }
 
+  // TODO make scroller for the frames when frames list number become a lot
   framesScroll() {
     // document.body.style.overflow = 'hidden';
-    console.log(
-      '\ndocument.body.scrollHeight: ',
-      document.body.scrollHeight,
-      '\ndocument.documentElement.scrollHeight: ',
-      document.documentElement.scrollHeight,
-      '\ndocument.body.offsetHeight: ',
-      document.body.offsetHeight,
-      '\ndocument.documentElement.offsetHeight: ',
-      document.documentElement.offsetHeight,
-      '\ndocument.body.clientHeight: ',
-      document.body.clientHeight,
-      '\ndocument.documentElement.clientHeight: ',
-      document.documentElement.clientHeight
-    );
-    let sLeft = this.view.framesList.scrollBottom;
-    if (this.view.framesList.clientHeight > document.body.clientHeight) {
-      console.log('ono');
-      this.view.framesList.style.overflowY = 'auto';
-      this.view.framesList.style.overflowX = 'hidden';
-    }
+    // console.log(
+    //   '\ndocument.body.scrollHeight: ',
+    //   document.body.scrollHeight,
+    //   '\ndocument.documentElement.scrollHeight: ',
+    //   document.documentElement.scrollHeight,
+    //   '\ndocument.body.offsetHeight: ',
+    //   document.body.offsetHeight,
+    //   '\ndocument.documentElement.offsetHeight: ',
+    //   document.documentElement.offsetHeight,
+    //   '\ndocument.body.clientHeight: ',
+    //   document.body.clientHeight,
+    //   '\ndocument.documentElement.clientHeight: ',
+    //   document.documentElement.clientHeight
+    // );
+    // let sLeft = this.view.framesList.scrollBottom;
+    // if (this.view.framesList.clientHeight > document.body.clientHeight) {
+    //   console.log('ono');
+    //   this.view.framesList.style.overflowY = 'auto';
+    //   this.view.framesList.style.overflowX = 'hidden';
+    // }
     // console.log(this.view.framesList.clientHeight);
   }
 
@@ -164,22 +179,22 @@ export default class Controller {
       this.pixelSize = Number(localStorage.getItem('piskelPixelSize'));
       const target = document.querySelector(`.resolution--res${this.view.canvas.width / this.pixelSize}`);
       console.log(target);
-      this.view.highlightTarget(target, 'resolution__btn--active');
+      highlightTarget(target, 'resolution__btn--active');
       console.log(target);
     }
 
-    this.view.setCanvasWrapSize();
+    setCanvasWrapSize(this.view.mainColumn, this.view.canvas);
 
     window.addEventListener('resize', e => {
-      this.view.setCanvasWrapSize();
+      setCanvasWrapSize(this.view.mainColumn, this.view.canvas);
     });
   }
 
-  canvasResolutioWatch() {
+  canvasResolutionWatch() {
     this.view.resBtns.addEventListener('click', e => {
       if (e.target.tagName === 'BUTTON') {
         this.pixelSize = this.view.canvas.width / e.target.dataset.size;
-        this.view.highlightTarget(e.target, 'resolution__btn--active');
+        highlightTarget(e.target, 'resolution__btn--active');
         localStorage.removeItem('piskelPixelSize');
         localStorage.setItem('piskelPixelSize', this.pixelSize);
 
@@ -199,7 +214,7 @@ export default class Controller {
           e.target,
           this.piskelImg,
           this.view.canvas,
-          this.view.highlightTarget,
+          highlightTarget,
           frameDatasetCountSet,
           drawOnCanvas
         );
@@ -220,7 +235,7 @@ export default class Controller {
     });
 
     this.view.frameAddBtn.addEventListener('click', () => {
-      frameAdd(this.view.renderFrameActive, this.view.framesList, this.view.canvas, this.piskelImg);
+      frameAdd(renderFrameActive, this.view.framesList, this.view.canvas, this.piskelImg);
       this.currentCount = +localStorage.getItem('piskelCounter');
     });
 
@@ -276,7 +291,7 @@ export default class Controller {
       localStorage.setItem('piskelTool', this.targetTool);
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
-      this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+      highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
       this.tools.toolHandler(this.targetTool, frameDraw);
     }
 
@@ -291,7 +306,7 @@ export default class Controller {
           frameDraw(this.piskelImg, this.currentCount);
           break;
         default:
-          this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+          highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
           this.tools.toolHandler(this.targetTool, frameDraw);
       }
     });
@@ -304,14 +319,14 @@ export default class Controller {
       this.penSize = localStorage.getItem('piskelPenSize');
       for (let i = 0; i < this.view.penSizes.children.length; i++) {
         if (this.view.penSizes.children[i].dataset.size === this.penSize) {
-          this.view.highlightTarget(this.view.penSizes.children[i], 'pen-size--active');
+          highlightTarget(this.view.penSizes.children[i], 'pen-size--active');
         }
       }
     }
 
     this.view.penSizes.addEventListener('click', e => {
       if (e.target.tagName === 'LI') {
-        this.view.highlightTarget(e.target, 'pen-size--active');
+        highlightTarget(e.target, 'pen-size--active');
         this.penSize = e.target.dataset.size;
         localStorage.removeItem('piskelPenSize');
         localStorage.setItem('piskelPenSize', this.penSize);
@@ -333,12 +348,28 @@ export default class Controller {
       }
 
       if (this.targetTool !== 'empty') {
-        this.view.highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+        highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
         this.tools.toolHandler(this.targetTool, frameDraw);
       }
     });
   }
 
+  eventListeners() {
+    // Button "Login"
+    this.view.authLoginBtn.addEventListener('click', () => {
+      loginGoogleAccount(this.view.authName, this.view.authPhoto, this.view.authLoginBtn, this.view.authLogoutBtn);
+    });
+
+    // Button "Logout"
+    this.view.authLogoutBtn.addEventListener('click', () => {
+      logoutGoogleAccount(this.view.authName, this.view.authPhoto, this.view.authLoginBtn, this.view.authLogoutBtn);
+    });
+
+    // Button "Clear user session"
+    this.view.clearSessionBtn.addEventListener('click', () => clearSession());
+  }
+
+  // TODO: pixel that tracks the cursor
   cursorOnCanvas() {
     // this.view.canvas.addEventListener('mousemove', e => {
     //   if (!this.tools.isDrawing) {
@@ -365,17 +396,5 @@ export default class Controller {
     //   this.view.cursor.style.width = 0;
     //   this.view.cursor.style.height = 0;
     // });
-  }
-
-  clearSession() {
-    this.view.clearSessionBtn.addEventListener('click', () => {
-      localStorage.removeItem('piskelImg');
-      localStorage.removeItem('piskelPrimaryColor');
-      localStorage.removeItem('piskelSecondaryColor');
-      localStorage.removeItem('piskelTool');
-      localStorage.removeItem('piskelFps');
-      localStorage.removeItem('piskelCounter');
-      location.reload();
-    });
   }
 }

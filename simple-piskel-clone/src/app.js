@@ -1,7 +1,7 @@
 import './sass/style.scss';
 import './components/drawCanvas/drawCanvas';
-import Controller from './components/Controller/Controller';
-import View from './components/View/View';
+import Controller from './Controller/Controller';
+import View from './View/View';
 import './components/authentification/firebaseFromGoogle';
 
 // options = [pixelSize, currentCount, fps, penSize, piskelImg]

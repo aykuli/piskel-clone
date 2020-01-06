@@ -163,6 +163,7 @@ body {
     }
 }
 
+// TODO JS implementation
 .cursor {
     position: absolute;
     top: 50px;
@@ -170,8 +171,7 @@ body {
     width: 100px;
     height: 100px;
     background-color: #fff;
-    opacity: 0.5;
-    
+    opacity: 0.5;    
 }
 
 .session {
@@ -183,22 +183,4 @@ body {
         font-size: 16px;
         line-height: 32px;
     }
-}
-
-.popup {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0);
-
-    padding: 10px 20px;
-
-    font-size: 32px;
-    font-weight: normal;
-    line-height: 40px;
-    color: #fff;
-    text-align: center;
-
-    background-color: rgba($color: $green, $alpha: 0.8);
-    border-radius: 5px;
 }

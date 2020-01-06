@@ -18,10 +18,10 @@ function firebaseInit() {
   };
 
   // Initialize Firebase
-  const myproj = firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 }
 
-function authWithFirebase(authName, authPhoto, authLoginBtn, authLogoutBtn) {
+function loginGoogleAccount(authName, authPhoto, authLoginBtn, authLogoutBtn) {
   var provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().useDeviceLanguage();
   firebase
@@ -32,7 +32,6 @@ function authWithFirebase(authName, authPhoto, authLoginBtn, authLogoutBtn) {
       const user = result.user;
 
       authPhoto.setAttribute('src', user.providerData[0].photoURL);
-      authPhoto.setAttribute('aria-label', user.providerData[0].displayName);
       authName.innerText = user.providerData[0].displayName;
       authName.parentNode.title = user.email;
       authLoginBtn.style.display = 'none';
@@ -41,16 +40,15 @@ function authWithFirebase(authName, authPhoto, authLoginBtn, authLogoutBtn) {
     .catch(e => {
       createPopup(e.message);
     });
-
-  authLogoutBtn.addEventListener('click', e => {
-    firebase.auth().signOut();
-    authPhoto.setAttribute('src', '');
-    authPhoto.setAttribute('aria-label', '');
-    authName.innerText = '';
-
-    authLoginBtn.style.display = 'block';
-    authLogoutBtn.style.display = 'none';
-  });
 }
 
-export { firebaseInit, authWithFirebase };
+function logoutGoogleAccount(authName, authPhoto, authLoginBtn, authLogoutBtn) {
+  firebase.auth().signOut();
+  authPhoto.setAttribute('src', '');
+  authName.innerText = '';
+
+  authLoginBtn.style.display = 'block';
+  authLogoutBtn.style.display = 'none';
+}
+
+export { firebaseInit, loginGoogleAccount, logoutGoogleAccount };
