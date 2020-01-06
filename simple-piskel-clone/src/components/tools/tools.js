@@ -1,5 +1,5 @@
 import './tools.scss';
-import { RGBToHex } from './utils';
+import { RGBToHex } from './toolsUtils';
 
 export default class Tools {
   constructor(canvas, ctx, currentColor, size) {

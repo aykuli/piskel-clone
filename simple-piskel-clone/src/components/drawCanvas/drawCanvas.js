@@ -11,4 +11,16 @@ function drawOnCanvas(canvas, dataURI) {
   });
 }
 
-export { drawOnCanvas };
+function canvasResolutionHandler(e, pixelSize, canvas, currentCount, drawOnCanvas, highlightTarget) {
+  if (e.target.tagName === 'BUTTON') {
+    pixelSize = canvas.width / e.target.dataset.size;
+    highlightTarget(e.target, 'resolution__btn--active');
+    localStorage.removeItem('piskelPixelSize');
+    localStorage.setItem('piskelPixelSize', pixelSize);
+    const piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
+    drawOnCanvas(canvas, piskelImg[currentCount]);
+  }
+  return pixelSize;
+}
+
+export { drawOnCanvas, canvasResolutionHandler };

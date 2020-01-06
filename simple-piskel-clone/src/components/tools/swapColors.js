@@ -1,13 +1,11 @@
-function swapHandler(primaryColor, secondaryColor, ctx) {
-  const buf = primaryColor;
-  primaryColor = secondaryColor;
+function swapHandler(primaryColor, secondaryColor, ctx, refreshLocalStorageValue) {
+  const buf = primaryColor.value;
+  primaryColor.value = secondaryColor.value;
+  secondaryColor.value = buf;
+  ctx.fillStyle = primaryColor.value;
 
-  secondaryColor = buf;
-  ctx.fillStyle = primaryColor;
-  localStorage.removeItem('piskelPrimaryColor');
-  localStorage.setItem('piskelPrimaryColor', primaryColor);
-  localStorage.removeItem('piskelSecondaryColor');
-  localStorage.setItem('piskelSecondaryColor', secondaryColor);
+  refreshLocalStorageValue('piskelPrimaryColor', primaryColor.value);
+  refreshLocalStorageValue('piskelSecondaryColor', secondaryColor.value);
 }
 
 export { swapHandler };

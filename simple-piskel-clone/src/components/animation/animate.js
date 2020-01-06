@@ -32,4 +32,18 @@ function animationFullscreen(fullscreenBtn, previewCanvas) {
   });
 }
 
-export { animate, animationFullscreen };
+function fpsHandler(fpsInput, fpsValue, animateFrame, draw) {
+  fpsValue.innerText = fpsInput.value;
+  let fps = fpsInput.value;
+  localStorage.removeItem('piskelFps');
+  localStorage.setItem('piskelFps', fps);
+
+  if (+fps !== 0) {
+    requestAnimationFrame(animateFrame);
+  } else {
+    const currentCount = localStorage.getItem('piskelCounter');
+    draw(currentCount);
+  }
+}
+
+export { animate, animationFullscreen, fpsHandler };

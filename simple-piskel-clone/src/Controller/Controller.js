@@ -1,4 +1,5 @@
-// TODO make scroller for the frames when frames list number become a lot
+// TODO^ make scroller for the frames when frames list number become a lot
+// TODO: pixel that tracks the cursor
 
 // DOM elements changing functions
 import {
@@ -10,13 +11,14 @@ import {
 } from '../components/dom/domUtils';
 
 // canvas draw function
-import { drawOnCanvas } from '../components/drawCanvas/drawCanvas';
+import { drawOnCanvas, canvasResolutionHandler } from '../components/drawCanvas/drawCanvas';
 import clearCanvas from '../components/drawCanvas/clearCanvas';
 
 // tools
 import Tools from '../components/tools/Tools';
 import { toolsMap } from '../components/tools/toolsMap';
 import { swapHandler } from '../components/tools/swapColors';
+import { penSizeHandler } from '../components/tools/toolsUtils';
 
 // work with frames
 import {
@@ -30,14 +32,19 @@ import {
 } from '../components/frames/frame';
 
 // animation functions
-import { animate, animationFullscreen } from '../components/animation/animate';
+import { animate, animationFullscreen, fpsHandler } from '../components/animation/animate';
 
 // export pictures
 import gifSave from '../components/exportImg/gifSave';
 import apngSave from '../components/exportImg/apngSave';
+import { saveHandler } from '../components/exportImg/exportUtils';
 
 // session
-import { clearSession, saveImgsInLocalStorage } from '../components/sessionActions/sessionActions';
+import {
+  clearSession,
+  saveImgsInLocalStorage,
+  refreshLocalStorageValue,
+} from '../components/sessionActions/sessionActions';
 
 // auth
 import {
@@ -51,11 +58,6 @@ export default class Controller {
     this.dom = dom;
     this.ctx = this.dom.canvas.getContext('2d');
     [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
-
-    this.colorSwapWatch(); // color swap eventListener
-    this.canvasResolutionWatch(); // canvas resolution eventListener
-    this.canvasSizeWatch();
-
     this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize);
 
     this.init();
@@ -75,13 +77,15 @@ export default class Controller {
       false
     );
 
-    this.authBtnsWatch();
-    this.clearSessionBtnWatch();
     animationFullscreen(this.dom.fullscreenBtn, this.dom.preview);
-    this.saveBtnsWatch();
+
+    this.eventListeners();
   }
 
   init() {
+    // init for authentification
+    firebaseInit();
+
     // get current number of active frame
     const lSCount = localStorage.getItem('piskelCounter');
     this.currentCount = lSCount !== null && lSCount !== 'undefined' ? lSCount : this.currentCount;
@@ -123,42 +127,6 @@ export default class Controller {
       );
     }
 
-    // init for authentification
-    firebaseInit();
-  }
-
-  fpsWatch = (draw, animateFrame) => {
-    this.dom.fps.addEventListener('input', () => {
-      this.dom.fpsValue.innerText = this.dom.fps.value;
-      let fps = this.dom.fps.value;
-      localStorage.removeItem('piskelFps');
-      localStorage.setItem('piskelFps', fps);
-
-      if (+fps !== 0) {
-        requestAnimationFrame(animateFrame);
-      } else {
-        const currentCount = localStorage.getItem('piskelCounter');
-        draw(currentCount);
-      }
-    });
-  };
-
-  saveBtnsWatch() {
-    this.dom.saveBtns.addEventListener('click', e => {
-      switch (e.target.dataset.save) {
-        case 'gif':
-          gifSave(this.dom.canvas);
-          break;
-        case 'apng':
-          apngSave(this.dom.canvas);
-          break;
-        default:
-          return;
-      }
-    });
-  }
-
-  canvasSizeWatch() {
     // set pixel size at app page loading
     if (localStorage.getItem('piskelPixelSize') !== null) {
       this.pixelSize = Number(localStorage.getItem('piskelPixelSize'));
@@ -170,23 +138,82 @@ export default class Controller {
 
     setCanvasWrapSize(this.dom.mainColumn, this.dom.canvas);
 
+    // set swaper color at app loading or
+    // get user colors from Local Storage if exists
+    if (localStorage.getItem('piskelPrimaryColor') !== null) {
+      this.dom.primaryColor.value = localStorage.getItem('piskelPrimaryColor');
+    } else {
+      localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
+    }
+    if (localStorage.getItem('piskelSecondaryColor') !== null) {
+      this.dom.secondaryColor.value = localStorage.getItem('piskelSecondaryColor');
+    } else {
+      localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
+    }
+  }
+
+  eventListeners() {
+    // HEADER
+    // AUTHORIZATION
+    const authElements = [this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn];
+    // Button "Login"
+    this.dom.authLoginBtn.addEventListener('click', () => {
+      loginGoogleAccount(authElements, createPopup);
+    });
+
+    // Button "Logout"
+    this.dom.authLogoutBtn.addEventListener('click', () => {
+      logoutGoogleAccount(authElements);
+    });
+
+    // LEFT SIDE COLUMN
+    // PEN SIZE
+    this.dom.penSizes.addEventListener('click', e => {
+      this.penSize = penSizeHandler(e, this.penSize, highlightTarget, refreshLocalStorageValue);
+    });
+
+    // COLOR SWAPER
+    this.dom.swapColor.addEventListener('click', () =>
+      swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue)
+    );
+
+    this.dom.primaryColor.addEventListener('change', () => {
+      refreshLocalStorageValue('piskelPrimaryColor', this.dom.primaryColor.value);
+    });
+
+    this.dom.secondaryColor.addEventListener('change', () => {
+      refreshLocalStorageValue('piskelSecondaryColor', this.dom.secondaryColor.value);
+    });
+
+    // MAIN COLUMN
+    // MAIN CANVAS SIZES when window resizing
     window.addEventListener('resize', e => {
       setCanvasWrapSize(this.dom.mainColumn, this.dom.canvas);
     });
-  }
 
-  canvasResolutionWatch() {
+    // RIGHT SIDE COLUMN
+    // RESOLUTION CHANGING
     this.dom.resBtns.addEventListener('click', e => {
-      if (e.target.tagName === 'BUTTON') {
-        this.pixelSize = this.dom.canvas.width / e.target.dataset.size;
-        highlightTarget(e.target, 'resolution__btn--active');
-        localStorage.removeItem('piskelPixelSize');
-        localStorage.setItem('piskelPixelSize', this.pixelSize);
-
-        drawOnCanvas(this.dom.canvas, this.piskelImg[this.currentCount]);
-      }
+      this.pixelSize = canvasResolutionHandler(
+        e,
+        this.pixelSize,
+        this.dom.canvas,
+        this.currentCount,
+        drawOnCanvas,
+        highlightTarget
+      );
     });
+
+    // BUTTON "Clear user session"
+    this.dom.clearSessionBtn.addEventListener('click', () => clearSession());
+
+    // EXPORT IMAGE
+    this.dom.saveBtns.addEventListener('click', e => saveHandler(e, this.dom.canvas, gifSave, apngSave));
   }
+
+  fpsWatch = (draw, animateFrame) => {
+    this.dom.fps.addEventListener('input', () => fpsHandler(this.dom.fps, this.dom.fpsValue, animateFrame, draw));
+  };
 
   frameWatch() {
     this.dom.framesList.addEventListener('click', e => {
@@ -219,35 +246,6 @@ export default class Controller {
     this.dom.canvas.addEventListener('mouseup', () => {
       saveImgsInLocalStorage(this.piskelImg, this.dom.canvas, this.currentCount);
       frameDraw(this.piskelImg, this.currentCount);
-    });
-  }
-
-  colorSwapWatch() {
-    // set swaper color at app loading or
-    // get user colors from Local Storage if exists
-    if (localStorage.getItem('piskelPrimaryColor') !== null) {
-      this.dom.primaryColor.value = localStorage.getItem('piskelPrimaryColor');
-    } else {
-      localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
-    }
-    if (localStorage.getItem('piskelSecondaryColor') !== null) {
-      this.dom.secondaryColor.value = localStorage.getItem('piskelSecondaryColor');
-    } else {
-      localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
-    }
-
-    this.dom.swapColor.addEventListener('click', () =>
-      swapHandler(this.dom.primaryColor.value, this.dom.secondaryColor, this.ctx)
-    );
-
-    this.dom.primaryColor.addEventListener('change', () => {
-      localStorage.removeItem('piskelPrimaryColor');
-      localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
-    });
-
-    this.dom.secondaryColor.addEventListener('change', () => {
-      localStorage.removeItem('piskelSecondaryColor');
-      localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
     });
   }
 
@@ -291,16 +289,6 @@ export default class Controller {
         }
       }
     }
-
-    // change pen size if according btn clicked
-    this.dom.penSizes.addEventListener('click', e => {
-      if (e.target.tagName === 'LI') {
-        highlightTarget(e.target, 'pen-size--active');
-        this.penSize = e.target.dataset.size;
-        localStorage.removeItem('piskelPenSize');
-        localStorage.setItem('piskelPenSize', this.penSize);
-      }
-    });
   }
 
   keyboardShortCutHandler() {
@@ -313,7 +301,7 @@ export default class Controller {
         frameDraw(this.piskelImg, this.currentCount);
       } else if (e.code === 'KeyX') {
         e.preventDefault();
-        swapHandler(this.dom.primaryColor.value, this.dom.secondaryColor, this.ctx);
+        swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue);
       }
 
       if (this.targetTool !== 'empty') {
@@ -321,52 +309,5 @@ export default class Controller {
         this.tools.toolHandler(this.targetTool, frameDraw);
       }
     });
-  }
-
-  authBtnsWatch() {
-    const authElements = [this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn];
-    // Button "Login"
-    this.dom.authLoginBtn.addEventListener('click', () => {
-      loginGoogleAccount(authElements, createPopup);
-    });
-
-    // Button "Logout"
-    this.dom.authLogoutBtn.addEventListener('click', () => {
-      logoutGoogleAccount(authElements);
-    });
-  }
-
-  clearSessionBtnWatch() {
-    // Button "Clear user session"
-    this.dom.clearSessionBtn.addEventListener('click', () => clearSession());
-  }
-
-  // TODO: pixel that tracks the cursor
-  cursorOnCanvas() {
-    // this.dom.canvas.addEventListener('mousemove', e => {
-    //   if (!this.tools.isDrawing) {
-    //     // console.log(this.tools.isDrawing);
-    //     // console.log('this.dom.canvas.addEventListener(mousemove)');
-    //     // console.log(e.offsetX);
-    //     // console.log(this.dom.canvas.parentNode.style.width);
-    //     const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
-    //     const pixelSize =
-    //       localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
-    //     const scale = this.dom.canvas.parentNode.style.width.slice(0, -2) / this.dom.canvas.width;
-    //     console.log('scale: ', scale);
-    //     this.dom.cursor.style.width = `${penSize * pixelSize * scale}px`;
-    //     this.dom.cursor.style.height = `${penSize * pixelSize * scale}px`;
-    //     const x = Math.round(e.offsetX / pixelSize) * pixelSize;
-    //     const y = Math.round(e.offsetY / pixelSize) * pixelSize;
-    //     this.dom.cursor.style.top = `${y - (penSize * pixelSize * scale) / 2}px`;
-    //     this.dom.cursor.style.left = `${x - (penSize * pixelSize * scale) / 2}px`;
-    //   }
-    // });
-    // this.dom.cursor.addEventListener('click', () => {
-    //   console.log('click on cursor');
-    //   this.tools.isDrawing = true;
-    //   this.dom.cursor.style.width = 0;
-    //   this.dom.cursor.style.height = 0;
-    // });
   }
 }

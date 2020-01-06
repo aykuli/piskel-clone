@@ -78,3 +78,4 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 14:00 | 15:30 | 2h | authentification styling |
 | 16:00 | 16:30 | .5h | refactoring View module |
 | 16:30 | 17:00 | .5h | refactoring View class to dom object |
+| 19:00 | 21:00 | 2h | refactoring in Controller eventListener handlers |

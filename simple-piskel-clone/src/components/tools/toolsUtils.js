@@ -10,4 +10,13 @@ function RGBToHex(data) {
   return dataHex;
 }
 
-export { RGBToHex };
+function penSizeHandler(e, penSize, highlightTarget, refreshLocalStorageValue) {
+  if (e.target.tagName === 'LI') {
+    highlightTarget(e.target, 'pen-size--active');
+    penSize = e.target.dataset.size;
+    refreshLocalStorageValue('piskelPenSize', penSize);
+  }
+  return penSize;
+}
+
+export { RGBToHex, penSizeHandler };
