@@ -1,5 +1,5 @@
 // DOM elements changing functions
-import { setCanvasWrapSize, renderFrames, renderFrameActive, highlightTarget } from '../View/viewUtils';
+import { setCanvasWrapSize, renderFrames, renderFrameActive, highlightTarget } from '../components/dom/domUtils';
 
 // tools
 import Tools from '../components/tools/Tools';
@@ -37,15 +37,16 @@ import {
 } from '../components/authentification/firebaseFromGoogle';
 
 export default class Controller {
-  constructor(view, options) {
-    this.view = view;
+  constructor(dom, options) {
+    this.dom = dom;
+    this.ctx = this.dom.canvas.getContext('2d');
     [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
 
     this.swapWatch(); // color swap eventListener
     this.canvasResolutionWatch(); // canvas resolution eventListener
     this.canvasSizeWatch();
 
-    this.tools = new Tools(this.view.canvas, this.view.ctx, this.view.primaryColor, this.pixelSize);
+    this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize);
 
     this.init();
 
@@ -54,11 +55,11 @@ export default class Controller {
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
     this.framesScroll();
-    frameDndHandler(this.view.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
+    frameDndHandler(this.dom.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
     animate(
       i => {
-        drawOnCanvas(this.view.preview, this.piskelImg[i]);
+        drawOnCanvas(this.dom.preview, this.piskelImg[i]);
       },
       this.piskelImg,
       this.fpsWatch,
@@ -66,7 +67,7 @@ export default class Controller {
     );
 
     this.eventListeners();
-    animationFullscreen(this.view.fullscreenBtn, this.view.preview);
+    animationFullscreen(this.dom.fullscreenBtn, this.dom.preview);
     this.saveBtnsWatch();
 
     // TODO: pixel that tracks the cursor
@@ -80,32 +81,32 @@ export default class Controller {
     // get image from Local Storage if exists
     if (localStorage.getItem('piskelImg') !== null) {
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
-      renderFrames(this.piskelImg, this.currentCount, this.view.framesList);
+      renderFrames(this.piskelImg, this.currentCount, this.dom.framesList);
 
       for (let i = 0; i < this.piskelImg.length; i++) {
-        const frame = this.view.framesList.children[i].children[0];
+        const frame = this.dom.framesList.children[i].children[0];
         drawOnCanvas(frame, this.piskelImg[i]);
       }
-      drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
+      drawOnCanvas(this.dom.canvas, this.piskelImg[this.currentCount]);
     } else {
-      renderFrameActive(0, this.piskelImg, this.view.framesList);
+      renderFrameActive(0, this.piskelImg, this.dom.framesList);
     }
 
     // get user fps from localStorage
     if (localStorage.getItem('piskelFps') !== null) {
       this.fps = localStorage.getItem('piskelFps');
-      this.view.fps.value = +localStorage.getItem('piskelFps');
+      this.dom.fps.value = +localStorage.getItem('piskelFps');
     } else {
-      this.view.fps.value = this.fps;
+      this.dom.fps.value = this.fps;
       localStorage.setItem('piskelFps', this.fps);
     }
-    this.view.fpsValue.innerText = localStorage.getItem('piskelFps');
+    this.dom.fpsValue.innerText = localStorage.getItem('piskelFps');
     if (+this.fps === 0 || this.piskelImg.length !== 0) {
-      drawOnCanvas(this.view.preview, this.piskelImg[this.currentCount]);
+      drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
     } else {
       animate(
         i => {
-          drawOnCanvas(this.view.preview, this.piskelImg[i]);
+          drawOnCanvas(this.dom.preview, this.piskelImg[i]);
         },
         this.piskelImg,
         this.fpsWatch,
@@ -117,9 +118,9 @@ export default class Controller {
   }
 
   fpsWatch = (draw, animateFrame) => {
-    this.view.fps.addEventListener('input', () => {
-      this.view.fpsValue.innerText = this.view.fps.value;
-      let fps = this.view.fps.value;
+    this.dom.fps.addEventListener('input', () => {
+      this.dom.fpsValue.innerText = this.dom.fps.value;
+      let fps = this.dom.fps.value;
       localStorage.removeItem('piskelFps');
       localStorage.setItem('piskelFps', fps);
 
@@ -133,13 +134,13 @@ export default class Controller {
   };
 
   saveBtnsWatch() {
-    this.view.saveBtns.addEventListener('click', e => {
+    this.dom.saveBtns.addEventListener('click', e => {
       switch (e.target.dataset.save) {
         case 'gif':
-          gifSave(this.view.canvas);
+          gifSave(this.dom.canvas);
           break;
         case 'apng':
-          apngSave(this.view.canvas);
+          apngSave(this.dom.canvas);
           break;
         default:
           return;
@@ -164,69 +165,62 @@ export default class Controller {
     //   '\ndocument.documentElement.clientHeight: ',
     //   document.documentElement.clientHeight
     // );
-    // let sLeft = this.view.framesList.scrollBottom;
-    // if (this.view.framesList.clientHeight > document.body.clientHeight) {
+    // let sLeft = this.dom.framesList.scrollBottom;
+    // if (this.dom.framesList.clientHeight > document.body.clientHeight) {
     //   console.log('ono');
-    //   this.view.framesList.style.overflowY = 'auto';
-    //   this.view.framesList.style.overflowX = 'hidden';
+    //   this.dom.framesList.style.overflowY = 'auto';
+    //   this.dom.framesList.style.overflowX = 'hidden';
     // }
-    // console.log(this.view.framesList.clientHeight);
+    // console.log(this.dom.framesList.clientHeight);
   }
 
   canvasSizeWatch() {
     // set pixel size at app page loading
     if (localStorage.getItem('piskelPixelSize') !== null) {
       this.pixelSize = Number(localStorage.getItem('piskelPixelSize'));
-      const target = document.querySelector(`.resolution--res${this.view.canvas.width / this.pixelSize}`);
+      const target = document.querySelector(`.resolution--res${this.dom.canvas.width / this.pixelSize}`);
       console.log(target);
       highlightTarget(target, 'resolution__btn--active');
       console.log(target);
     }
 
-    setCanvasWrapSize(this.view.mainColumn, this.view.canvas);
+    setCanvasWrapSize(this.dom.mainColumn, this.dom.canvas);
 
     window.addEventListener('resize', e => {
-      setCanvasWrapSize(this.view.mainColumn, this.view.canvas);
+      setCanvasWrapSize(this.dom.mainColumn, this.dom.canvas);
     });
   }
 
   canvasResolutionWatch() {
-    this.view.resBtns.addEventListener('click', e => {
+    this.dom.resBtns.addEventListener('click', e => {
       if (e.target.tagName === 'BUTTON') {
-        this.pixelSize = this.view.canvas.width / e.target.dataset.size;
+        this.pixelSize = this.dom.canvas.width / e.target.dataset.size;
         highlightTarget(e.target, 'resolution__btn--active');
         localStorage.removeItem('piskelPixelSize');
         localStorage.setItem('piskelPixelSize', this.pixelSize);
 
-        drawOnCanvas(this.view.canvas, this.piskelImg[this.currentCount]);
+        drawOnCanvas(this.dom.canvas, this.piskelImg[this.currentCount]);
       }
     });
   }
 
   frameWatch() {
-    this.view.framesList.addEventListener('click', e => {
+    this.dom.framesList.addEventListener('click', e => {
       if (e.target.className.includes('frame__btn--delete')) {
         console.log('до this.currentCount: ', this.currentCount);
-        this.currentCount = frameDel(e.target, this.piskelImg, this.view.canvas, this.view.framesList);
+        this.currentCount = frameDel(e.target, this.piskelImg, this.dom.canvas, this.dom.framesList);
         console.log('после this.currentCount: ', this.currentCount);
       } else if (e.target.className.includes('frame__btn--copy')) {
         this.currentCount = frameCopy(
           e.target,
           this.piskelImg,
-          this.view.canvas,
+          this.dom.canvas,
           highlightTarget,
           frameDatasetCountSet,
           drawOnCanvas
         );
       } else {
-        this.currentCount = frameHandler(
-          e,
-          this.view.canvas,
-          this.piskelImg,
-          drawOnCanvas,
-          this.view.preview,
-          this.fps
-        );
+        this.currentCount = frameHandler(e, this.dom.canvas, this.piskelImg, drawOnCanvas, this.dom.preview, this.fps);
       }
       localStorage.removeItem('piskelImg');
       localStorage.setItem('piskelImg', JSON.stringify(this.piskelImg));
@@ -234,13 +228,13 @@ export default class Controller {
       localStorage.setItem('piskelCounter', this.currentCount);
     });
 
-    this.view.frameAddBtn.addEventListener('click', () => {
-      frameAdd(renderFrameActive, this.view.framesList, this.view.canvas, this.piskelImg);
+    this.dom.frameAddBtn.addEventListener('click', () => {
+      frameAdd(renderFrameActive, this.dom.framesList, this.dom.canvas, this.piskelImg);
       this.currentCount = +localStorage.getItem('piskelCounter');
     });
 
-    this.view.canvas.addEventListener('mouseup', () => {
-      saveImgsInLocalStorage(this.piskelImg, this.view.canvas, this.currentCount);
+    this.dom.canvas.addEventListener('mouseup', () => {
+      saveImgsInLocalStorage(this.piskelImg, this.dom.canvas, this.currentCount);
       frameDraw(this.piskelImg, this.currentCount);
     });
   }
@@ -249,38 +243,38 @@ export default class Controller {
     // set swaper color at app loading or
     // get user colors from Local Storage if exists
     if (localStorage.getItem('piskelPrimaryColor') !== null) {
-      this.view.primaryColor.value = localStorage.getItem('piskelPrimaryColor');
+      this.dom.primaryColor.value = localStorage.getItem('piskelPrimaryColor');
     } else {
-      localStorage.setItem('piskelPrimaryColor', this.view.primaryColor.value);
+      localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
     }
     if (localStorage.getItem('piskelSecondaryColor') !== null) {
-      this.view.secondaryColor.value = localStorage.getItem('piskelSecondaryColor');
+      this.dom.secondaryColor.value = localStorage.getItem('piskelSecondaryColor');
     } else {
-      localStorage.setItem('piskelSecondaryColor', this.view.secondaryColor.value);
+      localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
     }
 
-    this.view.swapColor.addEventListener('click', this.swapHandler.bind(this));
-    this.view.primaryColor.addEventListener('change', () => {
+    this.dom.swapColor.addEventListener('click', this.swapHandler.bind(this));
+    this.dom.primaryColor.addEventListener('change', () => {
       localStorage.removeItem('piskelPrimaryColor');
-      localStorage.setItem('piskelPrimaryColor', this.view.primaryColor.value);
+      localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
     });
 
-    this.view.secondaryColor.addEventListener('change', () => {
+    this.dom.secondaryColor.addEventListener('change', () => {
       localStorage.removeItem('piskelSecondaryColor');
-      localStorage.setItem('piskelSecondaryColor', this.view.secondaryColor.value);
+      localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
     });
   }
 
   swapHandler() {
-    const buf = this.view.primaryColor.value;
-    this.view.primaryColor.value = this.view.secondaryColor.value;
+    const buf = this.dom.primaryColor.value;
+    this.dom.primaryColor.value = this.dom.secondaryColor.value;
 
-    this.view.secondaryColor.value = buf;
-    this.view.ctx.fillStyle = this.view.primaryColor.value;
+    this.dom.secondaryColor.value = buf;
+    this.ctx.fillStyle = this.dom.primaryColor.value;
     localStorage.removeItem('piskelPrimaryColor');
-    localStorage.setItem('piskelPrimaryColor', this.view.primaryColor.value);
+    localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
     localStorage.removeItem('piskelSecondaryColor');
-    localStorage.setItem('piskelSecondaryColor', this.view.secondaryColor.value);
+    localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
   }
 
   paintTools() {
@@ -295,7 +289,7 @@ export default class Controller {
       this.tools.toolHandler(this.targetTool, frameDraw);
     }
 
-    this.view.tools.addEventListener('click', e => {
+    this.dom.tools.addEventListener('click', e => {
       const targetToolEl = e.target.closest('li');
       if (targetToolEl === null) return;
       this.targetTool = targetToolEl.id;
@@ -317,14 +311,14 @@ export default class Controller {
     if (localStorage.getItem('piskelPenSize') !== null) {
       this.pixelSize = Number(localStorage.getItem('piskelPenSize'));
       this.penSize = localStorage.getItem('piskelPenSize');
-      for (let i = 0; i < this.view.penSizes.children.length; i++) {
-        if (this.view.penSizes.children[i].dataset.size === this.penSize) {
-          highlightTarget(this.view.penSizes.children[i], 'pen-size--active');
+      for (let i = 0; i < this.dom.penSizes.children.length; i++) {
+        if (this.dom.penSizes.children[i].dataset.size === this.penSize) {
+          highlightTarget(this.dom.penSizes.children[i], 'pen-size--active');
         }
       }
     }
 
-    this.view.penSizes.addEventListener('click', e => {
+    this.dom.penSizes.addEventListener('click', e => {
       if (e.target.tagName === 'LI') {
         highlightTarget(e.target, 'pen-size--active');
         this.penSize = e.target.dataset.size;
@@ -356,45 +350,45 @@ export default class Controller {
 
   eventListeners() {
     // Button "Login"
-    this.view.authLoginBtn.addEventListener('click', () => {
-      loginGoogleAccount(this.view.authName, this.view.authPhoto, this.view.authLoginBtn, this.view.authLogoutBtn);
+    this.dom.authLoginBtn.addEventListener('click', () => {
+      loginGoogleAccount(this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn);
     });
 
     // Button "Logout"
-    this.view.authLogoutBtn.addEventListener('click', () => {
-      logoutGoogleAccount(this.view.authName, this.view.authPhoto, this.view.authLoginBtn, this.view.authLogoutBtn);
+    this.dom.authLogoutBtn.addEventListener('click', () => {
+      logoutGoogleAccount(this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn);
     });
 
     // Button "Clear user session"
-    this.view.clearSessionBtn.addEventListener('click', () => clearSession());
+    this.dom.clearSessionBtn.addEventListener('click', () => clearSession());
   }
 
   // TODO: pixel that tracks the cursor
   cursorOnCanvas() {
-    // this.view.canvas.addEventListener('mousemove', e => {
+    // this.dom.canvas.addEventListener('mousemove', e => {
     //   if (!this.tools.isDrawing) {
     //     // console.log(this.tools.isDrawing);
-    //     // console.log('this.view.canvas.addEventListener(mousemove)');
+    //     // console.log('this.dom.canvas.addEventListener(mousemove)');
     //     // console.log(e.offsetX);
-    //     // console.log(this.view.canvas.parentNode.style.width);
+    //     // console.log(this.dom.canvas.parentNode.style.width);
     //     const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
     //     const pixelSize =
     //       localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
-    //     const scale = this.view.canvas.parentNode.style.width.slice(0, -2) / this.view.canvas.width;
+    //     const scale = this.dom.canvas.parentNode.style.width.slice(0, -2) / this.dom.canvas.width;
     //     console.log('scale: ', scale);
-    //     this.view.cursor.style.width = `${penSize * pixelSize * scale}px`;
-    //     this.view.cursor.style.height = `${penSize * pixelSize * scale}px`;
+    //     this.dom.cursor.style.width = `${penSize * pixelSize * scale}px`;
+    //     this.dom.cursor.style.height = `${penSize * pixelSize * scale}px`;
     //     const x = Math.round(e.offsetX / pixelSize) * pixelSize;
     //     const y = Math.round(e.offsetY / pixelSize) * pixelSize;
-    //     this.view.cursor.style.top = `${y - (penSize * pixelSize * scale) / 2}px`;
-    //     this.view.cursor.style.left = `${x - (penSize * pixelSize * scale) / 2}px`;
+    //     this.dom.cursor.style.top = `${y - (penSize * pixelSize * scale) / 2}px`;
+    //     this.dom.cursor.style.left = `${x - (penSize * pixelSize * scale) / 2}px`;
     //   }
     // });
-    // this.view.cursor.addEventListener('click', () => {
+    // this.dom.cursor.addEventListener('click', () => {
     //   console.log('click on cursor');
     //   this.tools.isDrawing = true;
-    //   this.view.cursor.style.width = 0;
-    //   this.view.cursor.style.height = 0;
+    //   this.dom.cursor.style.width = 0;
+    //   this.dom.cursor.style.height = 0;
     // });
   }
 }

@@ -77,3 +77,4 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 12:00 | 13:30 | 1.5h | Google authentification |
 | 14:00 | 15:30 | 2h | authentification styling |
 | 16:00 | 16:30 | .5h | refactoring View module |
+| 16:30 | 17:00 | .5h | refactoring View class to dom object |
