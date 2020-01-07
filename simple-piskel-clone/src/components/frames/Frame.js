@@ -1,10 +1,12 @@
 import './frames.scss';
+import { getDomElement, getDomElementsList } from '../dom/domUtils';
 
-function frameDraw(piskelImg, currentCount) {
-  const frames = document.querySelectorAll('.frame');
+function frameDraw(piskelImg, currentCount, frameClassName) {
+  // const frames = document.querySelectorAll('.frame');
+  const frames = getDomElementsList(frameClassName);
 
   if (piskelImg.length === 0) return;
-  const frameCtx = frames[currentCount].getContext('2d', { alpha: true });
+  const frameCtx = frames[currentCount].getContext('2d');
   const img = new Image();
   const dataURI = piskelImg[currentCount];
 
@@ -13,7 +15,7 @@ function frameDraw(piskelImg, currentCount) {
 
     currentWidth = frames[currentCount].width;
     currentHeight = frames[currentCount].height;
-    const frameCtx = frames[currentCount].getContext('2d', { alpha: true });
+    const frameCtx = frames[currentCount].getContext('2d');
     frameCtx.drawImage(img, 0, 0, currentWidth, currentHeight);
   };
 
@@ -128,7 +130,7 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
 }
 
 function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
-  const ctx = canvas.getContext('2d', { alpha: true });
+  const ctx = canvas.getContext('2d');
   const len = framesList.children.length;
   const frameActive = document.querySelector('.frame__active');
   frameActive.classList.remove('frame__active');
@@ -175,9 +177,7 @@ function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCount
 
 function frameDel(target, piskelImg, canvas, framesList, drawOnCanvas) {
   if (framesList.children.length === 1) return;
-  console.log('delete');
   let count = target.parentNode.children[0].dataset.count;
-  console.log('номер удаляемого фрейма: ', count);
   // remove LI of deleted frame and all of it's children
   target.parentNode.remove();
 

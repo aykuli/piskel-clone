@@ -81,4 +81,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 19:00 | 21:00 | 2h | refactoring in Controller eventListener handlers |
 | 22:00 | 21:00 | 2h | start testing code |
 | Jan 7 | | **6h** | **80h** |
-| 11:00 | 13:30 | 1.5h | test sessionAction/sessionAction, tools/toolsMap, tools/toolsUtils|
+| 11:00 | 12:00 | 1h | test sessionAction/sessionAction, tools/toolsMap, tools/toolsUtils |
+| 12:00 | 13:00 | 1h | test exportImg/apngSave, exportImg/gifSave, exportImg/exportUtils |

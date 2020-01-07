@@ -6,6 +6,7 @@ function swapHandler(primaryColor, secondaryColor, ctx, refreshLocalStorageValue
 
   refreshLocalStorageValue('piskelPrimaryColor', primaryColor.value);
   refreshLocalStorageValue('piskelSecondaryColor', secondaryColor.value);
+  return [primaryColor.value, secondaryColor.value];
 }
 
 export { swapHandler };

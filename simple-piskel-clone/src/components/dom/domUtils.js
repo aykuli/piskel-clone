@@ -40,4 +40,20 @@ function createPopup(msg) {
   setTimeout(() => popup.classList.add('visually-hidden'), 2500);
 }
 
-export { setCanvasWrapSize, renderFrames, renderFrameActive, highlightTarget, createPopup };
+function getDomElement(className) {
+  return document.querySelector(className);
+}
+
+function getDomElementsList(className) {
+  return document.querySelectorAll(className);
+}
+
+export {
+  setCanvasWrapSize,
+  renderFrames,
+  renderFrameActive,
+  highlightTarget,
+  createPopup,
+  getDomElement,
+  getDomElementsList,
+};

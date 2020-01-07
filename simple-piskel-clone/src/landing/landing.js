@@ -2,7 +2,7 @@ import './landing.scss';
 import { drawOnCanvas } from '../components/drawCanvas/drawCanvas';
 import { imagesArr } from './modules/dataURIs';
 import { animate } from '../components/animation/animate';
-import { getLandingElements, renderGalleryItems, galleryItemsEdit } from './modules/landingView';
+import { getLandingElements, renderGalleryItems, galleryItemsEdit } from './modules/landingDom';
 
 const [canvasMain, gallery, functionalityPreview] = getLandingElements();
 

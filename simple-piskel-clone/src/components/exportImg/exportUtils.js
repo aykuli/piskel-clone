@@ -1,14 +1,17 @@
-function saveHandler(e, canvas, gifSave, apngSave) {
+function saveHandler(e, canvas, gifSave, apngSave, GIFEncoder) {
+  let res;
   switch (e.target.dataset.save) {
     case 'gif':
-      gifSave(canvas);
+      res = gifSave(canvas, GIFEncoder);
       break;
     case 'apng':
-      apngSave(canvas);
+      res = apngSave(canvas);
       break;
     default:
-      return;
+      res = "image haven't saved";
+      return res;
   }
+  return res;
 }
 
 export { saveHandler };

@@ -1,4 +1,4 @@
-export default function gifSave(canvas) {
+export default function gifSave(canvas, GIFEncoder) {
   const fps = localStorage.getItem('piskelFps');
   const framesData = JSON.parse(localStorage.getItem('piskelImg'));
   const ctx = canvas.getContext('2d');
