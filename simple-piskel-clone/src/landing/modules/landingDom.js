@@ -1,13 +1,13 @@
-function getLandingElements() {
-  const canvasMain = document.querySelector('.canvas-main');
-  const gallery = document.querySelector('.gallery');
-  const functionalityPreview = document.querySelector('.functionality__preview');
+function getLandingElements(getDomElement) {
+  const canvasMain = getDomElement('.canvas-main');
+  const gallery = getDomElement('.gallery');
+  const functionalityPreview = getDomElement('.functionality__preview');
   return [canvasMain, gallery, functionalityPreview];
 }
 
-function renderGalleryItems(drawOnCanvas, animate, list, imgsArr) {
+function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, createDomElement) {
   for (let i = 0; i < imgsArr.length; i++) {
-    const item = document.createElement('A');
+    const item = createDomElement('A');
     item.innerHTML = `<canvas class="gallery__canvas" width="200" height="200"></canvas>`;
     item.className = 'gallery__item';
     item.setAttribute('href', 'app.html');
@@ -22,20 +22,21 @@ function renderGalleryItems(drawOnCanvas, animate, list, imgsArr) {
       true
     );
   }
+  return list;
 }
 
-function galleryItemsEdit(gallery, imgArr) {
-  gallery.addEventListener('click', e => {
-    if (e.target.tagName === 'CANVAS') {
-      const count = e.target.parentNode.dataset.count;
-      localStorage.removeItem('piskelImg');
-      localStorage.setItem('piskelImg', JSON.stringify(imgArr[count]));
-      localStorage.removeItem('piskelCounter');
-      localStorage.setItem('piskelCounter', 0);
-      localStorage.removeItem('piskelFps');
-      localStorage.setItem('piskelFps', 3);
-    }
-  });
+function galleryItemsHandler(e, imgArr) {
+  let count;
+  if (e.target.tagName === 'CANVAS') {
+    count = e.target.parentNode.dataset.count;
+    localStorage.removeItem('piskelImg');
+    localStorage.setItem('piskelImg', JSON.stringify(imgArr[count]));
+    localStorage.removeItem('piskelCounter');
+    localStorage.setItem('piskelCounter', 0);
+    localStorage.removeItem('piskelFps');
+    localStorage.setItem('piskelFps', 3);
+  }
+  return count;
 }
 
-export { getLandingElements, renderGalleryItems, galleryItemsEdit };
+export { getLandingElements, renderGalleryItems, galleryItemsHandler };

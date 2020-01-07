@@ -2,11 +2,19 @@ import './landing.scss';
 import { drawOnCanvas } from '../components/drawCanvas/drawCanvas';
 import { imagesArr } from './modules/dataURIs';
 import { animate } from '../components/animation/animate';
-import { getLandingElements, renderGalleryItems, galleryItemsEdit } from './modules/landingDom';
+import { getLandingElements, renderGalleryItems, galleryItemsHandler } from './modules/landingDom';
+import { getDomElement } from '../components/dom/domUtils';
 
-function landing(getLandingElements, drawOnCanvas, animate, renderGalleryItems, galleryItemsEdit) {
-  const [canvasMain, gallery, functionalityPreview] = getLandingElements();
-
+function landing(
+  imagesArr,
+  getDomElement,
+  getLandingElements,
+  drawOnCanvas,
+  animate,
+  renderGalleryItems,
+  galleryItemsHandler
+) {
+  const [canvasMain, gallery, functionalityPreview] = getLandingElements(getDomElement);
   // animate on screenshot of app
   animate(
     i => {
@@ -28,9 +36,10 @@ function landing(getLandingElements, drawOnCanvas, animate, renderGalleryItems, 
   );
 
   // animate in example gallery
-  renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr);
+  renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr, el => document.createElement(el));
 
-  galleryItemsEdit(gallery, imagesArr);
+  gallery.addEventListener('click', e => galleryItemsHandler(e, imagesArr));
+  return 'landing page created';
 }
 
-landing(getLandingElements, drawOnCanvas, animate, renderGalleryItems, galleryItemsEdit);
+landing(imagesArr, getDomElement, getLandingElements, drawOnCanvas, animate, renderGalleryItems, galleryItemsHandler);

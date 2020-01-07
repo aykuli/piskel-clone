@@ -83,3 +83,6 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | Jan 7 | | **6h** | **80h** |
 | 11:00 | 12:00 | 1h | test sessionAction/sessionAction, tools/toolsMap, tools/toolsUtils |
 | 12:00 | 13:00 | 1h | test exportImg/apngSave, exportImg/gifSave, exportImg/exportUtils |
+| 14:00 | 16:00 | 2h | add test coverage:full, refactor landing |
+| 16:30 | 18:00 | 1.5h | add test landing modules |
+| 18:30 | 20:30 | 2h | add test authentification |

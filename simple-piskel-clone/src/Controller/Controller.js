@@ -49,17 +49,19 @@ import {
 } from '../components/sessionActions/sessionActions';
 
 // auth
-import {
-  firebaseInit,
-  loginGoogleAccount,
-  logoutGoogleAccount,
-} from '../components/authentification/firebaseFromGoogle';
+// Firebase App (the core Firebase SDK) for google authentification
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
+import { loginGoogleAccount, logoutGoogleAccount } from '../components/authentification/firebaseFromGoogle';
 
 export default class Controller {
-  constructor(dom, options) {
+  constructor(dom, options, authConfig) {
     this.dom = dom;
     this.ctx = this.dom.canvas.getContext('2d');
     [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
+    this.firebaseConfig = authConfig;
     this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize);
 
     this.init();
@@ -86,7 +88,7 @@ export default class Controller {
 
   init() {
     // init for authentification
-    firebaseInit();
+    firebase.initializeApp(this.firebaseConfig);
 
     // get current number of active frame
     const lSCount = localStorage.getItem('piskelCounter');
@@ -160,12 +162,12 @@ export default class Controller {
     const authElements = [this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn];
     // Button "Login"
     this.dom.authLoginBtn.addEventListener('click', () => {
-      loginGoogleAccount(authElements, createPopup);
+      loginGoogleAccount(firebase, authElements, createPopup);
     });
 
     // Button "Logout"
     this.dom.authLogoutBtn.addEventListener('click', () => {
-      logoutGoogleAccount(authElements);
+      logoutGoogleAccount(firebase, authElements);
     });
 
     // LEFT SIDE COLUMN
