@@ -143,7 +143,7 @@ function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
   localStorage.setItem('piskelCounter', len);
 }
 
-function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCountSet, drawOnCanvas) {
+function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCountSet, drawOnCanvas, getDomElement) {
   // get the count of copied frame
   const countFrom = +target.parentNode.children[0].dataset.count;
 
@@ -156,7 +156,7 @@ function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCount
   target.parentNode.after(newFrame);
 
   // highlightTarget new frame and set it as active
-  highlightTarget(newFrame, 'frame__active');
+  highlightTarget(newFrame, 'frame__active', getDomElement);
 
   // set dataset.count and visual count text of frames consecutive
   frameDatasetCountSet();

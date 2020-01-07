@@ -87,3 +87,4 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 16:30 | 18:00 | 1.5h | add test landing modules |
 | 18:30 | 20:30 | 2h | add test authentification |
 | 21:30 | 23:00 | 1.5h | add test domElements |
+| 23:00 | 24:00 | 1.5h | add test some domUtils functions + refactoring |

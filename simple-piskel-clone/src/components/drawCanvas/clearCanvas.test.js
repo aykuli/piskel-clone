@@ -1,7 +1,7 @@
 import clearCanvas from './clearCanvas';
 
-describe('logoutGoogleAccount for google authentification', () => {
-  it('canvasResolutionHandler should return newpixelSize', () => {
+describe('clearCanvas function', () => {
+  it('clearCanvas should make empty string on place of cleares img in ims array', () => {
     const canvas = {
       getContext: msg => {
         return {

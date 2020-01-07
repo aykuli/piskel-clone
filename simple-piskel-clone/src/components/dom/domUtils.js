@@ -5,6 +5,7 @@ function renderFrameActive(i, piskelImg, framesList) {
     1}</span>`;
   framesList.append(newFrame);
   piskelImg.push('');
+  return piskelImg;
 }
 
 function highlightTarget(target, activeClassName) {
@@ -33,8 +34,8 @@ function renderFrames(piskelImg, currentCount, framesList) {
   }
 }
 
-function createPopup(msg) {
-  const popup = document.querySelector('.popup');
+function createPopup(msg, getDomElement) {
+  const popup = getDomElement('.popup');
   popup.classList.remove('visually-hidden');
   popup.innerText = msg;
   setTimeout(() => popup.classList.add('visually-hidden'), 2500);

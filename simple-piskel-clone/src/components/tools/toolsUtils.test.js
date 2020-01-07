@@ -16,6 +16,7 @@ describe('penSizeHandler function', ()=> {
   const penSize = 1;
   const highlightTarget = () => {};
   const refreshLocalStorageValue = () => {};
+  const getDomElement = 0;
   
-  expect(penSizeHandler(e, penSize, highlightTarget, refreshLocalStorageValue)).toBe(4)
+  expect(penSizeHandler(e, penSize, highlightTarget, refreshLocalStorageValue, getDomElement)).toBe(4)
 })

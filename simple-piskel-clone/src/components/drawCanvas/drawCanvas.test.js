@@ -25,11 +25,20 @@ describe('drawCanvas module functions', () => {
     const currentCount = 0;
     const drawOnCanvas = (canvas, img) => {};
     const highlightTarget = (target, str) => {};
+    const getDomElement = null;
 
     localStorage.setItem('piskelPixelSize', 1);
     localStorage.setItem('piskelImg', JSON.stringify(['']));
 
-    const res = canvasResolutionHandler(e, pixelSize, canvas, currentCount, drawOnCanvas, highlightTarget);
+    const res = canvasResolutionHandler(
+      e,
+      pixelSize,
+      canvas,
+      currentCount,
+      drawOnCanvas,
+      highlightTarget,
+      getDomElement
+    );
     expect(res).toBe(4);
   });
 });

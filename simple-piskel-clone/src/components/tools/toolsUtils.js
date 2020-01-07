@@ -10,9 +10,9 @@ function RGBToHex(data) {
   return dataHex;
 }
 
-function penSizeHandler(e, penSize, highlightTarget, refreshLocalStorageValue) {
+function penSizeHandler(e, penSize, highlightTarget, refreshLocalStorageValue, getDomElement) {
   if (e.target.tagName === 'LI') {
-    highlightTarget(e.target, 'pen-size--active');
+    highlightTarget(e.target, 'pen-size--active', getDomElement);
     penSize = e.target.dataset.size;
     refreshLocalStorageValue('piskelPenSize', penSize);
   }

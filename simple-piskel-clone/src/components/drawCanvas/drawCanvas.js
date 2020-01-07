@@ -12,10 +12,10 @@ function drawOnCanvas(canvas, dataURI) {
   return ctx;
 }
 
-function canvasResolutionHandler(e, pixelSize, canvas, currentCount, drawOnCanvas, highlightTarget) {
+function canvasResolutionHandler(e, pixelSize, canvas, currentCount, drawOnCanvas, highlightTarget, getDomElement) {
   if (e.target.tagName === 'BUTTON') {
     pixelSize = canvas.width / e.target.dataset.size;
-    highlightTarget(e.target, 'resolution__btn--active');
+    highlightTarget(e.target, 'resolution__btn--active', getDomElement);
     localStorage.removeItem('piskelPixelSize');
     localStorage.setItem('piskelPixelSize', pixelSize);
     const piskelImg = JSON.parse(localStorage.getItem('piskelImg'));

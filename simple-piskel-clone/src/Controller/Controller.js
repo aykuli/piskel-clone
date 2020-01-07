@@ -135,9 +135,7 @@ export default class Controller {
     if (localStorage.getItem('piskelPixelSize') !== null) {
       this.pixelSize = Number(localStorage.getItem('piskelPixelSize'));
       const target = document.querySelector(`.resolution--res${this.dom.canvas.width / this.pixelSize}`);
-      console.log(target);
-      highlightTarget(target, 'resolution__btn--active');
-      console.log(target);
+      highlightTarget(target, 'resolution__btn--active', getDomElement);
     }
 
     setCanvasWrapSize(this.dom.mainColumn, this.dom.canvas);
@@ -162,7 +160,7 @@ export default class Controller {
     const authElements = [this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn];
     // Button "Login"
     this.dom.authLoginBtn.addEventListener('click', () => {
-      loginGoogleAccount(firebase, authElements, createPopup);
+      loginGoogleAccount(firebase, authElements, createPopup, getDomElement);
     });
 
     // Button "Logout"
@@ -173,7 +171,7 @@ export default class Controller {
     // LEFT SIDE COLUMN
     // PEN SIZE
     this.dom.penSizes.addEventListener('click', e => {
-      this.penSize = penSizeHandler(e, this.penSize, highlightTarget, refreshLocalStorageValue);
+      this.penSize = penSizeHandler(e, this.penSize, highlightTarget, refreshLocalStorageValue, getDomElement);
     });
 
     // COLOR SWAPER
@@ -204,7 +202,8 @@ export default class Controller {
         this.dom.canvas,
         this.currentCount,
         drawOnCanvas,
-        highlightTarget
+        highlightTarget,
+        getDomElement
       );
     });
 
@@ -230,7 +229,8 @@ export default class Controller {
           this.dom.canvas,
           highlightTarget,
           frameDatasetCountSet,
-          drawOnCanvas
+          drawOnCanvas,
+          getDomElement
         );
       } else {
         this.currentCount = frameHandler(e, this.dom.canvas, this.piskelImg, drawOnCanvas, this.dom.preview, this.fps);
@@ -261,7 +261,7 @@ export default class Controller {
       localStorage.setItem('piskelTool', this.targetTool);
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
-      highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+      highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
       this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
     }
 
@@ -276,7 +276,7 @@ export default class Controller {
           frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
           break;
         default:
-          highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+          highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
           this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
       }
     });
@@ -289,7 +289,7 @@ export default class Controller {
       this.penSize = localStorage.getItem('piskelPenSize');
       for (let i = 0; i < this.dom.penSizes.children.length; i++) {
         if (this.dom.penSizes.children[i].dataset.size === this.penSize) {
-          highlightTarget(this.dom.penSizes.children[i], 'pen-size--active');
+          highlightTarget(this.dom.penSizes.children[i], 'pen-size--active', getDomElement);
         }
       }
     }
@@ -309,7 +309,7 @@ export default class Controller {
       }
 
       if (this.targetTool !== 'empty') {
-        highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
+        highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
         this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
       }
     });

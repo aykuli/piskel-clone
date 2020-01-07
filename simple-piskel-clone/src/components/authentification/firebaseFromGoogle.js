@@ -1,6 +1,6 @@
 import './auth.scss';
 
-function loginGoogleAccount(firebase, authElements, createPopup) {
+function loginGoogleAccount(firebase, authElements, createPopup, getDomElement) {
   const [authName, authPhoto, authLoginBtn, authLogoutBtn] = authElements;
   const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().useDeviceLanguage();
@@ -19,7 +19,7 @@ function loginGoogleAccount(firebase, authElements, createPopup) {
       return result.user;
     })
     .catch(e => {
-      createPopup(e.message);
+      createPopup(e.message, getDomElement);
     });
   return 'authentification passed';
 }

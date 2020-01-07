@@ -1,4 +1,12 @@
-import { domElements } from './dom';
+import {
+  setCanvasWrapSize,
+  renderFrames,
+  renderFrameActive,
+  highlightTarget,
+  createPopup,
+  getDomElement,
+  getDomElementsList,
+} from './domUtils';
 
 require('@babel/register');
 const jsdom = require('jsdom');
@@ -110,56 +118,30 @@ const domVirt = new JSDOM(
 ).window;
 
 describe('domElements Object', () => {
-  it('dom element should correspond to app.html elements', () => {
+  it('createPopup should remove "visually-hidden" class from popup element', () => {
     const getDomElement = selector => domVirt.window.document.querySelector(selector);
-    const dom = domElements(getDomElement);
+    const popup = domVirt.window.document.querySelector('.popup');
 
-    expect(dom.canvas).toBeDefined();
-    expect(dom.canvasAbove).toBeDefined();
-    expect(dom.tools).toBeDefined();
-    expect(dom.primaryColor).toBeDefined();
-    expect(dom.secondaryColor).toBeDefined();
-    expect(dom.swapColor).toBeDefined();
-    expect(dom.framesList).toBeDefined();
-    expect(dom.frameAddBtn).toBeDefined();
-    expect(dom.preview).toBeDefined();
-    expect(dom.fps).toBeDefined();
-    expect(dom.fpsValue).toBeDefined();
-    expect(dom.resBtns).toBeDefined();
-    expect(dom.mainColumn).toBeDefined();
-    expect(dom.penSizes).toBeDefined();
-    expect(dom.clearSessionBtn).toBeDefined();
-    expect(dom.fullscreenBtn).toBeDefined();
-    expect(dom.saveBtns).toBeDefined();
-    expect(dom.authLoginBtn).toBeDefined();
-    expect(dom.authPhoto).toBeDefined();
-    expect(dom.authName).toBeDefined();
-    expect(dom.authLogoutBtn).toBeDefined();
+    expect(popup.classList.contains('visually-hidden')).toBeTruthy();
 
-    expect(dom.canvas.tagName);
-    expect(dom.canvasAbove.tagName).toBe('CANVAS');
-    expect(dom.tools.tagName).toBe('UL');
-    expect(dom.primaryColor.tagName).toBe('INPUT');
-    expect(dom.secondaryColor.tagName).toBe('INPUT');
-    expect(dom.swapColor.tagName).toBe('BUTTON');
-    expect(dom.framesList.tagName).toBe('UL');
-    expect(dom.frameAddBtn.tagName).toBe('BUTTON');
-    expect(dom.preview.tagName).toBe('CANVAS');
-    expect(dom.fps.tagName).toBe('INPUT');
-    expect(dom.fpsValue.tagName).toBe('P');
-    expect(dom.resBtns.tagName).toBe('DIV');
-    expect(dom.mainColumn.tagName).toBe('DIV');
-    expect(dom.penSizes.tagName).toBe('UL');
-    expect(dom.clearSessionBtn.tagName).toBe('BUTTON');
-    expect(dom.fullscreenBtn.tagName).toBe('BUTTON');
-    expect(dom.saveBtns.tagName).toBe('DIV');
-    expect(dom.authLoginBtn.tagName).toBe('BUTTON');
-    expect(dom.authPhoto.tagName).toBe('IMG');
-    expect(dom.authName.tagName).toBe('SPAN');
-    expect(dom.authLogoutBtn.tagName).toBe('BUTTON');
+    createPopup('Hello, Russia', getDomElement);
 
-    expect(dom.tools.className).toBe('tools__container');
-    expect(dom.fullscreenBtn.className).toBe('animate__fullscreen');
-    expect(dom.clearSessionBtn.className).toBe('btn session__clear');
+    expect(popup.classList.contains('visually-hidden')).toBeFalsy();
+  });
+
+  it('setCanvasWrapSize should change canvas sizes', () => {
+    const mainColumn = { offsetWidth: 400, offsetHeight: 600 };
+    const canvas = {
+      parentNode: {
+        style: { width: '100px', height: '200px' },
+      },
+    };
+    expect(canvas.parentNode.style.width).toBe('100px');
+    expect(canvas.parentNode.style.height).toBe('200px');
+
+    setCanvasWrapSize(mainColumn, canvas);
+
+    expect(canvas.parentNode.style.width).toBe('400px');
+    expect(canvas.parentNode.style.height).toBe('400px');
   });
 });
