@@ -1,8 +1,6 @@
 import './frames.scss';
-import { getDomElement, getDomElementsList } from '../dom/domUtils';
 
-function frameDraw(piskelImg, currentCount, frameClassName) {
-  // const frames = document.querySelectorAll('.frame');
+function frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList) {
   const frames = getDomElementsList(frameClassName);
 
   if (piskelImg.length === 0) return;
@@ -25,6 +23,7 @@ function frameDraw(piskelImg, currentCount, frameClassName) {
     img.src = piskelImg[currentCount];
     img.addEventListener('load', () => frameHandleOnload({ target: img }, currentCount));
   }
+  return 0;
 }
 
 function frameHandler(e, canvas, piskelImg, drawOnCanvas, preview, fps) {

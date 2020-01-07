@@ -8,6 +8,8 @@ import {
   renderFrameActive,
   highlightTarget,
   createPopup,
+  getDomElement,
+  getDomElementsList,
 } from '../components/dom/domUtils';
 
 // canvas draw function
@@ -245,7 +247,7 @@ export default class Controller {
 
     this.dom.canvas.addEventListener('mouseup', () => {
       saveImgsInLocalStorage(this.piskelImg, this.dom.canvas, this.currentCount);
-      frameDraw(this.piskelImg, this.currentCount, '.frame');
+      frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
     });
   }
 
@@ -258,7 +260,7 @@ export default class Controller {
     } else {
       this.targetTool = localStorage.getItem('piskelTool');
       highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-      this.tools.toolHandler(this.targetTool, frameDraw, '.frame');
+      this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
     }
 
     this.dom.tools.addEventListener('click', e => {
@@ -269,11 +271,11 @@ export default class Controller {
       switch (this.targetTool) {
         case 'empty':
           clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
-          frameDraw(this.piskelImg, this.currentCount, '.frame');
+          frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
           break;
         default:
           highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-          this.tools.toolHandler(this.targetTool, frameDraw, '.frame');
+          this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
       }
     });
   }
@@ -298,7 +300,7 @@ export default class Controller {
       if (e.code === 'KeyZ') {
         e.preventDefault();
         clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
-        frameDraw(this.piskelImg, this.currentCount, '.frame');
+        frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
       } else if (e.code === 'KeyX') {
         e.preventDefault();
         swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue);
@@ -306,7 +308,7 @@ export default class Controller {
 
       if (this.targetTool !== 'empty') {
         highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active');
-        this.tools.toolHandler(this.targetTool, frameDraw, '.frame');
+        this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
       }
     });
   }

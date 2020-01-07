@@ -40,12 +40,12 @@ function createPopup(msg) {
   setTimeout(() => popup.classList.add('visually-hidden'), 2500);
 }
 
-function getDomElement(className) {
-  return document.querySelector(className);
+function getDomElement(selector) {
+  return document.querySelector(selector);
 }
 
-function getDomElementsList(className) {
-  return document.querySelectorAll(className);
+function getDomElementsList(selector) {
+  return document.querySelectorAll(selector);
 }
 
 export {
