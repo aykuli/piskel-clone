@@ -14,11 +14,13 @@ function saveImgsInLocalStorage(piskelImg, canvas, currentCount) {
 
   localStorage.removeItem('piskelImg');
   localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
+  return piskelImg[currentCount];
 }
 
 function refreshLocalStorageValue(key, value) {
   localStorage.removeItem(key);
   localStorage.setItem(key, value);
+  return localStorage.getItem(key);
 }
 
 export { clearSession, saveImgsInLocalStorage, refreshLocalStorageValue };

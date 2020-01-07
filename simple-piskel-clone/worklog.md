@@ -73,9 +73,12 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 14:00 | 17:00 | 1h | make gif export with jsgif |
 | 19:00 | 21:00 | 2h | refactor code |
 | 21:00 | 23:00 | 2h | apng download |
-| Jan 6 | | **6h** | **80h** |
+| Jan 6 | | **8.5h** | **88.5h** |
 | 12:00 | 13:30 | 1.5h | Google authentification |
 | 14:00 | 15:30 | 2h | authentification styling |
 | 16:00 | 16:30 | .5h | refactoring View module |
 | 16:30 | 17:00 | .5h | refactoring View class to dom object |
 | 19:00 | 21:00 | 2h | refactoring in Controller eventListener handlers |
+| 22:00 | 21:00 | 2h | start testing code |
+| Jan 7 | | **6h** | **80h** |
+| 11:00 | 13:30 | 1.5h | test sessionAction/sessionAction, tools/toolsMap, tools/toolsUtils|

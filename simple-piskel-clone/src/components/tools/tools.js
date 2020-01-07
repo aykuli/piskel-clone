@@ -123,6 +123,7 @@ export default class Tools {
 
     queue.push([x, y]);
     while (queue.length > 0) {
+      fillXY();
       if (
         x + 1 > 0 &&
         x + 1 < this.canvas.width &&
