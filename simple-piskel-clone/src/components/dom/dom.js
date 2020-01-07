@@ -1,36 +1,40 @@
-const domElements = {
-  canvas: document.querySelector('#canvas'),
-  canvasAbove: document.querySelector('.canvas--above'),
-  tools: document.querySelector('.tools__container'),
+import { getDomElement } from './domUtils';
 
-  primaryColor: document.querySelector('.tools__palette--primary'),
-  secondaryColor: document.querySelector('.tools__palette--secondary'),
-  swapColor: document.querySelector('.tools__palette--swapper'),
+const domElements = getDomElement => {
+  return {
+    canvas: getDomElement('#canvas'),
+    canvasAbove: getDomElement('.canvas--above'),
+    tools: getDomElement('.tools__container'),
 
-  framesList: document.querySelector('.frames__list'),
-  frameAddBtn: document.querySelector('.frames__btn--add'),
+    primaryColor: getDomElement('.tools__palette--primary'),
+    secondaryColor: getDomElement('.tools__palette--secondary'),
+    swapColor: getDomElement('.tools__palette--swapper'),
 
-  preview: document.querySelector('#preview'),
+    framesList: getDomElement('.frames__list'),
+    frameAddBtn: getDomElement('.frames__btn--add'),
 
-  fps: document.querySelector('#fps'),
-  fpsValue: document.querySelector('.fps__value'),
+    preview: getDomElement('#preview'),
 
-  resBtns: document.querySelector('.canvas-resolutions__list'),
+    fps: getDomElement('#fps'),
+    fpsValue: getDomElement('.fps__value'),
 
-  mainColumn: document.querySelector('.column--main'),
+    resBtns: getDomElement('.canvas-resolutions__list'),
 
-  penSizes: document.querySelector('.pen-size__list'),
+    mainColumn: getDomElement('.column--main'),
 
-  clearSessionBtn: document.querySelector('.session__clear'),
+    penSizes: getDomElement('.pen-size__list'),
 
-  fullscreenBtn: document.querySelector('.animate__fullscreen'),
+    clearSessionBtn: getDomElement('.session__clear'),
 
-  saveBtns: document.querySelector('.save'),
+    fullscreenBtn: getDomElement('.animate__fullscreen'),
 
-  authLoginBtn: document.querySelector('.auth__login'),
-  authPhoto: document.querySelector('.auth__photo'),
-  authName: document.querySelector('.auth__name'),
-  authLogoutBtn: document.querySelector('.auth__logout'),
+    saveBtns: getDomElement('.save'),
+
+    authLoginBtn: getDomElement('.auth__login'),
+    authPhoto: getDomElement('.auth__photo'),
+    authName: getDomElement('.auth__name'),
+    authLogoutBtn: getDomElement('.auth__logout'),
+  };
 };
 
 export { domElements };

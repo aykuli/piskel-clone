@@ -9,6 +9,7 @@ function drawOnCanvas(canvas, dataURI) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   });
+  return ctx;
 }
 
 function canvasResolutionHandler(e, pixelSize, canvas, currentCount, drawOnCanvas, highlightTarget) {

@@ -58,7 +58,7 @@ import { loginGoogleAccount, logoutGoogleAccount } from '../components/authentif
 
 export default class Controller {
   constructor(dom, options, authConfig) {
-    this.dom = dom;
+    this.dom = dom(getDomElement);
     this.ctx = this.dom.canvas.getContext('2d');
     [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
     this.firebaseConfig = authConfig;
