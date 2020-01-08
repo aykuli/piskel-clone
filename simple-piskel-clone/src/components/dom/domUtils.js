@@ -5,13 +5,14 @@ function renderFrameActive(i, piskelImg, framesList) {
     1}</span>`;
   framesList.append(newFrame);
   piskelImg.push('');
-  return piskelImg;
+  return newFrame;
 }
 
-function highlightTarget(target, activeClassName) {
-  const activeElement = document.querySelector(`.${activeClassName}`);
+function highlightTarget(target, activeClassName, getDomElement) {
+  const activeElement = getDomElement(`.${activeClassName}`);
   activeElement.classList.remove(activeClassName);
   target.classList.add(activeClassName);
+  return target;
 }
 
 function setCanvasWrapSize(mainColumn, canvas) {
@@ -32,6 +33,7 @@ function renderFrames(piskelImg, currentCount, framesList) {
     newFrame.className = (i === +currentCount) ? 'frame__item frame__active' : 'frame__item';
     framesList.append(newFrame);
   }
+  return framesList;
 }
 
 function createPopup(msg, getDomElement) {

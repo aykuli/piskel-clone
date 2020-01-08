@@ -80,7 +80,7 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 16:30 | 17:00 | .5h | refactoring View class to dom object |
 | 19:00 | 21:00 | 2h | refactoring in Controller eventListener handlers |
 | 22:00 | 21:00 | 2h | start testing code |
-| Jan 7 | | **6h** | **80h** |
+| Jan 7 | | **9.5h** | **80h** |
 | 11:00 | 12:00 | 1h | test sessionAction/sessionAction, tools/toolsMap, tools/toolsUtils |
 | 12:00 | 13:00 | 1h | test exportImg/apngSave, exportImg/gifSave, exportImg/exportUtils |
 | 14:00 | 16:00 | 2h | add test coverage:full, refactor landing |
@@ -88,3 +88,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 18:30 | 20:30 | 2h | add test authentification |
 | 21:30 | 23:00 | 1.5h | add test domElements |
 | 23:00 | 24:00 | 1.5h | add test some domUtils functions + refactoring |
+| Jan 8 | | **9.5h** | **80h** |
+| 10:00 | 12:00 | 1h | test sessionAction/sessionAction, tools/toolsMap, tools/toolsUtils |

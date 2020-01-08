@@ -118,15 +118,33 @@ const domVirt = new JSDOM(
 ).window;
 
 describe('domElements Object', () => {
-  it('createPopup should remove "visually-hidden" class from popup element', () => {
+  it('renderFrameActive function should make children elmement LI for framesList and push empty string in piskelImg', () => {
+    const i = 0;
+    const piskelImg = [''];
+    const framesList = domVirt.window.document.querySelector('.frames__list');
+    const res = renderFrameActive(i, piskelImg, framesList);
+    expect(res.className).toBe('frame__item frame__active');
+    expect(res.children[0].tagName).toBe('CANVAS');
+    expect(res.children[0].className).toBe('frame');
+    expect(piskelImg.length).toBe(2);
+    expect(piskelImg[i + 1]).toBe('');
+  });
+
+  it('highlightTarget should remove activeClassName from current active eleemnt and set it to target', () => {
+    const target = domVirt.window.document.querySelector('.tool--bucket');
+    const activeClassName = 'tool--active';
     const getDomElement = selector => domVirt.window.document.querySelector(selector);
-    const popup = domVirt.window.document.querySelector('.popup');
 
-    expect(popup.classList.contains('visually-hidden')).toBeTruthy();
+    const activeTool = domVirt.window.document.querySelector('.tool--active');
+    expect(activeTool.classList.contains('tool--pen')).toBeTruthy();
 
-    createPopup('Hello, Russia', getDomElement);
+    const res = highlightTarget(target, activeClassName, getDomElement);
 
-    expect(popup.classList.contains('visually-hidden')).toBeFalsy();
+    const newActiveTool = domVirt.window.document.querySelector('.tool--active');
+    expect(newActiveTool.classList.contains('tool--bucket')).toBeTruthy();
+    expect(res.classList.contains('tool--active')).toBeTruthy();
+    expect(res).toBe(newActiveTool);
+    expect(activeTool.classList.contains('tool--active')).toBeFalsy();
   });
 
   it('setCanvasWrapSize should change canvas sizes', () => {
@@ -143,5 +161,26 @@ describe('domElements Object', () => {
 
     expect(canvas.parentNode.style.width).toBe('400px');
     expect(canvas.parentNode.style.height).toBe('400px');
+  });
+
+  it('renderFrames should make children for framesList', () => {
+    const currentCount = 2;
+    const piskelImg = ['', '', '', ''];
+    const framesList = domVirt.window.document.querySelector('.frames__list');
+
+    const result = renderFrames(piskelImg, currentCount, framesList);
+    expect(result.children).toBeDefined();
+    expect(piskelImg).toStrictEqual(['', '', '', '']);
+  });
+
+  it('createPopup should remove "visually-hidden" class from popup element', () => {
+    const getDomElement = selector => domVirt.window.document.querySelector(selector);
+    const popup = domVirt.window.document.querySelector('.popup');
+
+    expect(popup.classList).toContain('visually-hidden');
+
+    createPopup('Hello, Russia', getDomElement);
+
+    expect(popup.classList.contains('visually-hidden')).toBeFalsy();
   });
 });
