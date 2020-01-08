@@ -1,8 +1,7 @@
 import './sass/style.scss';
-import './components/drawCanvas/drawCanvas';
 import Controller from './Controller/Controller';
 import domElements from './components/dom/dom';
-
+import './components/hotKeys/hotKeys';
 // Firebase project configuration from google-firebase
 const firebaseConfig = {
   apiKey: 'AIzaSyARJwn4pidGuuTH8d0Cwq6iKkofYZZzW3c',

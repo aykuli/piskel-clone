@@ -1,5 +1,6 @@
 // TODO^ make scroller for the frames when frames list number become a lot
 // TODO: pixel that tracks the cursor
+// TODO: https://firebase.google.com/docs/auth/admin/manage-sessions Firebase user session storage
 
 // auth
 // Firebase App (the core Firebase SDK) for google authentification
@@ -24,8 +25,8 @@ import clearCanvas from '../components/drawCanvas/clearCanvas';
 
 // tools
 import Tools from '../components/tools/Tools';
-import { toolsMap } from '../components/tools/toolsMap';
-import { swapHandler } from '../components/tools/swapColors';
+import toolsMap from '../components/tools/toolsMap';
+import swapHandler from '../components/tools/swapColors';
 import { penSizeHandler } from '../components/tools/toolsUtils';
 
 // work with frames
@@ -87,6 +88,7 @@ export default class Controller {
   }
 
   init() {
+    // console.log(firebase);
     // init for authentification
     firebase.initializeApp(this.firebaseConfig);
 

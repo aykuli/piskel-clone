@@ -19,8 +19,8 @@ export default class Tools {
     const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
     const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
     ctx.fillStyle = this.currentColor.value;
-    x = Math.round(x / pixelSize) * pixelSize;
-    y = Math.round(y / pixelSize) * pixelSize;
+    x = Math.round(x / pixelSize) * pixelSize; // eslint-disable-line
+    y = Math.round(y / pixelSize) * pixelSize; // eslint-disable-line
     const delta = Math.floor((penSize * pixelSize) / 2);
 
     if (this.isEraser) {
@@ -59,7 +59,7 @@ export default class Tools {
   };
 
   getXYCoors(e) {
-    const canvasWidth = canvas.parentNode.style.width.slice(0, -2);
+    const canvasWidth = this.canvas.parentNode.style.width.slice(0, -2);
     return [
       Math.round((e.offsetX / canvasWidth) * this.canvas.width),
       Math.round((e.offsetY / canvasWidth) * this.canvas.width),
@@ -88,7 +88,7 @@ export default class Tools {
 
   pencilTool(targetTool) {
     if (targetTool === 'pencil' || targetTool === 'eraser') {
-      this.isEraser = targetTool === 'eraser' ? true : false;
+      this.isEraser = targetTool === 'eraser';
       this.canvas.addEventListener('mousemove', this.draw);
       this.canvas.addEventListener('mousedown', this.drawOnMouseDown);
       this.canvas.addEventListener('mouseup', this.drawMouseUp);
@@ -176,14 +176,14 @@ export default class Tools {
   }
 
   floodFillSamePixel = e => {
-    let [x, y] = this.getXYCoors(e);
+    const [x, y] = this.getXYCoors(e);
     const prevColor = RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
     this.ctx.fillStyle = this.currentColor.value;
 
-    for (let x = 0; x < this.canvas.width; x++) {
-      for (let y = 0; y < this.canvas.height; y++) {
-        const currentColor = RGBToHex(this.ctx.getImageData(x, y, 1, 1).data);
-        if (currentColor === prevColor) this.ctx.fillRect(x, y, 1, 1);
+    for (let i = 0; i < this.canvas.width; i += 1) {
+      for (let j = 0; j < this.canvas.height; j += 1) {
+        const currentColor = RGBToHex(this.ctx.getImageData(i, j, 1, 1).data);
+        if (currentColor === prevColor) this.ctx.fillRect(i, j, 1, 1);
       }
     }
   };
@@ -213,8 +213,10 @@ export default class Tools {
     if (targetTool === 'stroke') {
       canvasAbove.style.display = 'block';
       this.isDrawing = false;
-      let x1, y1;
-      let x0, y0;
+      let x1;
+      let y1;
+      let x0;
+      let y0;
 
       canvasAbove.addEventListener('mousedown', e => {
         this.isDrawing = true;
@@ -236,7 +238,7 @@ export default class Tools {
         this.isDrawing = false;
 
         const dataURI = this.canvas.toDataURL();
-        let piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
+        const piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
         const currentCount = localStorage.getItem('piskelCounter');
         piskelImg[currentCount] = dataURI;
 

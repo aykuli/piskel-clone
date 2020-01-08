@@ -1,4 +1,4 @@
-import { swapHandler } from './swapColors';
+import swapHandler from './swapColors';
 import { refreshLocalStorageValue } from '../sessionActions/sessionActions';
 
 /* eslint-disable */

@@ -1,5 +1,6 @@
 import { clearSession, saveImgsInLocalStorage, refreshLocalStorageValue } from './sessionActions';
 
+/* eslint-disable */
 describe('sessionActions function', () => {
   it("saveImgsInLocalStorage function should update localStorage and return 'data:someImage'", () => {
     const piskelImg = [''];

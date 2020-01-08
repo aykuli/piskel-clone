@@ -5,12 +5,12 @@ function clearSession() {
   localStorage.removeItem('piskelTool');
   localStorage.removeItem('piskelFps');
   localStorage.removeItem('piskelCounter');
-  location.reload();
+  location.reload(); // eslint-disable-line
 }
 
 function saveImgsInLocalStorage(piskelImg, canvas, currentCount) {
   const dataURI = canvas.toDataURL();
-  piskelImg[currentCount] = dataURI;
+  piskelImg[currentCount] = dataURI; // eslint-disable-line
 
   localStorage.removeItem('piskelImg');
   localStorage.setItem('piskelImg', JSON.stringify(piskelImg));

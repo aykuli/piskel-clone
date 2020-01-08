@@ -13,7 +13,7 @@ function RGBToHex(data) {
 function penSizeHandler(e, penSize, highlightTarget, refreshLocalStorageValue, getDomElement) {
   if (e.target.tagName === 'LI') {
     highlightTarget(e.target, 'pen-size--active', getDomElement);
-    penSize = e.target.dataset.size;
+    penSize = e.target.dataset.size; // eslint-disable-line
     refreshLocalStorageValue('piskelPenSize', penSize);
   }
   return penSize;

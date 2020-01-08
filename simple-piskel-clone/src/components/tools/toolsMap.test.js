@@ -1,4 +1,4 @@
-import { toolsMap } from './toolsMap';
+import toolsMap from './toolsMap';
 
 /* eslint-disable */
 describe('check tools keyboardShortCuts', () => {

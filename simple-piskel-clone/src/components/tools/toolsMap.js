@@ -7,4 +7,4 @@ const toolsMap = new Map([
   ['KeyL', 'stroke'],
 ]);
 
-export { toolsMap };
+export default toolsMap;
