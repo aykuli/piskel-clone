@@ -89,4 +89,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 21:30 | 23:00 | 1.5h | add test domElements |
 | 23:00 | 24:00 | 1.5h | add test some domUtils functions + refactoring |
 | Jan 8 | | **9.5h** | **80h** |
-| 10:00 | 12:00 | 1h | test sessionAction/sessionAction, tools/toolsMap, tools/toolsUtils |
+| 10:00 | 12:00 | 2h | test function from domUtil.js , try to test landing page using mocks unseccesfully |
+| 12:00 | 12:15 | .25h | update Readme with test commands|
