@@ -33,6 +33,8 @@ export default function domElements(getDomElement) {
     authName: getDomElement('.auth__name'),
     authLogoutBtn: getDomElement('.auth__logout'),
 
-    displayHotKeyWindow: getDomElement('.hotKeys__btn'),
+    hotKeyWindowBtn: getDomElement('.hotKeys__btn'),
+    hotKeysWindow: getDomElement('.hotKeys__wrap'),
+    pageDarker: getDomElement('.page__darker'),
   };
 }

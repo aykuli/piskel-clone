@@ -94,4 +94,4 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 12:30 | 13:00 | .5h | help Pavlenstory fix bugs |
 | 13:00 | 14:30 | 1.5h | fight with eslint |
 | 15:00 | 16:00 | 1h | fix refreshing on preview while drawing in current canvas |
-| 18:00 | 16:00 | 1h | keyboard shortcuts modal window |
+| 18:00 | 19:00 | 1h | keyboard shortcuts modal window markup and styles |

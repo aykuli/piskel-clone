@@ -7,6 +7,7 @@
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { loginGoogleAccount, logoutGoogleAccount } from '../components/authentification/firebaseFromGoogle';
 
 // DOM elements changing functions
 import {
@@ -55,7 +56,7 @@ import {
   refreshLocalStorageValue,
 } from '../components/sessionActions/sessionActions';
 
-import { loginGoogleAccount, logoutGoogleAccount } from '../components/authentification/firebaseFromGoogle';
+import { classToggler } from '../components/hotKeys/hotKeys';
 
 export default class Controller {
   constructor(dom, options, authConfig) {
@@ -64,6 +65,7 @@ export default class Controller {
     [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
     this.firebaseConfig = authConfig;
     this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize);
+    this.isHotKeyOpen = false;
 
     this.init();
 
@@ -214,6 +216,16 @@ export default class Controller {
 
     // EXPORT IMAGE
     this.dom.saveBtns.addEventListener('click', e => saveHandler(e, this.dom.canvas, gifSave, apngSave, GIFEncoder)); // eslint-disable-line
+
+    // KEYBOARD SHORTCUTS WINDOW OPENER
+    this.dom.hotKeyWindowBtn.addEventListener('click', () => {
+      this.isHotKeyOpen = classToggler(
+        'visually-hidden',
+        this.isHotKeyOpen,
+        this.dom.hotKeysWindow,
+        this.dom.pageDarker
+      );
+    });
   }
 
   fpsWatch = animateFrame => {
@@ -317,6 +329,14 @@ export default class Controller {
 
   keyboardShortCutHandler() {
     document.addEventListener('keydown', e => {
+      if (this.isHotKeyOpen && e.code === 'Escape') {
+        this.isHotKeyOpen = classToggler(
+          'visually-hidden',
+          this.isHotKeyOpen,
+          this.dom.hotKeysWindow,
+          this.dom.pageDarker
+        );
+      }
       this.targetTool = toolsMap.has(e.code) ? toolsMap.get(e.code) : this.targetTool;
 
       if (e.code === 'KeyZ') {

@@ -30,8 +30,8 @@
         margin: 0;
         padding: 5px;
         
-        font-size: 20px;
-        line-height: 34px;
+        font-size: 30px;
+        line-height: 50px;
         font-weight: bold;
         color: #fff;
     }
@@ -41,7 +41,8 @@
         align-items: center;
         margin: 30px;
 
-        line-height: 25px;
+        font-size: 20px;
+        line-height: 35px;
 
         cursor: pointer;
     }
@@ -57,8 +58,8 @@
     }
 
     &__ecode {
-        width: 25px;
-        height: 25px;
+        width: 35px;
+        height: 35px;
         margin-right: 15px;
 
         text-align: center;
