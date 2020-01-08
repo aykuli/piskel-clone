@@ -36,6 +36,7 @@ export default function domElements(getDomElement) {
     hotKeyWindowBtn: getDomElement('.hotKeys__btn'),
     hotKeysWindow: getDomElement('.hotKeys__wrap'),
     hotKeysClose: getDomElement('.hotKeys__close'),
+    hotKeysList: getDomElement('.hotKeys'),
     pageDarker: getDomElement('.page__darker'),
   };
 }

@@ -5,6 +5,7 @@ const toolsMap = new Map([
   ['KeyE', 'eraser'],
   ['KeyP', 'pencil'],
   ['KeyL', 'stroke'],
+  ['KeyZ', 'cleanCanvas'],
 ]);
 
 export default toolsMap;

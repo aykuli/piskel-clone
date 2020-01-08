@@ -1,7 +1,7 @@
 @import '../../sass/vars.scss';
 
 .hotKeys {
-    height: calc(100% - 100px);
+    height: calc(100% - 130px);
     margin: 0;
     padding: 20px;
 
@@ -34,6 +34,13 @@
         line-height: 50px;
         font-weight: bold;
         color: #fff;
+    }
+
+    &__footer {
+        padding-top: 10px;
+        
+        font-weight: bold;
+        color: $red-cherry;
     }
 
     &__item {
@@ -79,6 +86,11 @@
         &--highlight {
             opacity: 0.5;
         }
+
+        &--unsetted {
+            color: $red;
+            border-color: $red;
+        }
     }
 
     &__btn {
@@ -99,18 +111,5 @@
         &:hover, &:focus {
             outline: none;
         }
-    }
-}
-
-.tip {
-    &:hover::before {
-        top: -5px;
-        left: 50px;
-        z-index: 1000;
-    }
-
-    &:hover::after {
-        top: 0px;
-        left: 35px;
     }
 }

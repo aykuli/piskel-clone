@@ -5,6 +5,7 @@ function clearSession() {
   localStorage.removeItem('piskelTool');
   localStorage.removeItem('piskelFps');
   localStorage.removeItem('piskelCounter');
+  localStorage.removeItem('piskelHotKeys');
   location.reload(); // eslint-disable-line
 }
 

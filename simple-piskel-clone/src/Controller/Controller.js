@@ -304,7 +304,7 @@ export default class Controller {
       this.targetTool = targetToolEl.id;
 
       switch (this.targetTool) {
-        case 'empty':
+        case 'cleanCanvas':
           clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
           frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
           break;
@@ -330,10 +330,13 @@ export default class Controller {
 
   keyboardShortCutHandler() {
     // prettier-ignore
-    this.toolsMap = (localStorage.getItem('piskelHotKeys') === null) ? toolsMap : JSON.parse(localStorage.getItem('piskelHotKeys'));
+    this.toolsMap = (localStorage.getItem('piskelHotKeys') === null) ? toolsMap : new Map(JSON.parse(localStorage.getItem('piskelHotKeys')));
+
+    // this.toolsMap.forEach((value, key, map) => {
+    //   this.dom.hotKeysList
+    // });
 
     document.addEventListener('keydown', e => {
-      console.log('1) ', this.isToSetToolKey);
       if (this.isHotKeyOpen && e.code === 'Escape') {
         this.isHotKeyOpen = classToggler(
           'visually-hidden',
@@ -343,31 +346,72 @@ export default class Controller {
         );
       }
 
-      if (this.isToSetToolKey) {
-      } else {
-        console.log(this.toolsMap);
-        this.targetTool = toolsMap.has(e.code) ? toolsMap.get(e.code) : this.targetTool;
-        if (e.code === 'KeyZ') {
-          e.preventDefault();
-          clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
-          frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
-        } else if (e.code === 'KeyX') {
-          e.preventDefault();
-          swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue);
-        }
+      if (e.code === 'KeyX') {
+        e.preventDefault();
+        swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue);
+      }
 
-        if (this.targetTool !== 'empty') {
-          highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
-          this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
+      if (this.isToSetToolKey) {
+        if (e.code === 'KeyX') return;
+        let buf;
+        if (this.toolsMap.has(e.code)) {
+          // if set the same value skip
+          if (this.toolsMap.get(e.code) === this.toolToChange) return;
+
+          //save tool that was on that key
+          buf = this.toolsMap.get(e.code);
+
+          // delete old (key, value) of old tool
+          this.toolsMap.delete(e.code);
+          // delete old (key, value) of target tool
+          this.toolsMap.forEach((val, key, map) => {
+            if (val === this.toolToChange) {
+              map.delete(key);
+              return;
+            }
+          });
+          this.toolsMap.delete(e.code);
+
+          // set e.code new tool
+          this.toolsMap.set(e.code, this.toolToChange);
+
+          // old tool no more in this.toolsMap, highlight it in window
+          const elToHighlightAsWithoutKey = getDomElement(`.hotKeys__item--${buf}`);
+
+          elToHighlightAsWithoutKey.children[1].classList.add('hotKeys__ecode--unsetted');
+          elToHighlightAsWithoutKey.children[1].innerText = '???';
+
+          const toolToChange = getDomElement(`.hotKeys__item--${this.toolToChange}`);
+          toolToChange.children[1].innerText = e.code.slice(3);
+          clearTimeout(this.timerId);
+          const highlighted = getDomElement('.hotKeys__ecode--highlight');
+          if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+          this.isToSetToolKey = false;
+
+          localStorage.myMap = JSON.stringify(Array.from(this.toolsMap.entries()));
+
+          localStorage.removeItem('piskelHotKeys');
+          localStorage.setItem('piskelHotKeys', localStorage.myMap);
+        }
+      } else {
+        this.targetTool = this.toolsMap.has(e.code) ? this.toolsMap.get(e.code) : this.targetTool;
+
+        switch (this.targetTool) {
+          case 'cleanCanvas':
+            clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
+            frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
+            break;
+          default:
+            highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
+            this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
         }
       }
     });
   }
 
   hotKeysChanger() {
-    console.log('1) ', this.isToSetToolKey);
-    let timerId;
     this.dom.hotKeysWindow.addEventListener('click', e => {
+      // close window
       if (e.target === this.dom.hotKeysClose) {
         classToggler('visually-hidden', this.isHotKeyOpen, this.dom.hotKeysWindow, this.dom.pageDarker);
         return;
@@ -376,15 +420,18 @@ export default class Controller {
       if (['hotKeys__item', 'hotKeys__icon', 'hotKeys__ecode', 'hotKeys__tool'].includes(e.target.className)) {
         let item = e.target.closest('LI');
         this.isToSetToolKey = true;
-        console.log('2) ', this.isToSetToolKey);
+        console.log(item.dataset.tool);
+        this.toolToChange = item.dataset.tool;
+
         // delete blinking of previous chosen element if it exists
-        clearTimeout(timerId);
+        clearTimeout(this.timerId);
+
         // if there exist highlighted element, make it common
         const highlighted = getDomElement('.hotKeys__ecode--highlight');
         if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
 
         // set blinking of chosen element
-        timerId = setInterval(() => {
+        this.timerId = setInterval(() => {
           item.children[1].classList.toggle('hotKeys__ecode--highlight');
         }, 300);
         return;
@@ -394,7 +441,7 @@ export default class Controller {
       // if there exist highlighted element, make it common
       const highlighted = getDomElement('.hotKeys__ecode--highlight');
       if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
-      console.log('3) ', this.isToSetToolKey);
+      return timerId;
     });
   }
 }
