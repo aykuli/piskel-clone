@@ -1,7 +1,7 @@
 import './sass/style.scss';
 import './components/drawCanvas/drawCanvas';
 import Controller from './Controller/Controller';
-import { domElements } from './components/dom/dom';
+import domElements from './components/dom/dom';
 
 // Firebase project configuration from google-firebase
 const firebaseConfig = {
@@ -16,4 +16,4 @@ const firebaseConfig = {
 
 // options = [pixelSize, currentCount, fps, penSize, piskelImg]
 const options = [1, 0, 0, 1, []];
-const app = new Controller(domElements, options, firebaseConfig);
+const app = new Controller(domElements, options, firebaseConfig); // eslint-disable-line

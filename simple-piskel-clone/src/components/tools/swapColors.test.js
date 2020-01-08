@@ -1,6 +1,7 @@
 import { swapHandler } from './swapColors';
 import { refreshLocalStorageValue } from '../sessionActions/sessionActions';
 
+/* eslint-disable */
 describe('swapHandler function for changing colors', () => {
   it('swapHandler function should mutate given parameters', () => {
     let primaryColor = { value: '#111111' };

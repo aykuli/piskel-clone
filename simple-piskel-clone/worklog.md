@@ -90,4 +90,7 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 23:00 | 24:00 | 1.5h | add test some domUtils functions + refactoring |
 | Jan 8 | | **9.5h** | **80h** |
 | 10:00 | 12:00 | 2h | test function from domUtil.js , try to test landing page using mocks unseccesfully |
-| 12:00 | 12:15 | .25h | update Readme with test commands|
+| 12:00 | 12:15 | .25h | update Readme with test commands |
+| 12:30 | 13:00 | .5h | help Pavlenstory fix bugs |
+| 13:00 | 14:30 | 1.5h | fight with eslint |
+| 15:00 | 16:00 | 1h | fix refreshing on preview while drawing in current canvas |

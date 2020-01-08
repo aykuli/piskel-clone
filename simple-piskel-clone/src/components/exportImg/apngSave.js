@@ -6,8 +6,8 @@ export default function apngSave(canvas) {
   const fps = localStorage.getItem('piskelFps');
   const ctx = canvas.getContext('2d');
 
-  let imgs = [];
-  let delays = [];
+  const imgs = [];
+  const delays = [];
 
   framesData.forEach((frame, index) => {
     const img = new Image();

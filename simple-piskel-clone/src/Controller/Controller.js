@@ -1,6 +1,12 @@
 // TODO^ make scroller for the frames when frames list number become a lot
 // TODO: pixel that tracks the cursor
 
+// auth
+// Firebase App (the core Firebase SDK) for google authentification
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
 // DOM elements changing functions
 import {
   setCanvasWrapSize,
@@ -39,7 +45,7 @@ import { animate, animationFullscreen, fpsHandler } from '../components/animatio
 // export pictures
 import gifSave from '../components/exportImg/gifSave';
 import apngSave from '../components/exportImg/apngSave';
-import { saveHandler } from '../components/exportImg/exportUtils';
+import saveHandler from '../components/exportImg/exportUtils';
 
 // session
 import {
@@ -47,12 +53,6 @@ import {
   saveImgsInLocalStorage,
   refreshLocalStorageValue,
 } from '../components/sessionActions/sessionActions';
-
-// auth
-// Firebase App (the core Firebase SDK) for google authentification
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
 
 import { loginGoogleAccount, logoutGoogleAccount } from '../components/authentification/firebaseFromGoogle';
 
@@ -70,7 +70,7 @@ export default class Controller {
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
-    frameDndHandler(this.dom.canvas, this.piskelImg, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
+    frameDndHandler(this.dom.canvas, this.piskelImg, this.dom.framesList, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
     animate(
       i => {
@@ -99,7 +99,7 @@ export default class Controller {
       this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
       renderFrames(this.piskelImg, this.currentCount, this.dom.framesList);
 
-      for (let i = 0; i < this.piskelImg.length; i++) {
+      for (let i = 0; i < this.piskelImg.length; i += 1) {
         const frame = this.dom.framesList.children[i].children[0];
         drawOnCanvas(frame, this.piskelImg[i]);
       }
@@ -189,7 +189,7 @@ export default class Controller {
 
     // MAIN COLUMN
     // MAIN CANVAS SIZES when window resizing
-    window.addEventListener('resize', e => {
+    window.addEventListener('resize', () => {
       setCanvasWrapSize(this.dom.mainColumn, this.dom.canvas);
     });
 
@@ -211,17 +211,24 @@ export default class Controller {
     this.dom.clearSessionBtn.addEventListener('click', () => clearSession());
 
     // EXPORT IMAGE
-    this.dom.saveBtns.addEventListener('click', e => saveHandler(e, this.dom.canvas, gifSave, apngSave, GIFEncoder));
+    this.dom.saveBtns.addEventListener('click', e => saveHandler(e, this.dom.canvas, gifSave, apngSave, GIFEncoder)); // eslint-disable-line
   }
 
-  fpsWatch = (draw, animateFrame) => {
-    this.dom.fps.addEventListener('input', () => fpsHandler(this.dom.fps, this.dom.fpsValue, animateFrame, draw));
+  fpsWatch = animateFrame => {
+    this.dom.fps.addEventListener('input', e => fpsHandler(e.target, animateFrame));
   };
 
   frameWatch() {
     this.dom.framesList.addEventListener('click', e => {
       if (e.target.className.includes('frame__btn--delete')) {
-        this.currentCount = frameDel(e.target, this.piskelImg, this.dom.canvas, this.dom.framesList, drawOnCanvas);
+        this.currentCount = frameDel(
+          e.target,
+          this.piskelImg,
+          this.dom.canvas,
+          this.dom.framesList,
+          drawOnCanvas,
+          frameDatasetCountSet
+        );
       } else if (e.target.className.includes('frame__btn--copy')) {
         this.currentCount = frameCopy(
           e.target,
@@ -233,7 +240,16 @@ export default class Controller {
           getDomElement
         );
       } else {
-        this.currentCount = frameHandler(e, this.dom.canvas, this.piskelImg, drawOnCanvas, this.dom.preview, this.fps);
+        this.currentCount = frameHandler(
+          e,
+          this.dom.canvas,
+          this.piskelImg,
+          drawOnCanvas,
+          this.dom.preview,
+          this.fps,
+          highlightTarget,
+          getDomElement
+        );
       }
 
       localStorage.removeItem('piskelImg');
@@ -250,6 +266,8 @@ export default class Controller {
     this.dom.canvas.addEventListener('mouseup', () => {
       saveImgsInLocalStorage(this.piskelImg, this.dom.canvas, this.currentCount);
       frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
+      const fps = +localStorage.getItem('piskelFps');
+      if (fps === 0) drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
     });
   }
 
@@ -287,7 +305,7 @@ export default class Controller {
     if (localStorage.getItem('piskelPenSize') !== null) {
       this.pixelSize = Number(localStorage.getItem('piskelPenSize'));
       this.penSize = localStorage.getItem('piskelPenSize');
-      for (let i = 0; i < this.dom.penSizes.children.length; i++) {
+      for (let i = 0; i < this.dom.penSizes.children.length; i += 1) {
         if (this.dom.penSizes.children[i].dataset.size === this.penSize) {
           highlightTarget(this.dom.penSizes.children[i], 'pen-size--active', getDomElement);
         }

@@ -6,7 +6,7 @@ function getLandingElements(getDomElement) {
 }
 
 function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, createDomElement) {
-  for (let i = 0; i < imgsArr.length; i++) {
+  for (let i = 0; i < imgsArr.length; i += 1) {
     const item = createDomElement('A');
     item.innerHTML = `<canvas class="gallery__canvas" width="200" height="200"></canvas>`;
     item.className = 'gallery__item';

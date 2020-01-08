@@ -14,7 +14,7 @@ export default function gifSave(canvas, GIFEncoder) {
     img.addEventListener('load', () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
       encoder.setSize(canvas.width, canvas.height);
       encoder.addFrame(imageData.data, true);
 

@@ -16,13 +16,7 @@ module.exports = {
   },
   rules: {
     'prettier/prettier': ['error'],
-    'import/extensions': [
-      'error',
-      'ignorePackages',
-      {
-        js: 'always',
-      },
-    ],
+    'import/extensions': ['error', 'ignorePackages'],
     'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
   },
 };

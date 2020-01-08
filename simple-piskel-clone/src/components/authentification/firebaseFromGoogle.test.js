@@ -2,7 +2,6 @@ import { loginGoogleAccount, logoutGoogleAccount } from './firebaseFromGoogle';
 
 require('@babel/register');
 const jsdom = require('jsdom');
-const getType = require('jest-get-type');
 
 const { JSDOM } = jsdom;
 
@@ -57,6 +56,7 @@ const firebase = {
   },
 };
 
+/* eslint-disable */
 describe('logoutGoogleAccount for google authentification', () => {
   it('loginGoogleAccount should return authentification passed', () => {
     firebase.auth.GoogleAuthProvider = () => {};

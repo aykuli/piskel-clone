@@ -30,4 +30,4 @@ const face = [
 ];
 
 const imagesArr = [megaMan, psycho, snow, pikachu, face];
-export { imagesArr };
+export { imagesArr }; // eslint-disable-line

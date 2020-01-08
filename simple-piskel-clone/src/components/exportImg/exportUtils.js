@@ -1,4 +1,4 @@
-function saveHandler(e, canvas, gifSave, apngSave, GIFEncoder) {
+export default function saveHandler(e, canvas, gifSave, apngSave, GIFEncoder) {
   let res;
   switch (e.target.dataset.save) {
     case 'gif':
@@ -13,5 +13,3 @@ function saveHandler(e, canvas, gifSave, apngSave, GIFEncoder) {
   }
   return res;
 }
-
-export { saveHandler };

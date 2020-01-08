@@ -8,8 +8,8 @@ function renderFrameActive(i, piskelImg, framesList) {
   return newFrame;
 }
 
-function highlightTarget(target, activeClassName, getDomElement) {
-  const activeElement = getDomElement(`.${activeClassName}`);
+function highlightTarget(target, activeClassName, getDomEl) {
+  const activeElement = getDomEl(`.${activeClassName}`);
   activeElement.classList.remove(activeClassName);
   target.classList.add(activeClassName);
   return target;
@@ -19,13 +19,13 @@ function setCanvasWrapSize(mainColumn, canvas) {
   const canvasWrapHeight = mainColumn.offsetHeight;
   const canvasWrapWidth = mainColumn.offsetWidth;
   const size = canvasWrapWidth < canvasWrapHeight ? canvasWrapWidth : canvasWrapHeight;
-  canvas.parentNode.style.width = `${size}px`;
-  canvas.parentNode.style.height = `${size}px`;
+  canvas.parentNode.style.width = `${size}px`; // eslint-disable-line
+  canvas.parentNode.style.height = `${size}px`; // eslint-disable-line
 }
 
 function renderFrames(piskelImg, currentCount, framesList) {
   const len = piskelImg.length;
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < len; i += 1) {
     const newFrame = document.createElement('LI');
     newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn frame__btn--delete tip" data-tooltip="Delete this frame"><button class="frame__btn frame__btn--copy tip" data-tooltip="Copy this frame"><span class="visually-hidden">Copy this canvas</span></button><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
       1}</span>`;
@@ -36,8 +36,8 @@ function renderFrames(piskelImg, currentCount, framesList) {
   return framesList;
 }
 
-function createPopup(msg, getDomElement) {
-  const popup = getDomElement('.popup');
+function createPopup(msg, getDomEl) {
+  const popup = getDomEl('.popup');
   popup.classList.remove('visually-hidden');
   popup.innerText = msg;
   setTimeout(() => popup.classList.add('visually-hidden'), 2500);

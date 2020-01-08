@@ -1,5 +1,6 @@
 import gifSave from './gifSave';
 
+/* eslint-disable */
 describe('function gifSave to exporting images as .gif', () => {
   it('gifSave function should return answer with given mock parameters', () => {
     class GIFEncoder {

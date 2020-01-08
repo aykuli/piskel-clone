@@ -7,9 +7,9 @@ function loginGoogleAccount(firebase, authElements, createPopup, getDomElement) 
   firebase
     .auth()
     .signInWithPopup(provider)
-    .then(function(result) {
+    .then(result => {
       // The signed-in user info.
-      const user = result.user;
+      const { user } = result.user;
 
       authPhoto.setAttribute('src', user.providerData[0].photoURL);
       authName.innerText = user.providerData[0].displayName;

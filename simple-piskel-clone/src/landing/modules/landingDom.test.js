@@ -1,6 +1,7 @@
 import { getLandingElements, renderGalleryItems, galleryItemsHandler } from './landingDom';
 import { imagesArr } from './dataURIs';
 
+/* eslint-disable */
 require('@babel/register');
 const jsdom = require('jsdom');
 const getType = require('jest-get-type');

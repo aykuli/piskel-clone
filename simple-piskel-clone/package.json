@@ -1,6 +1,6 @@
 {
   "name": "piskel-clone",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Piskel clone simplificated task from RSSchool 2019q3",
   "main": "./src/scripts/index.js",
   "scripts": {

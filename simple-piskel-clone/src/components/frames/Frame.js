@@ -7,13 +7,12 @@ function frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList) 
   const frameCtx = frames[currentCount].getContext('2d');
   const img = new Image();
   const dataURI = piskelImg[currentCount];
-
-  const frameHandleOnload = ({ target: img }) => {
+  // prettier-ignore
+  const frameHandleOnload = ({ target: img }) => { // eslint-disable-line
     let [currentWidth, currentHeight] = [frames[currentCount].width, frames[currentCount].height];
 
     currentWidth = frames[currentCount].width;
     currentHeight = frames[currentCount].height;
-    const frameCtx = frames[currentCount].getContext('2d');
     frameCtx.drawImage(img, 0, 0, currentWidth, currentHeight);
   };
 
@@ -23,18 +22,13 @@ function frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList) 
     img.src = piskelImg[currentCount];
     img.addEventListener('load', () => frameHandleOnload({ target: img }, currentCount));
   }
-  return 0;
 }
 
-function frameHandler(e, canvas, piskelImg, drawOnCanvas, preview, fps) {
+function frameHandler(e, canvas, piskelImg, drawOnCanvas, preview, fps, highlightActive, getDomEl) {
   // highlighting current frame
-  if (e.target.classList.contains('frame')) {
-    const frameActive = document.querySelector('.frame__active');
-    frameActive.classList.remove('frame__active');
-    e.target.parentNode.classList.add('frame__active');
-  }
+  if (e.target.classList.contains('frame')) highlightActive(e.target.parentNode, 'frame__active', getDomEl);
 
-  const count = event.target.dataset.count;
+  const { count } = e.target.dataset;
   if (piskelImg[count] !== undefined) {
     drawOnCanvas(canvas, piskelImg[count]);
     if (+fps === 0) drawOnCanvas(preview, piskelImg[count]);
@@ -42,10 +36,9 @@ function frameHandler(e, canvas, piskelImg, drawOnCanvas, preview, fps) {
   return count;
 }
 
-function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) {
+function frameDndHandler(canvas, piskelImg, framesList, frameDataCountSet, drawOnCanvas) {
   let dragged;
-
-  document.addEventListener('dragstart', e => {
+  framesList.addEventListener('dragstart', e => {
     dragged = e.target; // store a ref. on the dragged elem
     if (e.target.className.includes('frame')) {
       dragged = e.target.parentNode;
@@ -53,7 +46,7 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
     }
   });
   // back dragged canvas opacity to 1 (by removing this style)
-  document.addEventListener('dragend', e => {
+  framesList.addEventListener('dragend', e => {
     dragged.style.opacity = '';
     e.target.style.border = '';
     localStorage.removeItem('piskelImg');
@@ -61,19 +54,18 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
   });
 
   // events fired on the drop targets. Prevent default to allow drop
-  document.addEventListener('dragover', e => {
+  framesList.addEventListener('dragover', e => {
     e.preventDefault();
   });
 
-  document.addEventListener('dragenter', e => {
+  framesList.addEventListener('dragenter', e => {
     // highlight potential drop target when the draggable element enters it
     if (e.target.tagName.includes('CANVAS')) {
-      console.log('dragenter');
       e.target.parentNode.classList.add('frame__below');
     }
   });
 
-  document.addEventListener('dragleave', e => {
+  framesList.addEventListener('dragleave', e => {
     // reset background of potential drop target when the draggable element leaves it
     if (e.target.tagName.includes('CANVAS')) {
       const framesLeaved = document.querySelectorAll('.frame__below');
@@ -82,7 +74,7 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
     }
   });
 
-  document.addEventListener('drop', e => {
+  framesList.addEventListener('drop', e => {
     // prettier-ignore
     if ((e.target.className === 'frame') && (e.target.parentNode !== dragged)) {
         // main drag and drop logic
@@ -119,7 +111,7 @@ function frameDndHandler(canvas, piskelImg, frameDatasetCountSet, drawOnCanvas) 
           drawOnCanvas(canvas, piskelImg[targetNumb]);
           
           // make dataset.count and visual count text of frames consecutive          
-          frameDatasetCountSet();
+          frameDataCountSet();
 
           localStorage.removeItem('piskelCounter');
           localStorage.setItem('piskelCounter', targetNumb);
@@ -143,7 +135,7 @@ function frameAdd(renderFrameActive, framesList, canvas, piskelImg) {
   localStorage.setItem('piskelCounter', len);
 }
 
-function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCountSet, drawOnCanvas, getDomElement) {
+function frameCopy(target, piskelImg, canvas, highlightTarget, frameDataCountSet, drawOnCanvas, getDomElement) {
   // get the count of copied frame
   const countFrom = +target.parentNode.children[0].dataset.count;
 
@@ -159,7 +151,7 @@ function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCount
   highlightTarget(newFrame, 'frame__active', getDomElement);
 
   // set dataset.count and visual count text of frames consecutive
-  frameDatasetCountSet();
+  frameDataCountSet();
 
   // draw on main canvas this.piskelImg[countFrom]
   drawOnCanvas(newFrame.children[0], piskelImg[countFrom]);
@@ -174,9 +166,11 @@ function frameCopy(target, piskelImg, canvas, highlightTarget, frameDatasetCount
   return countFrom + 1;
 }
 
-function frameDel(target, piskelImg, canvas, framesList, drawOnCanvas) {
-  if (framesList.children.length === 1) return;
-  let count = target.parentNode.children[0].dataset.count;
+function frameDel(target, piskelImg, canvas, framesList, drawOnCanvas, frameDataCountSet) {
+  if (framesList.children.length === 1) return 0;
+  let { count } = target.parentNode.children[0].dataset;
+  // console.log('frameDel target.parentNode.children[0].dataset.count: ', target.parentNode.children[0].dataset.count);
+
   // remove LI of deleted frame and all of it's children
   target.parentNode.remove();
 
@@ -186,9 +180,9 @@ function frameDel(target, piskelImg, canvas, framesList, drawOnCanvas) {
   localStorage.setItem(`piskelImg`, JSON.stringify(piskelImg));
 
   // refresh frames count
-  frameDatasetCountSet();
+  frameDataCountSet();
 
-  //set active frame if it was deleted
+  // set active frame if it was deleted
   const frameActive = document.querySelector('.frame__active');
   if (frameActive === null) {
     drawOnCanvas(canvas, piskelImg[0]);
@@ -201,14 +195,15 @@ function frameDel(target, piskelImg, canvas, framesList, drawOnCanvas) {
     localStorage.removeItem('piskelCounter');
     localStorage.setItem('piskelCounter', count - 1);
   }
-  return count - 1;
+
+  return count === 0 ? 0 : count - 1; // eslint-disable-line
 }
 
 // make dataset.count and visual count text of frames consecutive
 function frameDatasetCountSet() {
   const framesList = document.querySelector('.frames__list');
   const len = framesList.children.length;
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < len; i += 1) {
     framesList.children[i].children[0].dataset.count = i;
     framesList.children[i].lastChild.innerText = i + 1;
   }

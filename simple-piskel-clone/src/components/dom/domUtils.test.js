@@ -1,12 +1,4 @@
-import {
-  setCanvasWrapSize,
-  renderFrames,
-  renderFrameActive,
-  highlightTarget,
-  createPopup,
-  getDomElement,
-  getDomElementsList,
-} from './domUtils';
+import { setCanvasWrapSize, renderFrames, renderFrameActive, highlightTarget, createPopup } from './domUtils';
 
 require('@babel/register');
 const jsdom = require('jsdom');
@@ -117,6 +109,7 @@ const domVirt = new JSDOM(
   options
 ).window;
 
+/* eslint-disable */
 describe('domElements Object', () => {
   it('renderFrameActive function should make children elmement LI for framesList and push empty string in piskelImg', () => {
     const i = 0;

@@ -1,6 +1,4 @@
-import { getDomElement } from './domUtils';
-
-const domElements = getDomElement => {
+export default function domElements(getDomElement) {
   return {
     canvas: getDomElement('#canvas'),
     canvasAbove: getDomElement('.canvas--above'),
@@ -35,6 +33,4 @@ const domElements = getDomElement => {
     authName: getDomElement('.auth__name'),
     authLogoutBtn: getDomElement('.auth__logout'),
   };
-};
-
-export { domElements };
+}

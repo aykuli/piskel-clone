@@ -1,5 +1,6 @@
-import { RGBToHex,penSizeHandler } from './toolsUtils';
+import { RGBToHex, penSizeHandler } from './toolsUtils';
 
+/* eslint-disable */
 describe('RGBToHex function', () => {
   it('Black color data', () => {
     const data = Uint8ClampedArray.from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);

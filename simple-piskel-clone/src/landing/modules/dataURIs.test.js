@@ -1,5 +1,6 @@
 import { imagesArr } from './dataURIs';
 
+/* eslint-disable */
 describe('const with images to show on landing page', () => {
   it('imagesArr should contain elements with image data started with "data:image/png;base64,"', () => {
     expect(imagesArr.length).toBeGreaterThan(0);

@@ -6,39 +6,39 @@ import { getLandingElements, renderGalleryItems, galleryItemsHandler } from './m
 import { getDomElement } from '../components/dom/domUtils';
 
 function landing(
-  imagesArr,
-  getDomElement,
-  getLandingElements,
-  drawOnCanvas,
-  animate,
-  renderGalleryItems,
-  galleryItemsHandler
+  imagesArray,
+  getDomElem,
+  getLandingDOMElements,
+  drawCanvas,
+  animation,
+  renderGalleryElements,
+  galleryElemsHandler
 ) {
-  const [canvasMain, gallery, functionalityPreview] = getLandingElements(getDomElement);
+  const [canvasMain, gallery, functionalityPreview] = getLandingDOMElements(getDomElem);
   // animate on screenshot of app
-  animate(
+  animation(
     i => {
-      drawOnCanvas(canvasMain, imagesArr[0][i]);
+      drawCanvas(canvasMain, imagesArray[0][i]);
     },
-    imagesArr[0],
-    false,
+    imagesArray[0],
+    0,
     true
   );
 
   // animate in functionality list
-  animate(
+  animation(
     i => {
-      drawOnCanvas(functionalityPreview, imagesArr[1][i]);
+      drawCanvas(functionalityPreview, imagesArray[1][i]);
     },
-    imagesArr[1],
-    false,
+    imagesArray[1],
+    0,
     true
   );
 
   // animate in example gallery
-  renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr, el => document.createElement(el));
+  renderGalleryElements(drawCanvas, animation, gallery, imagesArray, el => document.createElement(el));
 
-  gallery.addEventListener('click', e => galleryItemsHandler(e, imagesArr));
+  gallery.addEventListener('click', e => galleryElemsHandler(e, imagesArray));
   return 'landing page created';
 }
 

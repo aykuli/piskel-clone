@@ -1,4 +1,4 @@
-import { domElements } from './dom';
+import domElements from './dom';
 
 require('@babel/register');
 const jsdom = require('jsdom');
@@ -109,6 +109,7 @@ const domVirt = new JSDOM(
   options
 ).window;
 
+/* eslint-disable */
 describe('domElements Object', () => {
   it('dom element should correspond to app.html elements', () => {
     const getDomElement = selector => domVirt.window.document.querySelector(selector);

@@ -1,5 +1,6 @@
 import { drawOnCanvas, canvasResolutionHandler } from './drawCanvas';
 
+/* eslint-disable */
 const canvas = {
   width: 128,
   height: 128,

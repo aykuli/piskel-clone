@@ -1,5 +1,6 @@
 import { toolsMap } from './toolsMap';
 
+/* eslint-disable */
 describe('check tools keyboardShortCuts', () => {
   const keys = ['KeyA', 'KeyB', 'KeyC', 'KeyE', 'KeyP', 'KeyL'];
 

@@ -1,11 +1,12 @@
 import clearCanvas from './clearCanvas';
 
+/* eslint-disable */
 describe('clearCanvas function', () => {
   it('clearCanvas should make empty string on place of cleares img in ims array', () => {
     const canvas = {
       getContext: msg => {
         return {
-          clearRect: (x0y0, width, height) => {},
+          clearRect: (x0, y0, width, height) => {},
         };
       },
     };

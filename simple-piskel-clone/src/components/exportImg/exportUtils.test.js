@@ -1,5 +1,6 @@
-import { saveHandler } from './exportUtils';
+import saveHandler from './exportUtils';
 
+/* eslint-disable */
 describe('function attends to exporting images', () => {
   it('saveHandler function should return answer', () => {
     let e = { target: { dataset: { save: 'gif' } } };

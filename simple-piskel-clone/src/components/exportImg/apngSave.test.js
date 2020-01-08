@@ -1,4 +1,6 @@
 import apngSave from './apngSave';
+
+/* eslint-disable */
 describe('function apngSave to exporting images as .apng', () => {
   it('apngSave function should return answer with given mock parameters', () => {
     const canvas = {
