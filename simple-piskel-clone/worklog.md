@@ -95,3 +95,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 13:00 | 14:30 | 1.5h | fight with eslint |
 | 15:00 | 16:00 | 1h | fix refreshing on preview while drawing in current canvas |
 | 18:00 | 19:00 | 1h | keyboard shortcuts modal window markup and styles |
+| 19:00 | 19:30 | .5h | keyboard shortcuts modal window opener handler |
+| 20:00 | 21:30 | .5h | keyboard shortcuts modal window logic |

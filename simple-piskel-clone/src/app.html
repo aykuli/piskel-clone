@@ -75,13 +75,13 @@
                     <li class="pen-size" data-size="4"></li>
                 </ul>
                 <ul class="tools__container">
-                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)"><span class="visually-hidden">Pencil tool</span></li>
-                    <li id='stroke' class="tool tool--stroke tip" data-tooltip="Line tool(L)"><span class="visually-hidden">Line tool</span></li>
-                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)"><span class="visually-hidden">Bucket tool</span></li>
-                    <li id='bucketSamePixel' class="tool tool--bucket-same-pixel tip" data-tooltip="Paint all pixels of the same color tool(A)"><span class="visually-hidden">Paint all pixels of the same color tool</span></li>
-                    <li id='eraser' class="tool tool--eraser tip" data-tooltip="Eraser tool(E)"><span class="visually-hidden">Eraser tool</span></li>
-                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)"><span class="visually-hidden">Picker tool</span></li>
-                    <li id='empty' class="tool tool--empty tip" data-tooltip="Clear canvas(Z)"><span class="visually-hidden">Clear canvas</span></li>
+                    <li id='pencil' class="tool tool--pen tool--active tip" data-tooltip="Pen tool(P)" data-tool="pencil"><span class="visually-hidden">Pencil tool</span></li>
+                    <li id='stroke' class="tool tool--stroke tip" data-tooltip="Line tool(L)" data-tool="stroke"><span class="visually-hidden">Line tool</span></li>
+                    <li id='bucket' class="tool tool--bucket tip" data-tooltip="Bucket tool(B)" data-tool="bucket"><span class="visually-hidden">Bucket tool</span></li>
+                    <li id='bucketSamePixel' class="tool tool--bucket-same-pixel tip" data-tooltip="Paint all pixels of the same color tool(A)" data-tool="bucketAll"><span class="visually-hidden">Paint all pixels of the same color tool</span></li>
+                    <li id='eraser' class="tool tool--eraser tip" data-tooltip="Eraser tool(E)" data-tool="eraser"><span class="visually-hidden">Eraser tool</span></li>
+                    <li id='picker' class="tool tool--picker tip" data-tooltip="Picker tool(C)" data-tool="picker"><span class="visually-hidden">Picker tool</span></li>
+                    <li id='empty' class="tool tool--empty tip" data-tooltip="Clear canvas(Z)" data-tool="cleanCanvas"><span class="visually-hidden">Clear canvas</span></li>
                 </ul>
                 <div class="tools__palette--wrap">
                     <label for="color-switch-secondary" class="visually-hidden">Secondary color</label>
@@ -103,32 +103,37 @@
         <ul class="hotKeys">
             <li class="hotKeys__item">
                 <img src="./components/tools/img/pencil.svg" class="hotKeys__icon" width="20" height="20">
-                <span class="hotKeys__ecode">P</span>
+                <p class="hotKeys__ecode">P</p>
                 <span class="hotKeys__tool">Pencil</span>
             </li>
             <li class="hotKeys__item">
+                <img src="./components/tools/img/stroke.svg" class="hotKeys__icon" width="20" height="20">
+                <p class="hotKeys__ecode">L</p>
+                <span class="hotKeys__tool">Stroke</span>
+            </li>
+            <li class="hotKeys__item">
                 <img src="./components/tools/img/bucket.svg" class="hotKeys__icon" width="20" height="20">
-                <span class="hotKeys__ecode">B</span>
+                <p class="hotKeys__ecode">B</p>
                 <span class="hotKeys__tool">Bucket</span>
             </li>
             <li class="hotKeys__item">
                 <img src="./components/tools/img/bucket_same_pixels.svg" class="hotKeys__icon" width="20" height="20">
-                <span class="hotKeys__ecode">A</span>
+                <p class="hotKeys__ecode">A</p>
                 <span class="hotKeys__tool">Bucket all the same pixels</span>
             </li>
             <li class="hotKeys__item">
-                <img src="./components/tools/img/stroke.svg" class="hotKeys__icon" width="20" height="20">
-                <span class="hotKeys__ecode">L</span>
-                <span class="hotKeys__tool">Stroke</span>
-            </li>
-            <li class="hotKeys__item">
                 <img src="./components/tools/img/eraser.svg" class="hotKeys__icon" width="20" height="20">
-                <span class="hotKeys__ecode">E</span>
+                <p class="hotKeys__ecode">E</p>
                 <span class="hotKeys__tool">Eraser</span>
             </li>
             <li class="hotKeys__item">
+                <img src="./components/tools/img/picker.svg" class="hotKeys__icon" width="20" height="20">
+                <p class="hotKeys__ecode">C</p>
+                <span class="hotKeys__tool">Picker</span>
+            </li>
+            <li class="hotKeys__item">
                 <img src="./components/tools/img/blank.svg" class="hotKeys__icon" width="20" height="20">
-                <span class="hotKeys__ecode">Z</span>
+                <p class="hotKeys__ecode">Z</p>
                 <span class="hotKeys__tool">Clear canvas</span>
             </li>
         </ul>

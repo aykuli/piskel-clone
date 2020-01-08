@@ -87,6 +87,7 @@ export default class Controller {
     animationFullscreen(this.dom.fullscreenBtn, this.dom.preview);
 
     this.eventListeners();
+    this.hotKeysChanger();
   }
 
   init() {
@@ -328,7 +329,11 @@ export default class Controller {
   }
 
   keyboardShortCutHandler() {
+    // prettier-ignore
+    this.toolsMap = (localStorage.getItem('piskelHotKeys') === null) ? toolsMap : JSON.parse(localStorage.getItem('piskelHotKeys'));
+
     document.addEventListener('keydown', e => {
+      console.log('1) ', this.isToSetToolKey);
       if (this.isHotKeyOpen && e.code === 'Escape') {
         this.isHotKeyOpen = classToggler(
           'visually-hidden',
@@ -337,21 +342,59 @@ export default class Controller {
           this.dom.pageDarker
         );
       }
-      this.targetTool = toolsMap.has(e.code) ? toolsMap.get(e.code) : this.targetTool;
 
-      if (e.code === 'KeyZ') {
-        e.preventDefault();
-        clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
-        frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
-      } else if (e.code === 'KeyX') {
-        e.preventDefault();
-        swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue);
+      if (this.isToSetToolKey) {
+      } else {
+        console.log(this.toolsMap);
+        this.targetTool = toolsMap.has(e.code) ? toolsMap.get(e.code) : this.targetTool;
+        if (e.code === 'KeyZ') {
+          e.preventDefault();
+          clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
+          frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
+        } else if (e.code === 'KeyX') {
+          e.preventDefault();
+          swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue);
+        }
+
+        if (this.targetTool !== 'empty') {
+          highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
+          this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
+        }
+      }
+    });
+  }
+
+  hotKeysChanger() {
+    console.log('1) ', this.isToSetToolKey);
+    let timerId;
+    this.dom.hotKeysWindow.addEventListener('click', e => {
+      if (e.target === this.dom.hotKeysClose) {
+        classToggler('visually-hidden', this.isHotKeyOpen, this.dom.hotKeysWindow, this.dom.pageDarker);
+        return;
       }
 
-      if (this.targetTool !== 'empty') {
-        highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
-        this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
+      if (['hotKeys__item', 'hotKeys__icon', 'hotKeys__ecode', 'hotKeys__tool'].includes(e.target.className)) {
+        let item = e.target.closest('LI');
+        this.isToSetToolKey = true;
+        console.log('2) ', this.isToSetToolKey);
+        // delete blinking of previous chosen element if it exists
+        clearTimeout(timerId);
+        // if there exist highlighted element, make it common
+        const highlighted = getDomElement('.hotKeys__ecode--highlight');
+        if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+
+        // set blinking of chosen element
+        timerId = setInterval(() => {
+          item.children[1].classList.toggle('hotKeys__ecode--highlight');
+        }, 300);
+        return;
       }
+      this.isToSetToolKey = false;
+      clearTimeout(timerId);
+      // if there exist highlighted element, make it common
+      const highlighted = getDomElement('.hotKeys__ecode--highlight');
+      if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+      console.log('3) ', this.isToSetToolKey);
     });
   }
 }

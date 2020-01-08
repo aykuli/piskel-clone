@@ -45,9 +45,14 @@
         line-height: 35px;
 
         cursor: pointer;
+
+        &:hover, &:focus {
+            background-color: $grey;
+        }
     }
 
     &__close {
+        margin: 0;
         padding: 0 5px;
         
         cursor: pointer;
@@ -55,16 +60,25 @@
 
     &__icon {
         margin: 0 15px;
+        padding: 0;
     }
 
     &__ecode {
         width: 35px;
         height: 35px;
+        margin: 0;
         margin-right: 15px;
+        padding: 0;
 
         text-align: center;
+        color: $green;
         
         border: 2px solid $green;
+        border-radius: 5px;
+
+        &--highlight {
+            opacity: 0.5;
+        }
     }
 
     &__btn {
