@@ -24,4 +24,10 @@ function refreshLocalStorageValue(key, value) {
   return localStorage.getItem(key);
 }
 
-export { clearSession, saveImgsInLocalStorage, refreshLocalStorageValue };
+function refreshLocalStorageMap(key, map) {
+  localStorage.myMap = JSON.stringify(Array.from(map.entries()));
+  localStorage.removeItem(key);
+  localStorage.setItem(key, localStorage.myMap);
+}
+
+export { clearSession, saveImgsInLocalStorage, refreshLocalStorageValue, refreshLocalStorageMap };

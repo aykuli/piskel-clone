@@ -88,7 +88,7 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 18:30 | 20:30 | 2h | add test authentification |
 | 21:30 | 23:00 | 1.5h | add test domElements |
 | 23:00 | 24:00 | 1.5h | add test some domUtils functions + refactoring |
-| Jan 8 | | **9.5h** | **80h** |
+| Jan 8 | | **9.5h** | **89.5h** |
 | 10:00 | 12:00 | 2h | test function from domUtil.js , try to test landing page using mocks unseccesfully |
 | 12:00 | 12:15 | .25h | update Readme with test commands |
 | 12:30 | 13:00 | .5h | help Pavlenstory fix bugs |
@@ -98,3 +98,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 19:00 | 19:30 | .5h | keyboard shortcuts modal window opener handler |
 | 20:00 | 21:30 | .5h | keyboard shortcuts modal window logic |
 | 22:00 | 24:00 | 2h | keyboard shortcuts saving in localStorage |
+| Jan 9 | | **9.5h** | **90h** |
+| 00:00 | 01:00 | 1h | keyboard shortcuts logic finish |

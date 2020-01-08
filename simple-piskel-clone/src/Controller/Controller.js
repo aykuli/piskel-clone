@@ -54,9 +54,10 @@ import {
   clearSession,
   saveImgsInLocalStorage,
   refreshLocalStorageValue,
+  refreshLocalStorageMap,
 } from '../components/sessionActions/sessionActions';
 
-import { classToggler } from '../components/hotKeys/hotKeys';
+import { classToggler, setExistKeyInMap } from '../components/hotKeys/hotKeys';
 
 export default class Controller {
   constructor(dom, options, authConfig) {
@@ -331,10 +332,26 @@ export default class Controller {
   keyboardShortCutHandler() {
     // prettier-ignore
     this.toolsMap = (localStorage.getItem('piskelHotKeys') === null) ? toolsMap : new Map(JSON.parse(localStorage.getItem('piskelHotKeys')));
+    // make array of list items of dom Elements
+    const arr = Array.from(this.dom.hotKeysList.children);
 
-    // this.toolsMap.forEach((value, key, map) => {
-    //   this.dom.hotKeysList
-    // });
+    // go through map and write to tools ecode text according key value
+    this.toolsMap.forEach((value, key) => {
+      arr.forEach(el => {
+        if (el.dataset.tool === value) {
+          // eslint-disable-next-line no-param-reassign
+          el.children[1].innerText = key.slice(3);
+        }
+      });
+    });
+
+    // tool that don't have key will show "???"
+    arr.forEach(el => {
+      if (el.children[1].innerText === '') {
+        el.children[1].innerText = '???'; // eslint-disable-line
+        el.children[1].classList.add('hotKeys__ecode--unsetted'); // eslint-disable-line
+      }
+    });
 
     document.addEventListener('keydown', e => {
       if (this.isHotKeyOpen && e.code === 'Escape') {
@@ -353,46 +370,24 @@ export default class Controller {
 
       if (this.isToSetToolKey) {
         if (e.code === 'KeyX') return;
-        let buf;
+
         if (this.toolsMap.has(e.code)) {
-          // if set the same value skip
-          if (this.toolsMap.get(e.code) === this.toolToChange) return;
-
-          //save tool that was on that key
-          buf = this.toolsMap.get(e.code);
-
-          // delete old (key, value) of old tool
-          this.toolsMap.delete(e.code);
-          // delete old (key, value) of target tool
-          this.toolsMap.forEach((val, key, map) => {
-            if (val === this.toolToChange) {
-              map.delete(key);
-              return;
-            }
-          });
-          this.toolsMap.delete(e.code);
-
-          // set e.code new tool
+          setExistKeyInMap(e.code, this.toolToChange, this.toolsMap, getDomElement);
+        } else {
           this.toolsMap.set(e.code, this.toolToChange);
-
-          // old tool no more in this.toolsMap, highlight it in window
-          const elToHighlightAsWithoutKey = getDomElement(`.hotKeys__item--${buf}`);
-
-          elToHighlightAsWithoutKey.children[1].classList.add('hotKeys__ecode--unsetted');
-          elToHighlightAsWithoutKey.children[1].innerText = '???';
-
-          const toolToChange = getDomElement(`.hotKeys__item--${this.toolToChange}`);
-          toolToChange.children[1].innerText = e.code.slice(3);
-          clearTimeout(this.timerId);
-          const highlighted = getDomElement('.hotKeys__ecode--highlight');
-          if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
-          this.isToSetToolKey = false;
-
-          localStorage.myMap = JSON.stringify(Array.from(this.toolsMap.entries()));
-
-          localStorage.removeItem('piskelHotKeys');
-          localStorage.setItem('piskelHotKeys', localStorage.myMap);
         }
+
+        const toolToChangeDom = getDomElement(`.hotKeys__item--${this.toolToChange}`);
+        toolToChangeDom.children[1].innerText = e.code.slice(3);
+
+        clearTimeout(this.timerId);
+
+        const highlighted = getDomElement('.hotKeys__ecode--highlight');
+        if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+
+        this.isToSetToolKey = false;
+
+        refreshLocalStorageMap('piskelHotKeys', this.toolsMap);
       } else {
         this.targetTool = this.toolsMap.has(e.code) ? this.toolsMap.get(e.code) : this.targetTool;
 
@@ -418,9 +413,8 @@ export default class Controller {
       }
 
       if (['hotKeys__item', 'hotKeys__icon', 'hotKeys__ecode', 'hotKeys__tool'].includes(e.target.className)) {
-        let item = e.target.closest('LI');
+        const item = e.target.closest('LI');
         this.isToSetToolKey = true;
-        console.log(item.dataset.tool);
         this.toolToChange = item.dataset.tool;
 
         // delete blinking of previous chosen element if it exists
@@ -437,11 +431,10 @@ export default class Controller {
         return;
       }
       this.isToSetToolKey = false;
-      clearTimeout(timerId);
+      clearTimeout(this.timerId);
       // if there exist highlighted element, make it common
       const highlighted = getDomElement('.hotKeys__ecode--highlight');
       if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
-      return timerId;
     });
   }
 }

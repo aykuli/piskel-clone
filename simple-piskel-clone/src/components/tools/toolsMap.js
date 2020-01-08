@@ -1,5 +1,5 @@
 const toolsMap = new Map([
-  ['KeyA', 'bucketSamePixel'],
+  ['KeyA', 'bucketAll'],
   ['KeyB', 'bucket'],
   ['KeyC', 'picker'],
   ['KeyE', 'eraser'],
