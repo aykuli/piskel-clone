@@ -57,7 +57,7 @@ import {
   refreshLocalStorageMap,
 } from '../components/sessionActions/sessionActions';
 
-import { classToggler, setExistKeyInMap } from '../components/hotKeys/hotKeys';
+import { classToggler, setExistKeyInMap, setKeyToolsMap } from '../components/hotKeys/hotKeys';
 
 export default class Controller {
   constructor(dom, options, authConfig) {
@@ -267,11 +267,8 @@ export default class Controller {
           getDomElement
         );
       }
-
-      localStorage.removeItem('piskelImg');
-      localStorage.setItem('piskelImg', JSON.stringify(this.piskelImg));
-      localStorage.removeItem('piskelCounter');
-      localStorage.setItem('piskelCounter', this.currentCount);
+      refreshLocalStorageValue('piskelImg', JSON.stringify(this.piskelImg));
+      refreshLocalStorageValue('piskelCounter', this.currentCount);
     });
 
     this.dom.frameAddBtn.addEventListener('click', () => {
@@ -369,25 +366,18 @@ export default class Controller {
       }
 
       if (this.isToSetToolKey) {
-        if (e.code === 'KeyX') return;
-
-        if (this.toolsMap.has(e.code)) {
-          setExistKeyInMap(e.code, this.toolToChange, this.toolsMap, getDomElement);
-        } else {
-          this.toolsMap.set(e.code, this.toolToChange);
-        }
-
-        const toolToChangeDom = getDomElement(`.hotKeys__item--${this.toolToChange}`);
-        toolToChangeDom.children[1].innerText = e.code.slice(3);
-
+        this.isToSetToolKey = false;
         clearTimeout(this.timerId);
 
-        const highlighted = getDomElement('.hotKeys__ecode--highlight');
-        if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
-
-        this.isToSetToolKey = false;
-
         refreshLocalStorageMap('piskelHotKeys', this.toolsMap);
+        this.isToSetToolKey = setKeyToolsMap(
+          e.code,
+          this.toolsMap,
+          this.toolToChange,
+          getDomElement,
+          setExistKeyInMap,
+          refreshLocalStorageMap
+        );
       } else {
         this.targetTool = this.toolsMap.has(e.code) ? this.toolsMap.get(e.code) : this.targetTool;
 

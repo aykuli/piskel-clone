@@ -98,5 +98,5 @@ project creator: **[Aynur Shauerman](https://github.com/aykuli)**
 | 19:00 | 19:30 | .5h | keyboard shortcuts modal window opener handler |
 | 20:00 | 21:30 | .5h | keyboard shortcuts modal window logic |
 | 22:00 | 24:00 | 2h | keyboard shortcuts saving in localStorage |
-| Jan 9 | | **9.5h** | **90h** |
+| Jan 9 | | **9.5h** | **90.5h** |
 | 00:00 | 01:00 | 1h | keyboard shortcuts logic finish |

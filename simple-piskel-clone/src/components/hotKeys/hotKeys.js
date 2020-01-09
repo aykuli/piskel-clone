@@ -34,4 +34,26 @@ function setExistKeyInMap(code, toolToChange, map, getDomEl) {
   elToHighlightAsWithoutKey.children[1].innerText = '???';
 }
 
-export { classToggler, setExistKeyInMap };
+function setKeyToolsMap(code, map, toolToChange, getDomElement, setExistKeyMap, refreshLocalStorageMap) {
+  if (code === 'KeyX') return;
+
+  if (map.has(code)) {
+    setExistKeyMap(code, toolToChange, map, getDomElement);
+  } else {
+    map.set(code, toolToChange);
+  }
+
+  // remover unsetted if exist
+  const unsetted = getDomElement(`.hotKeys__item--${toolToChange}`);
+  if (unsetted !== null) unsetted.children[1].classList.remove('hotKeys__ecode--unsetted');
+
+  const toolToChangeDom = getDomElement(`.hotKeys__item--${toolToChange}`);
+  toolToChangeDom.children[1].innerText = code.slice(3);
+
+  const highlighted = getDomElement('.hotKeys__ecode--highlight');
+  if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+
+  refreshLocalStorageMap('piskelHotKeys', map);
+}
+
+export { classToggler, setExistKeyInMap, setKeyToolsMap };

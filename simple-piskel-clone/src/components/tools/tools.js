@@ -168,7 +168,7 @@ export default class Tools {
   };
 
   bucketSamePixelTool(targetTool) {
-    if (targetTool === 'bucketSamePixel') {
+    if (targetTool === 'bucketAll') {
       this.canvas.addEventListener('mousedown', this.floodFillSamePixel);
     } else {
       this.canvas.removeEventListener('mousedown', this.floodFillSamePixel);
