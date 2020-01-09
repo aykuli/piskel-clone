@@ -232,6 +232,7 @@ export default class Tools {
       });
 
       canvasAbove.addEventListener('mouseup', e => {
+        // console.log(ctxAbove);
         [x1, y1] = this.getXYCoors(e);
         ctxAbove.clearRect(0, 0, canvasAbove.width, canvasAbove.height);
         this.bresenham(x0, x1, y0, y1, this.ctx);
@@ -240,6 +241,7 @@ export default class Tools {
         const dataURI = this.canvas.toDataURL();
         const piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
         const currentCount = localStorage.getItem('piskelCounter');
+        console.log(currentCount);
         piskelImg[currentCount] = dataURI;
 
         localStorage.removeItem('piskelImg');

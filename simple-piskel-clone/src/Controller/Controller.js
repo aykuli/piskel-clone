@@ -57,7 +57,13 @@ import {
   refreshLocalStorageMap,
 } from '../components/sessionActions/sessionActions';
 
-import { classToggler, setExistKeyInMap, setKeyToolsMap } from '../components/hotKeys/hotKeys';
+import {
+  classToggler,
+  setExistKeyInMap,
+  setKeyToolsMap,
+  manageStyleToolToChange,
+  highlightUnsettedTool,
+} from '../components/hotKeys/hotKeys';
 
 export default class Controller {
   constructor(dom, options, authConfig) {
@@ -97,8 +103,12 @@ export default class Controller {
     firebase.initializeApp(this.firebaseConfig);
 
     // get current number of active frame
-    const lSCount = localStorage.getItem('piskelCounter');
-    this.currentCount = lSCount !== null && lSCount !== 'undefined' ? lSCount : this.currentCount;
+    if (localStorage.getItem('piskelCounter') === null) {
+      this.currentCount = 0;
+      refreshLocalStorageValue('piskelCounter', 0);
+    } else {
+      this.currentCount = localStorage.getItem('piskelCounter');
+    }
 
     // get image from Local Storage if exists and draw accordingly frames
     if (localStorage.getItem('piskelImg') !== null) {
@@ -376,7 +386,9 @@ export default class Controller {
           this.toolToChange,
           getDomElement,
           setExistKeyInMap,
-          refreshLocalStorageMap
+          refreshLocalStorageMap,
+          manageStyleToolToChange,
+          highlightUnsettedTool
         );
       } else {
         this.targetTool = this.toolsMap.has(e.code) ? this.toolsMap.get(e.code) : this.targetTool;
