@@ -1,4 +1,12 @@
-import { classToggler, setExistKeyInMap, setKeyToolsMap } from './hotKeys';
+import {
+  classToggler,
+  setExistKeyInMap,
+  setKeyToolsMap,
+  manageStyleToolToChange,
+  highlightUnsettedTool,
+} from './hotKeys';
+
+import { refreshLocalStorageMap } from '../sessionActions/sessionActions';
 
 require('@babel/register');
 const jsdom = require('jsdom');
@@ -39,7 +47,7 @@ const domVirt = new JSDOM(
         <ul class="hotKeys">
             <li class="hotKeys__item hotKeys__item--pencil" data-tool="pencil">
                 <img src="./components/tools/img/pencil.svg" class="hotKeys__icon" width="20" height="20">
-                <p class="hotKeys__ecode"></p>
+                <p class="hotKeys__ecode hotKeys__ecode--unsetted">???</p>
                 <span class="hotKeys__tool">Pencil</span>
             </li>
             <li class="hotKeys__item hotKeys__item--stroke" data-tool="stroke">
@@ -64,12 +72,12 @@ const domVirt = new JSDOM(
             </li>
             <li class="hotKeys__item hotKeys__item--picker" data-tool="picker">
                 <img src="./components/tools/img/picker.svg" class="hotKeys__icon" width="20" height="20">
-                <p class="hotKeys__ecode"></p>
+                <p class="hotKeys__ecode hotKeys__ecode--highlight"></p>
                 <span class="hotKeys__tool">Picker</span>
             </li>
             <li class="hotKeys__item hotKeys__item--cleanCanvas" data-tool="cleanCanvas">
                 <img src="./components/tools/img/blank.svg" class="hotKeys__icon" width="20" height="20">
-                <p class="hotKeys__ecode"></p>
+                <p class="hotKeys__ecode hotKeys__ecode--unsetted">???</p>
                 <span class="hotKeys__tool">Clear canvas</span>
             </li>
         </ul>
@@ -82,19 +90,6 @@ const domVirt = new JSDOM(
 
 /* eslint-disable */
 describe('hotKeys manipulating functions', () => {
-  //   const getDomEl = selector => {
-  //     let el = domVirt.window.document.querySelector(selector);
-  //     let obj = Object.assign({}, el);
-  //     Object.defineProperty(obj, 'children', {
-  //       value: { '1': { classList: { add: str => str, toggle: str => str }, innerText: 'innerText of children[1]' } },
-  //       enumerable: true,
-  //       writable: true,
-  //       configurable: true,
-  //     });
-
-  //     return obj;
-  //   };
-
   const getDomEl = selector => domVirt.window.document.querySelector(selector);
 
   it('classToggler should toggle class and return inversed value of isHotKeyOpen', () => {
@@ -130,8 +125,39 @@ describe('hotKeys manipulating functions', () => {
     expect(res).toBe('bucketAll');
   });
 
-  it('setKeyToolsMap shoul refresh map', () => {
+  it('manageStyleToolToChange shoul change classNames of tools and set unsettedtarget tool acoording to code', () => {
     const code = 'KeyA';
+    const toolToChange = 'pencil';
+
+    const pencil = getDomEl(`.hotKeys__item--${toolToChange}`);
+    pencil.children[1].innerText = '???';
+    const highlighted = getDomEl('.hotKeys__ecode--highlight'); // picker in virtual DOM
+    // state of dom before this function
+    expect(pencil.children[1].classList).toContain('hotKeys__ecode--unsetted');
+    expect(pencil.children[1].innerText).toBe('???');
+    expect(highlighted.classList).toContain('hotKeys__ecode--highlight');
+
+    manageStyleToolToChange(code, toolToChange, getDomEl);
+    // state of dom after this function
+    expect(pencil.children[1].classList).not.toContain('hotKeys__ecode--unsetted');
+    expect(pencil.children[1].innerText).toBe('A');
+    expect(highlighted.classList).not.toContain('hotKeys__ecode--highlight');
+  });
+
+  it('highlightUnsettedTool should set bucket class hotKeys__ecode--unsetted', () => {
+    const tool = 'bucket';
+
+    const toolDom = getDomEl(`.hotKeys__item--${tool}`);
+    toolDom.children[1].innerText = 'B';
+    expect(toolDom.children[1].classList).not.toContain('hotKeys__ecode--unsetted');
+
+    highlightUnsettedTool(tool, getDomEl);
+    // state of dom after this function
+    expect(toolDom.children[1].classList).toContain('hotKeys__ecode--unsetted');
+  });
+
+  it('setKeyToolsMap should manage all logic eith hotKey changing', () => {
+    let code = 'KeyA';
     let toolToChange = 'pencil';
     let map = new Map([
       ['KeyP', 'pencil'],
@@ -139,10 +165,48 @@ describe('hotKeys manipulating functions', () => {
       ['KeyA', 'bucketAll'],
     ]);
 
-    const res = setKeyToolsMap(code, map, toolToChange, getDomElement, setExistKeyMap, refreshLocalStorageMap);
+    setKeyToolsMap(
+      code,
+      map,
+      toolToChange,
+      getDomEl,
+      setExistKeyInMap,
+      refreshLocalStorageMap,
+      manageStyleToolToChange,
+      highlightUnsettedTool
+    );
 
-    expect(map.has(code)).toBeTruthy();
     expect(map.get(code)).toBe(toolToChange);
-    expect(res).toBe('bucketAll');
+    expect(map.get('KeyP')).toBeUndefined();
+
+    // copy map
+    let map1 = new Map(Array.from(map.entries()));
+
+    code = 'KeyG';
+    setKeyToolsMap(
+      code,
+      map1,
+      toolToChange,
+      getDomEl,
+      setExistKeyInMap,
+      refreshLocalStorageMap,
+      manageStyleToolToChange,
+      highlightUnsettedTool
+    );
+    expect(map1.has(code)).toBeTruthy();
+    expect(map1.get(code)).toBe(toolToChange);
+
+    code = 'KeyX';
+    setKeyToolsMap(
+      code,
+      map1,
+      toolToChange,
+      getDomEl,
+      setExistKeyInMap,
+      refreshLocalStorageMap,
+      manageStyleToolToChange,
+      highlightUnsettedTool
+    );
+    expect(map1.has(code)).toBeFalsy();
   });
 });

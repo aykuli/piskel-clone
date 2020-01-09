@@ -30,6 +30,23 @@ function setExistKeyInMap(code, toolToChange, map) {
   return buf; // eslint-disable-line
 }
 
+function manageStyleToolToChange(code, toolToChange, getDomElement) {
+  const toolToChangeDom = getDomElement(`.hotKeys__item--${toolToChange}`);
+  toolToChangeDom.children[1].innerText = code.slice(3);
+  toolToChangeDom.children[1].classList.remove('hotKeys__ecode--unsetted');
+
+  const highlighted = getDomElement('.hotKeys__ecode--highlight');
+  if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+}
+
+function highlightUnsettedTool(el, getDomElement) {
+  const elToHighlightAsWithoutKey = getDomElement(`.hotKeys__item--${el}`);
+  if (elToHighlightAsWithoutKey !== null) {
+    elToHighlightAsWithoutKey.children[1].classList.add('hotKeys__ecode--unsetted');
+    elToHighlightAsWithoutKey.children[1].innerText = '???';
+  }
+}
+
 function setKeyToolsMap(
   code,
   map,
@@ -52,22 +69,5 @@ function setKeyToolsMap(
   }
   manageStyleTool(code, toolToChange, getDomElement);
   refreshLocalStorageMap('piskelHotKeys', map);
-}
-
-function manageStyleToolToChange(code, toolToChange, getDomElement) {
-  const toolToChangeDom = getDomElement(`.hotKeys__item--${toolToChange}`);
-  toolToChangeDom.children[1].innerText = code.slice(3);
-  toolToChangeDom.children[1].classList.remove('hotKeys__ecode--unsetted');
-
-  const highlighted = getDomElement('.hotKeys__ecode--highlight');
-  if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
-}
-
-function highlightUnsettedTool(el, getDomElement) {
-  const elToHighlightAsWithoutKey = getDomElement(`.hotKeys__item--${el}`);
-  if (elToHighlightAsWithoutKey !== null) {
-    elToHighlightAsWithoutKey.children[1].classList.add('hotKeys__ecode--unsetted');
-    elToHighlightAsWithoutKey.children[1].innerText = '???';
-  }
 }
 export { classToggler, setExistKeyInMap, setKeyToolsMap, manageStyleToolToChange, highlightUnsettedTool };

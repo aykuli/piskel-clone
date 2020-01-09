@@ -380,7 +380,7 @@ export default class Controller {
         clearTimeout(this.timerId);
 
         refreshLocalStorageMap('piskelHotKeys', this.toolsMap);
-        this.isToSetToolKey = setKeyToolsMap(
+        setKeyToolsMap(
           e.code,
           this.toolsMap,
           this.toolToChange,
