@@ -227,7 +227,10 @@ export default class Controller {
     this.dom.clearSessionBtn.addEventListener('click', () => clearSession());
 
     // EXPORT IMAGE
-    this.dom.saveBtns.addEventListener('click', e => saveHandler(e, this.dom.canvas, gifSave, apngSave, GIFEncoder)); // eslint-disable-line
+    this.dom.saveBtns.addEventListener(
+      'click',
+      e => saveHandler(e, this.dom.canvasAbove, gifSave, apngSave, GIFEncoder) // eslint-disable-line
+    );
 
     // KEYBOARD SHORTCUTS WINDOW OPENER
     this.dom.hotKeyWindowBtn.addEventListener('click', () => {
