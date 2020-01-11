@@ -1,11 +1,5 @@
 function clearSession() {
-  localStorage.removeItem('piskelImg');
-  localStorage.removeItem('piskelPrimaryColor');
-  localStorage.removeItem('piskelSecondaryColor');
-  localStorage.removeItem('piskelTool');
-  localStorage.removeItem('piskelFps');
-  localStorage.removeItem('piskelCounter');
-  localStorage.removeItem('piskelHotKeys');
+  localStorage.clear();
   location.reload(); // eslint-disable-line
 }
 
