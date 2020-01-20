@@ -351,7 +351,15 @@ export default class Controller {
     } else {
       this.targetTool = localStorage.getItem(LS_KEYS.tool);
       highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);
-      this.tools.toolHandler(this.targetTool, frameDraw, `.${SELECTORS.FRAME}`, getDomElementsList);
+      this.tools.toolHandler(
+        this.targetTool,
+        frameDraw,
+        `.${SELECTORS.FRAME}`,
+        getDomElementsList,
+        framePreviewDraw,
+        this.dom.preview,
+        drawOnCanvas
+      );
     }
 
     this.dom.tools.addEventListener('click', e => {
@@ -367,7 +375,15 @@ export default class Controller {
           break;
         default:
           highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);
-          this.tools.toolHandler(this.targetTool, frameDraw, `.${SELECTORS.FRAME}`, getDomElementsList);
+          this.tools.toolHandler(
+            this.targetTool,
+            frameDraw,
+            `.${SELECTORS.FRAME}`,
+            getDomElementsList,
+            framePreviewDraw,
+            this.dom.preview,
+            drawOnCanvas
+          );
       }
     });
   }
@@ -453,7 +469,15 @@ export default class Controller {
             break;
           default:
             highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);
-            this.tools.toolHandler(this.targetTool, frameDraw, `.${SELECTORS.FRAME}`, getDomElementsList);
+            this.tools.toolHandler(
+              this.targetTool,
+              frameDraw,
+              `.${SELECTORS.FRAME}`,
+              getDomElementsList,
+              framePreviewDraw,
+              this.dom.preview,
+              drawOnCanvas
+            );
         }
       }
     });

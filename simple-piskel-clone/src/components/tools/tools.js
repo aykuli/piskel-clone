@@ -208,7 +208,7 @@ export default class Tools {
     this.currentColor.value = color;
   };
 
-  strokeTool(targetTool, frameDraw, frameClassName, getDomElementsList) {
+  strokeTool(targetTool, frameDraw, frameClassName, getDomElementsList, framePreviewDraw, preview, drawOnCanvas) {
     const canvasAbove = document.querySelector('.canvas--above');
     const ctxAbove = canvasAbove.getContext('2d');
     ctxAbove.imageSmoothingEnabled = false;
@@ -248,17 +248,27 @@ export default class Tools {
         localStorage.removeItem(this.LS_KEYS.piskelImg);
         localStorage.setItem(this.LS_KEYS.piskelImg, JSON.stringify(piskelImg));
         frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList);
+        framePreviewDraw(this.LS_KEYS.fps, preview, piskelImg, currentCount, drawOnCanvas);
+        // framePreviewDraw(LS_KEYS.fps, this.dom.preview, this.piskelImg, this.currentCount, drawOnCanvas);
       });
     } else {
       canvasAbove.style.display = '';
     }
   }
 
-  toolHandler = (targetTool, frameDraw, frameClassName, getDomElementsList) => {
+  toolHandler = (
+    targetTool,
+    frameDraw,
+    frameClassName,
+    getDomElementsList,
+    framePreviewDraw,
+    preview,
+    drawOnCanvas
+  ) => {
     this.pencilTool(targetTool);
     this.bucketTool(targetTool);
     this.pickerTool(targetTool);
-    this.strokeTool(targetTool, frameDraw, frameClassName, getDomElementsList);
+    this.strokeTool(targetTool, frameDraw, frameClassName, getDomElementsList, framePreviewDraw, preview, drawOnCanvas);
     this.bucketSamePixelTool(targetTool);
 
     localStorage.removeItem(this.LS_KEYS.tool);

@@ -4,7 +4,7 @@ import { imagesArr } from './modules/dataURIs';
 import { animate } from '../components/animation/animate';
 import { getLandingElements, renderGalleryItems, galleryItemsHandler } from './modules/landingDom';
 import { getDomElement } from '../components/dom/domUtils';
-import { LS_KEYS } from '../constants';
+import { LS_KEYS, SELECTORS } from '../constants';
 
 function landing(
   imagesArray,
@@ -14,9 +14,10 @@ function landing(
   animation,
   renderGalleryElements,
   galleryElemsHandler,
-  keysForLS
+  keysForLS,
+  Selectors
 ) {
-  const [canvasMain, gallery, functionalityPreview] = getLandingDOMElements(getDomElem);
+  const [canvasMain, gallery, functionalityPreview] = getLandingDOMElements(getDomElem, Selectors);
   // animate on screenshot of app
   animation({
     draw: i => {
@@ -38,7 +39,9 @@ function landing(
   });
 
   // animate in example gallery
-  renderGalleryElements(drawCanvas, animation, gallery, imagesArray, keysForLS, el => document.createElement(el));
+  renderGalleryElements(drawCanvas, animation, gallery, imagesArray, keysForLS, Selectors, el =>
+    document.createElement(el)
+  );
 
   gallery.addEventListener('click', e => galleryElemsHandler(e, imagesArray, keysForLS));
   return 'landing page created';
@@ -52,5 +55,6 @@ landing(
   animate,
   renderGalleryItems,
   galleryItemsHandler,
-  LS_KEYS
+  LS_KEYS,
+  SELECTORS
 );

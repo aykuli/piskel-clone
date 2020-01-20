@@ -16,6 +16,11 @@ const SELECTORS = {
   CANVAS_ABOVE: 'canvas--above',
   CANVAS_RESOLUTION: 'resolution--res',
 
+  CANVAS_LANDING_MAIN: 'canvas-main',
+  PREVIEW: 'functionality__preview',
+  GALLERY: 'gallery',
+  GALLERY_ITEM: 'gallery__item',
+
   BUTTON_RESOLUTION_ACTIVE: 'resolution__btn--active',
   BUTTON_FRAME_DELETE: 'frame__btn--delete',
   BUTTON_FRAME_COPY: 'frame__btn--copy',

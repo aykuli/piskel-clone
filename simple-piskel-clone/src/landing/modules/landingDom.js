@@ -1,15 +1,15 @@
-function getLandingElements(getDomElement) {
-  const canvasMain = getDomElement('.canvas-main');
-  const gallery = getDomElement('.gallery');
-  const functionalityPreview = getDomElement('.functionality__preview');
+function getLandingElements(getDomElement, SELECTORS) {
+  const canvasMain = getDomElement(`.${SELECTORS.CANVAS_LANDING_MAIN}`);
+  const gallery = getDomElement(`.${SELECTORS.GALLERY}`);
+  const functionalityPreview = getDomElement(`.${SELECTORS.PREVIEW}`);
   return [canvasMain, gallery, functionalityPreview];
 }
 
-function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, keysForLS, createDomElement) {
+function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, keysForLS, SELECTORS, createDomElement) {
   for (let i = 0; i < imgsArr.length; i += 1) {
     const item = createDomElement('A');
     item.innerHTML = `<canvas class="gallery__canvas" width="200" height="200"></canvas>`;
-    item.className = 'gallery__item';
+    item.className = SELECTORS.GALLERY_ITEM;
     item.setAttribute('href', 'app.html');
     item.dataset.count = i;
     list.append(item);
