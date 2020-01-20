@@ -8,7 +8,7 @@ function frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList) 
   const img = new Image();
   const dataURI = piskelImg[currentCount];
   // prettier-ignore
-  const frameHandleOnload = ({ target: img }) => { // eslint-disable-line
+  const frameHandleOnload = (img) => { // eslint-disable-line
     let [currentWidth, currentHeight] = [frames[currentCount].width, frames[currentCount].height];
 
     currentWidth = frames[currentCount].width;
@@ -20,7 +20,7 @@ function frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList) 
     frameCtx.clearRect(0, 0, frames[currentCount].width, frames[currentCount].height);
   } else {
     img.src = piskelImg[currentCount];
-    img.addEventListener('load', () => frameHandleOnload({ target: img }, currentCount));
+    img.addEventListener('load', () => frameHandleOnload(img, currentCount));
   }
 }
 
