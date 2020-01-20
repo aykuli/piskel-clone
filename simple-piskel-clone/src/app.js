@@ -42,6 +42,7 @@ import {
   frameDatasetCountSet,
   frameCopy,
   frameDel,
+  framePreviewDraw,
 } from './components/frames/frame';
 
 // animation functions
@@ -60,6 +61,7 @@ import {
   refreshLocalStorageMap,
 } from './components/sessionActions/sessionActions';
 
+// hotkeys
 import {
   classToggler,
   setExistKeyInMap,
@@ -92,7 +94,17 @@ export default class Controller {
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
-    frameDndHandler(this.dom.canvas, this.piskelImg, this.dom.framesList, frameDatasetCountSet, drawOnCanvas, LS_KEYS); // frame drag and drop listener
+    frameDndHandler(
+      this.dom.canvas,
+      this.dom.preview,
+      this.piskelImg,
+      this.dom.framesList,
+      frameDatasetCountSet,
+      drawOnCanvas,
+      LS_KEYS,
+      SELECTORS,
+      framePreviewDraw
+    ); // frame drag and drop listener
 
     animate({
       draw: i => {
@@ -100,7 +112,7 @@ export default class Controller {
       },
       piskelImg: this.piskelImg,
       fpsWatch: this.fpsWatch,
-      fps: this.fps,
+      keys: LS_KEYS,
     });
 
     animationFullscreen(this.dom.fullscreenBtn, this.dom.preview);
@@ -116,7 +128,7 @@ export default class Controller {
     // get current number of active frame
     if (localStorage.getItem(LS_KEYS.counter) === null) {
       this.currentCount = 0;
-      refreshLocalStorageValue(LS_KEYS.counter, 0);
+      refreshLocalStorageValue(LS_KEYS.counter, this.currentCount);
     } else {
       this.currentCount = localStorage.getItem(LS_KEYS.counter);
     }
@@ -124,7 +136,7 @@ export default class Controller {
     // get image from Local Storage if exists and draw accordingly frames
     if (localStorage.getItem(LS_KEYS.piskelImg) !== null) {
       this.piskelImg = JSON.parse(localStorage.getItem(LS_KEYS.piskelImg));
-      renderFrames(this.piskelImg, this.currentCount, this.dom.framesList);
+      renderFrames(this.piskelImg, this.currentCount, this.dom.framesList, SELECTORS);
 
       for (let i = 0; i < this.piskelImg.length; i += 1) {
         const frame = this.dom.framesList.children[i].children[0];
@@ -154,16 +166,16 @@ export default class Controller {
         },
         piskelImg: this.piskelImg,
         fpsWatch: this.fpsWatch,
-        fps: this.fps,
+        keys: LS_KEYS,
       });
     }
 
     // set pixel size at app page loading
     if (localStorage.getItem(LS_KEYS.pixelSize) !== null) {
       this.pixelSize = Number(localStorage.getItem(LS_KEYS.pixelSize));
-      const target = document.querySelector(`.resolution--res${this.dom.canvas.width / this.pixelSize}`);
-      highlightTarget(target, 'resolution__btn--active', getDomElement);
-    }
+      const target = document.querySelector(`.${SELECTORS.CANVAS_RESOLUTION}${this.dom.canvas.width / this.pixelSize}`);
+      highlightTarget(target, SELECTORS.BUTTON_RESOLUTION_ACTIVE, getDomElement);
+    } else refreshLocalStorageValue(LS_KEYS.pixelSize, this.pixelSize);
 
     setCanvasWrapSize(this.dom.mainColumn, this.dom.canvas);
 
@@ -187,7 +199,7 @@ export default class Controller {
     const authElements = [this.dom.authName, this.dom.authPhoto, this.dom.authLoginBtn, this.dom.authLogoutBtn];
     // Button "Login"
     this.dom.authLoginBtn.addEventListener('click', () => {
-      loginGoogleAccount(firebase, authElements, createPopup, getDomElement);
+      loginGoogleAccount(firebase, authElements, createPopup, getDomElement, SELECTORS);
     });
 
     // Button "Logout"
@@ -236,7 +248,8 @@ export default class Controller {
         highlightTarget,
         getDomElement,
         LS_KEYS.pixelSize,
-        LS_KEYS.piskelImg
+        LS_KEYS.piskelImg,
+        SELECTORS
       );
     });
 
@@ -252,7 +265,7 @@ export default class Controller {
     // KEYBOARD SHORTCUTS WINDOW OPENER
     this.dom.hotKeyWindowBtn.addEventListener('click', () => {
       this.isHotKeyOpen = classToggler(
-        'visually-hidden',
+        SELECTORS.VISUALLY_HIDDEN,
         this.isHotKeyOpen,
         this.dom.hotKeysWindow,
         this.dom.pageDarker
@@ -266,16 +279,19 @@ export default class Controller {
 
   frameWatch() {
     this.dom.framesList.addEventListener('click', e => {
-      if (e.target.className.includes('frame__btn--delete')) {
+      if (e.target.className.includes(SELECTORS.BUTTON_FRAME_DELETE)) {
         this.currentCount = frameDel(
           e.target,
           this.piskelImg,
           this.dom.canvas,
           this.dom.framesList,
           drawOnCanvas,
-          frameDatasetCountSet
+          frameDatasetCountSet,
+          SELECTORS,
+          refreshLocalStorageValue,
+          LS_KEYS
         );
-      } else if (e.target.className.includes('frame__btn--copy')) {
+      } else if (e.target.className.includes(SELECTORS.BUTTON_FRAME_COPY)) {
         this.currentCount = frameCopy(
           e.target,
           this.piskelImg,
@@ -283,7 +299,8 @@ export default class Controller {
           highlightTarget,
           frameDatasetCountSet,
           drawOnCanvas,
-          getDomElement
+          getDomElement,
+          SELECTORS
         );
       } else {
         this.currentCount = frameHandler(
@@ -294,24 +311,34 @@ export default class Controller {
           this.dom.preview,
           this.fps,
           highlightTarget,
+          SELECTORS,
           getDomElement
         );
       }
       refreshLocalStorageValue(LS_KEYS.piskelImg, JSON.stringify(this.piskelImg));
       refreshLocalStorageValue(LS_KEYS.counter, this.currentCount);
+
+      framePreviewDraw(LS_KEYS.fps, this.dom.preview, this.piskelImg, this.currentCount, drawOnCanvas);
     });
 
     this.dom.frameAddBtn.addEventListener('click', () => {
-      frameAdd(renderFrameActive, this.dom.framesList, this.dom.canvas, this.piskelImg);
-      this.currentCount = +localStorage.getItem(LS_KEYS.counter);
+      frameAdd(renderFrameActive, this.dom.framesList, this.dom.canvas, this.piskelImg, SELECTORS);
+
+      this.currentCount = this.dom.framesList.children.length - 1;
+
+      refreshLocalStorageValue(LS_KEYS.piskelImg, JSON.stringify(this.piskelImg));
+      refreshLocalStorageValue(LS_KEYS.counter, this.currentCount);
+
+      framePreviewDraw(LS_KEYS.fps, this.dom.preview, this.piskelImg, this.currentCount, drawOnCanvas);
     });
 
     this.dom.canvas.addEventListener('mouseup', () => {
+      this.currentCount = localStorage.getItem(LS_KEYS.counter);
       saveImgsInLocalStorage(this.piskelImg, this.dom.canvas, this.currentCount);
       refreshLocalStorageValue(LS_KEYS.piskelImg, JSON.stringify(this.piskelImg));
-      frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
-      const fps = +localStorage.getItem(LS_KEYS.fps);
-      if (!fps) drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
+      frameDraw(this.piskelImg, this.currentCount, `.${SELECTORS.FRAME}`, getDomElementsList);
+
+      framePreviewDraw(LS_KEYS.fps, this.dom.preview, this.piskelImg, this.currentCount, drawOnCanvas);
     });
   }
 
@@ -323,8 +350,8 @@ export default class Controller {
       localStorage.setItem(LS_KEYS.tool, this.targetTool);
     } else {
       this.targetTool = localStorage.getItem(LS_KEYS.tool);
-      highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
-      this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
+      highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);
+      this.tools.toolHandler(this.targetTool, frameDraw, `.${SELECTORS.FRAME}`, getDomElementsList);
     }
 
     this.dom.tools.addEventListener('click', e => {
@@ -335,11 +362,11 @@ export default class Controller {
       switch (this.targetTool) {
         case 'cleanCanvas':
           clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount, LS_KEYS.piskelImg);
-          frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
+          frameDraw(this.piskelImg, this.currentCount, `.${SELECTORS.FRAME}`, getDomElementsList);
           break;
         default:
-          highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
-          this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
+          highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);
+          this.tools.toolHandler(this.targetTool, frameDraw, `.${SELECTORS.FRAME}`, getDomElementsList);
       }
     });
   }
@@ -351,10 +378,10 @@ export default class Controller {
       this.penSize = localStorage.getItem(LS_KEYS.penSize);
       for (let i = 0; i < this.dom.penSizes.children.length; i += 1) {
         if (this.dom.penSizes.children[i].dataset.size === this.penSize) {
-          highlightTarget(this.dom.penSizes.children[i], 'pen-size--active', getDomElement);
+          highlightTarget(this.dom.penSizes.children[i], SELECTORS.PEN_SIZE_ACTIVE, getDomElement);
         }
       }
-    }
+    } else localStorage.setItem(LS_KEYS.penSize, this.penSize);
   }
 
   keyboardShortCutHandler() {
@@ -377,14 +404,14 @@ export default class Controller {
     arr.forEach(el => {
       if (el.children[1].innerText === '') {
         el.children[1].innerText = '???'; // eslint-disable-line
-        el.children[1].classList.add('hotKeys__ecode--unsetted'); // eslint-disable-line
+        el.children[1].classList.add(SELECTORS.HOTKEY_UNSETTED); // eslint-disable-line
       }
     });
 
     document.addEventListener('keydown', e => {
       if (this.isHotKeyOpen && e.code === 'Escape') {
         this.isHotKeyOpen = classToggler(
-          'visually-hidden',
+          SELECTORS.VISUALLY_HIDDEN,
           this.isHotKeyOpen,
           this.dom.hotKeysWindow,
           this.dom.pageDarker
@@ -418,11 +445,11 @@ export default class Controller {
         switch (this.targetTool) {
           case 'cleanCanvas':
             clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount, LS_KEYS.piskelImg);
-            frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
+            frameDraw(this.piskelImg, this.currentCount, `.${SELECTORS.FRAME}`, getDomElementsList);
             break;
           default:
-            highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
-            this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
+            highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);
+            this.tools.toolHandler(this.targetTool, frameDraw, `.${SELECTORS.FRAME}`, getDomElementsList);
         }
       }
     });
@@ -432,11 +459,15 @@ export default class Controller {
     this.dom.hotKeysWindow.addEventListener('click', e => {
       // close window
       if (e.target === this.dom.hotKeysClose) {
-        classToggler('visually-hidden', this.isHotKeyOpen, this.dom.hotKeysWindow, this.dom.pageDarker);
+        classToggler(SELECTORS.VISUALLY_HIDDEN, this.isHotKeyOpen, this.dom.hotKeysWindow, this.dom.pageDarker);
         return;
       }
 
-      if (['hotKeys__item', 'hotKeys__icon', 'hotKeys__ecode', 'hotKeys__tool'].includes(e.target.className)) {
+      if (
+        [SELECTORS.HOTKEY_ITEM, SELECTORS.HOTKEY_ICON, SELECTORS.HOTKEY_ECODE, SELECTORS.HOTKEY_TOOL].includes(
+          e.target.className
+        )
+      ) {
         const item = e.target.closest('LI');
         this.isToSetToolKey = true;
         this.toolToChange = item.dataset.tool;
@@ -445,20 +476,20 @@ export default class Controller {
         clearTimeout(this.timerId);
 
         // if there exist highlighted element, make it common
-        const highlighted = getDomElement('.hotKeys__ecode--highlight');
-        if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+        const highlighted = getDomElement(`.${SELECTORS.HOTKEY_HIGHLIGHT}`);
+        if (highlighted !== null) highlighted.classList.remove(SELECTORS.HOTKEY_HIGHLIGHT);
 
         // set blinking of chosen element
         this.timerId = setInterval(() => {
-          item.children[1].classList.toggle('hotKeys__ecode--highlight');
+          item.children[1].classList.toggle(SELECTORS.HOTKEY_HIGHLIGHT);
         }, 300);
         return;
       }
       this.isToSetToolKey = false;
       clearTimeout(this.timerId);
       // if there exist highlighted element, make it common
-      const highlighted = getDomElement('.hotKeys__ecode--highlight');
-      if (highlighted !== null) highlighted.classList.remove('hotKeys__ecode--highlight');
+      const highlighted = getDomElement(`.${SELECTORS.HOTKEY_HIGHLIGHT}`);
+      if (highlighted !== null) highlighted.classList.remove(SELECTORS.HOTKEY_HIGHLIGHT);
     });
   }
 }

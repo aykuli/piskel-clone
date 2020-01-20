@@ -11,7 +11,32 @@ const LS_KEYS = {
 };
 
 const SELECTORS = {
-  FRAME_BUTTON_DELETE: 'frame__btn--delete',
+  VISUALLY_HIDDEN: 'visually-hidden',
+
+  CANVAS_RESOLUTION: 'resolution--res',
+
+  BUTTON_RESOLUTION_ACTIVE: 'resolution__btn--active',
+  BUTTON_FRAME_DELETE: 'frame__btn--delete',
+  BUTTON_FRAME_COPY: 'frame__btn--copy',
+
+  FRAME: 'frame',
+  FRAMES_LIST: 'frames__list',
+  FRAME_ITEM: 'frame__item',
+  FRAME_ACTIVE: 'frame__active',
+  FRAME_BELOW: 'frame__below',
+
+  TOOL_ACTIVE: 'tool--active',
+
+  PEN_SIZE_ACTIVE: 'pen-size--active',
+
+  HOTKEY_UNSETTED: 'hotKeys__ecode--unsetted',
+  HOTKEY_ITEM: 'hotKeys__item',
+  HOTKEY_ICON: 'hotKeys__icon',
+  HOTKEY_ECODE: 'hotKeys__ecode',
+  HOTKEY_TOOL: 'hotKeys__tool',
+  HOTKEY_HIGHLIGHT: 'hotKeys__ecode--highlight',
+
+  POPUP: 'popup',
 };
 
 export { LS_KEYS, SELECTORS };

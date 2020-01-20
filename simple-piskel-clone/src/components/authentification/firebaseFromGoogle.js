@@ -1,6 +1,6 @@
 import './auth.scss';
 
-function loginGoogleAccount(firebase, authElements, createPopup, getDomElement) {
+function loginGoogleAccount(firebase, authElements, createPopup, getDomElement, SELECTORS) {
   const [authName, authPhoto, authLoginBtn, authLogoutBtn] = authElements;
   const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -19,7 +19,7 @@ function loginGoogleAccount(firebase, authElements, createPopup, getDomElement) 
 
     return result.user;
   } catch (e) {
-    createPopup(e.message, getDomElement);
+    createPopup(e.message, getDomElement, SELECTORS);
   }
   return 'authentification passed';
 }

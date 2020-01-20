@@ -1,6 +1,6 @@
 import './animation.scss';
 
-function animate({ draw, piskelImg, fpsWatch = () => {}, fps = 3 }) {
+function animate({ draw, piskelImg, fpsWatch = () => {}, keys = {}, isForLanding = false }) {
   if (!piskelImg.length) return;
 
   const start = performance.now();
@@ -9,6 +9,7 @@ function animate({ draw, piskelImg, fpsWatch = () => {}, fps = 3 }) {
 
   function animateFrame(time) {
     // const fps = isForLanding ? 3 : localStorage.getItem('piskelFps');
+    const fps = isForLanding ? 3 : localStorage.getItem(keys.fps);
 
     const duration = 1000 / fps;
     const prev = timeFraction;
@@ -19,7 +20,7 @@ function animate({ draw, piskelImg, fpsWatch = () => {}, fps = 3 }) {
       i %= piskelImg.length;
 
       if (!+fps) {
-        const currentCount = localStorage.getItem('piskelCounter');
+        const currentCount = localStorage.getItem(keys.counter);
         draw(currentCount);
       }
     }

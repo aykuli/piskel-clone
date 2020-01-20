@@ -5,7 +5,7 @@ function getLandingElements(getDomElement) {
   return [canvasMain, gallery, functionalityPreview];
 }
 
-function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, createDomElement) {
+function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, keysForLS, createDomElement) {
   for (let i = 0; i < imgsArr.length; i += 1) {
     const item = createDomElement('A');
     item.innerHTML = `<canvas class="gallery__canvas" width="200" height="200"></canvas>`;
@@ -18,6 +18,8 @@ function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, createDomEleme
         drawOnCanvas(item.children[0], imgsArr[i][j]);
       },
       piskelImg: imgsArr[i],
+      keys: keysForLS,
+      isForLanding: true,
     });
   }
   return list;

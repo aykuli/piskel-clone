@@ -23,24 +23,24 @@ function setCanvasWrapSize(mainColumn, canvas) {
   canvas.parentNode.style.height = `${size}px`; // eslint-disable-line
 }
 
-function renderFrames(piskelImg, currentCount, framesList) {
+function renderFrames(piskelImg, currentCount, framesList, SELECTORS) {
   const len = piskelImg.length;
   for (let i = 0; i < len; i += 1) {
     const newFrame = document.createElement('LI');
     newFrame.innerHTML = `<canvas class="frame" data-count="${i}" width="100" height="100" draggable="true"></canvas><button class="frame__btn frame__btn--delete tip" data-tooltip="Delete this frame"><button class="frame__btn frame__btn--copy tip" data-tooltip="Copy this frame"><span class="visually-hidden">Copy this canvas</span></button><span class="visually-hidden">Delete this canvas</span></button><span class="frame__number">${i +
       1}</span>`;
     // prettier-ignore
-    newFrame.className = (i === +currentCount) ? 'frame__item frame__active' : 'frame__item';
+    newFrame.className = (i === +currentCount) ? `${SELECTORS.FRAME_ITEM} ${SELECTORS.FRAME_ACTIVE}` : SELECTORS.FRAME_ITEM;
     framesList.append(newFrame);
   }
   return framesList;
 }
 
-function createPopup(msg, getDomEl) {
-  const popup = getDomEl('.popup');
-  popup.classList.remove('visually-hidden');
+function createPopup(msg, getDomEl, SELECTORS) {
+  const popup = getDomEl(`.${SELECTORS.POPUP}`);
+  popup.classList.remove(SELECTORS.VISUALLY_HIDDEN);
   popup.innerText = msg;
-  setTimeout(() => popup.classList.add('visually-hidden'), 2500);
+  setTimeout(() => popup.classList.add(SELECTORS.VISUALLY_HIDDEN), 2500);
 }
 
 function getDomElement(selector) {

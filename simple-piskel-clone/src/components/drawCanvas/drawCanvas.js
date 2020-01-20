@@ -21,11 +21,12 @@ function canvasResolutionHandler(
   highlightTarget,
   getDomElement,
   pixelSizeKey,
-  imgsKey
+  imgsKey,
+  SELECTORS
 ) {
   if (e.target.tagName === 'BUTTON') {
     pixelSize = canvas.width / e.target.dataset.size; // eslint-disable-line
-    highlightTarget(e.target, 'resolution__btn--active', getDomElement);
+    highlightTarget(e.target, SELECTORS.BUTTON_RESOLUTION_ACTIVE, getDomElement);
     localStorage.removeItem(pixelSizeKey);
     localStorage.setItem(pixelSizeKey, pixelSize);
     const piskelImg = JSON.parse(localStorage.getItem(imgsKey));

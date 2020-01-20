@@ -23,6 +23,8 @@ function landing(
       drawCanvas(canvasMain, imagesArray[0][i]);
     },
     piskelImg: imagesArray[0],
+    isForLanding: true,
+    keys: keysForLS,
   });
 
   // animate in functionality list
@@ -31,10 +33,12 @@ function landing(
       drawCanvas(functionalityPreview, imagesArray[1][i]);
     },
     piskelImg: imagesArray[1],
+    isForLanding: true,
+    keys: keysForLS,
   });
 
   // animate in example gallery
-  renderGalleryElements(drawCanvas, animation, gallery, imagesArray, el => document.createElement(el));
+  renderGalleryElements(drawCanvas, animation, gallery, imagesArray, keysForLS, el => document.createElement(el));
 
   gallery.addEventListener('click', e => galleryElemsHandler(e, imagesArray, keysForLS));
   return 'landing page created';
