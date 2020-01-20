@@ -44,3 +44,7 @@
 
         npm run test -- --coverage
 
+9. Current test coverage
+
+![test coverage](./test_coverage.jpg)
+
