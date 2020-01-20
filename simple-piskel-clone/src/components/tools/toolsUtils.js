@@ -10,11 +10,10 @@ function RGBToHex(data) {
   return dataHex;
 }
 
-function penSizeHandler(e, penSize, highlightTarget, refreshLocalStorageValue, getDomElement) {
+function penSizeHandler(e, penSize, highlightTarget, getDomElement) {
   if (e.target.tagName === 'LI') {
     highlightTarget(e.target, 'pen-size--active', getDomElement);
     penSize = e.target.dataset.size; // eslint-disable-line
-    refreshLocalStorageValue('piskelPenSize', penSize);
   }
   return penSize;
 }

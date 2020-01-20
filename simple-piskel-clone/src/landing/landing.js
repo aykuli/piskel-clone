@@ -4,6 +4,7 @@ import { imagesArr } from './modules/dataURIs';
 import { animate } from '../components/animation/animate';
 import { getLandingElements, renderGalleryItems, galleryItemsHandler } from './modules/landingDom';
 import { getDomElement } from '../components/dom/domUtils';
+import { LS_KEYS } from '../constants';
 
 function landing(
   imagesArray,
@@ -12,7 +13,8 @@ function landing(
   drawCanvas,
   animation,
   renderGalleryElements,
-  galleryElemsHandler
+  galleryElemsHandler,
+  keysForLS
 ) {
   const [canvasMain, gallery, functionalityPreview] = getLandingDOMElements(getDomElem);
   // animate on screenshot of app
@@ -34,8 +36,17 @@ function landing(
   // animate in example gallery
   renderGalleryElements(drawCanvas, animation, gallery, imagesArray, el => document.createElement(el));
 
-  gallery.addEventListener('click', e => galleryElemsHandler(e, imagesArray));
+  gallery.addEventListener('click', e => galleryElemsHandler(e, imagesArray, keysForLS));
   return 'landing page created';
 }
 
-landing(imagesArr, getDomElement, getLandingElements, drawOnCanvas, animate, renderGalleryItems, galleryItemsHandler);
+landing(
+  imagesArr,
+  getDomElement,
+  getLandingElements,
+  drawOnCanvas,
+  animate,
+  renderGalleryItems,
+  galleryItemsHandler,
+  LS_KEYS
+);

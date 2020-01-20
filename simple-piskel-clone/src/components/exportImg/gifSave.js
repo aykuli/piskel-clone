@@ -1,9 +1,9 @@
-export default function gifSave(canvas, GIFEncoder) {
-  const fps = localStorage.getItem('piskelFps');
-  const framesData = JSON.parse(localStorage.getItem('piskelImg'));
+export default function gifSave(canvas, GIFEncoder, LS_KEYS) {
+  const fps = localStorage.getItem(LS_KEYS.fps);
+  const framesData = JSON.parse(localStorage.getItem(LS_KEYS.piskelImg));
   const ctx = canvas.getContext('2d');
 
-  const scale = localStorage.getItem('piskelPixelSize');
+  const scale = localStorage.getItem(LS_KEYS.pixelSize);
 
   const encoder = new GIFEncoder();
   encoder.setRepeat(0);

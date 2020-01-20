@@ -36,7 +36,7 @@ function frameHandler(e, canvas, piskelImg, drawOnCanvas, preview, fps, highligh
   return count;
 }
 
-function frameDndHandler(canvas, piskelImg, framesList, frameDataCountSet, drawOnCanvas) {
+function frameDndHandler(canvas, piskelImg, framesList, frameDataCountSet, drawOnCanvas, LS_KEYS) {
   let dragged;
   framesList.addEventListener('dragstart', e => {
     dragged = e.target; // store a ref. on the dragged elem
@@ -49,8 +49,8 @@ function frameDndHandler(canvas, piskelImg, framesList, frameDataCountSet, drawO
   framesList.addEventListener('dragend', e => {
     dragged.style.opacity = '';
     e.target.style.border = '';
-    localStorage.removeItem('piskelImg');
-    localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
+    localStorage.removeItem(LS_KEYS.piskelImg);
+    localStorage.setItem(LS_KEYS.piskelImg, JSON.stringify(piskelImg));
   });
 
   // events fired on the drop targets. Prevent default to allow drop
@@ -102,7 +102,7 @@ function frameDndHandler(canvas, piskelImg, framesList, frameDataCountSet, drawO
         frameLeaved.classList.remove('frame__below');
 
         // get image from Local Storage if exists
-        if (localStorage.getItem(`piskelImg`) !== null) {
+        if (localStorage.getItem(LS_KEYS.piskelImg) !== null) {
           // replace dragged frame in target place
           const removed = piskelImg.splice(sourceNumb,1);
           piskelImg.splice(targetNumb, 0, removed);
@@ -113,8 +113,8 @@ function frameDndHandler(canvas, piskelImg, framesList, frameDataCountSet, drawO
           // make dataset.count and visual count text of frames consecutive          
           frameDataCountSet();
 
-          localStorage.removeItem('piskelCounter');
-          localStorage.setItem('piskelCounter', targetNumb);
+          localStorage.removeItem(LS_KEYS.counter);
+          localStorage.setItem(LS_KEYS.counter, targetNumb);
         }
       }
   });

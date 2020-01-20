@@ -2,13 +2,14 @@ import './tools.scss';
 import { RGBToHex } from './toolsUtils';
 
 export default class Tools {
-  constructor(canvas, ctx, currentColor, size) {
+  constructor(canvas, ctx, currentColor, size, LS_KEYS) {
     this.canvas = canvas;
     this.ctx = ctx;
     this.isDrawing = false;
     this.currentColor = currentColor;
     this.size = size;
     this.isEraser = false;
+    this.LS_KEYS = LS_KEYS;
 
     if (canvas == null) {
       throw new Error('there is no canvas');
@@ -16,8 +17,10 @@ export default class Tools {
   }
 
   plot(x, y, ctx) {
-    const penSize = localStorage.getItem('piskelPenSize') !== null ? +localStorage.getItem('piskelPenSize') : 1;
-    const pixelSize = localStorage.getItem('piskelPixelSize') !== null ? +localStorage.getItem('piskelPixelSize') : 1;
+    const penSize =
+      localStorage.getItem(this.LS_KEYS.penSize) !== null ? +localStorage.getItem(this.LS_KEYS.penSize) : 1;
+    const pixelSize =
+      localStorage.getItem(this.LS_KEYS.pixelSize) !== null ? +localStorage.getItem(this.LS_KEYS.pixelSize) : 1;
     ctx.fillStyle = this.currentColor.value;
     x = Math.round(x / pixelSize) * pixelSize; // eslint-disable-line
     y = Math.round(y / pixelSize) * pixelSize; // eslint-disable-line
@@ -238,12 +241,12 @@ export default class Tools {
         this.isDrawing = false;
 
         const dataURI = this.canvas.toDataURL();
-        const piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
-        const currentCount = localStorage.getItem('piskelCounter');
+        const piskelImg = JSON.parse(localStorage.getItem(this.LS_KEYS.piskelImg));
+        const currentCount = localStorage.getItem(this.LS_KEYS.counter);
         piskelImg[currentCount] = dataURI;
 
-        localStorage.removeItem('piskelImg');
-        localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
+        localStorage.removeItem(this.LS_KEYS.piskelImg);
+        localStorage.setItem(this.LS_KEYS.piskelImg, JSON.stringify(piskelImg));
         frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList);
       });
     } else {
@@ -258,7 +261,7 @@ export default class Tools {
     this.strokeTool(targetTool, frameDraw, frameClassName, getDomElementsList);
     this.bucketSamePixelTool(targetTool);
 
-    localStorage.removeItem('piskelTool');
-    localStorage.setItem('piskelTool', targetTool);
+    localStorage.removeItem(this.LS_KEYS.tool);
+    localStorage.setItem(this.LS_KEYS.tool, targetTool);
   };
 }

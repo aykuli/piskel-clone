@@ -12,13 +12,23 @@ function drawOnCanvas(canvas, dataURI) {
   return ctx; // eslint-disable-line
 }
 
-function canvasResolutionHandler(e, pixelSize, canvas, currentCount, drawOnCanvasFunc, highlightTarget, getDomElement) {
+function canvasResolutionHandler(
+  e,
+  pixelSize,
+  canvas,
+  currentCount,
+  drawOnCanvasFunc,
+  highlightTarget,
+  getDomElement,
+  pixelSizeKey,
+  imgsKey
+) {
   if (e.target.tagName === 'BUTTON') {
     pixelSize = canvas.width / e.target.dataset.size; // eslint-disable-line
     highlightTarget(e.target, 'resolution__btn--active', getDomElement);
-    localStorage.removeItem('piskelPixelSize');
-    localStorage.setItem('piskelPixelSize', pixelSize);
-    const piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
+    localStorage.removeItem(pixelSizeKey);
+    localStorage.setItem(pixelSizeKey, pixelSize);
+    const piskelImg = JSON.parse(localStorage.getItem(imgsKey));
     drawOnCanvasFunc(canvas, piskelImg[currentCount]);
   }
   return pixelSize;

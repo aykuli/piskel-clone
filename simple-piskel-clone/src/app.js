@@ -9,6 +9,9 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import { loginGoogleAccount, logoutGoogleAccount } from './components/authentification/firebaseFromGoogle';
 
+// constantas
+import { LS_KEYS, SELECTORS } from './constants';
+
 // DOM elements changing functions
 import {
   setCanvasWrapSize,
@@ -78,7 +81,7 @@ export default class Controller {
     this.ctx = this.dom.canvas.getContext('2d');
 
     this.firebaseConfig = authConfig;
-    this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize);
+    this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize, LS_KEYS);
     this.isHotKeyOpen = false;
   }
 
@@ -89,7 +92,7 @@ export default class Controller {
     this.keyboardShortCutHandler(); // keyboard eventListener
     this.frameWatch(); // frame active eventListener
     this.penSizes(); // pen size eventListener
-    frameDndHandler(this.dom.canvas, this.piskelImg, this.dom.framesList, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
+    frameDndHandler(this.dom.canvas, this.piskelImg, this.dom.framesList, frameDatasetCountSet, drawOnCanvas, LS_KEYS); // frame drag and drop listener
 
     animate({
       draw: i => {
@@ -111,16 +114,16 @@ export default class Controller {
     firebase.initializeApp(this.firebaseConfig);
 
     // get current number of active frame
-    if (localStorage.getItem('piskelCounter') === null) {
+    if (localStorage.getItem(LS_KEYS.counter) === null) {
       this.currentCount = 0;
-      refreshLocalStorageValue('piskelCounter', 0);
+      refreshLocalStorageValue(LS_KEYS.counter, 0);
     } else {
-      this.currentCount = localStorage.getItem('piskelCounter');
+      this.currentCount = localStorage.getItem(LS_KEYS.counter);
     }
 
     // get image from Local Storage if exists and draw accordingly frames
-    if (localStorage.getItem('piskelImg') !== null) {
-      this.piskelImg = JSON.parse(localStorage.getItem('piskelImg'));
+    if (localStorage.getItem(LS_KEYS.piskelImg) !== null) {
+      this.piskelImg = JSON.parse(localStorage.getItem(LS_KEYS.piskelImg));
       renderFrames(this.piskelImg, this.currentCount, this.dom.framesList);
 
       for (let i = 0; i < this.piskelImg.length; i += 1) {
@@ -134,14 +137,14 @@ export default class Controller {
     }
 
     // get user fps from localStorage
-    if (localStorage.getItem('piskelFps') !== null) {
-      this.fps = localStorage.getItem('piskelFps');
-      this.dom.fps.value = +localStorage.getItem('piskelFps');
+    if (localStorage.getItem(LS_KEYS.fps) !== null) {
+      this.fps = localStorage.getItem(LS_KEYS.fps);
+      this.dom.fps.value = +localStorage.getItem(LS_KEYS.fps);
     } else {
       this.dom.fps.value = this.fps;
-      localStorage.setItem('piskelFps', this.fps);
+      localStorage.setItem(LS_KEYS.fps, this.fps);
     }
-    this.dom.fpsValue.innerText = localStorage.getItem('piskelFps');
+    this.dom.fpsValue.innerText = localStorage.getItem(LS_KEYS.fps);
     if (!+this.fps || this.piskelImg.length) {
       drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
     } else {
@@ -156,8 +159,8 @@ export default class Controller {
     }
 
     // set pixel size at app page loading
-    if (localStorage.getItem('piskelPixelSize') !== null) {
-      this.pixelSize = Number(localStorage.getItem('piskelPixelSize'));
+    if (localStorage.getItem(LS_KEYS.pixelSize) !== null) {
+      this.pixelSize = Number(localStorage.getItem(LS_KEYS.pixelSize));
       const target = document.querySelector(`.resolution--res${this.dom.canvas.width / this.pixelSize}`);
       highlightTarget(target, 'resolution__btn--active', getDomElement);
     }
@@ -166,15 +169,15 @@ export default class Controller {
 
     // set swaper color at app loading or
     // get user colors from Local Storage if exists
-    if (localStorage.getItem('piskelPrimaryColor') !== null) {
-      this.dom.primaryColor.value = localStorage.getItem('piskelPrimaryColor');
+    if (localStorage.getItem(LS_KEYS.primaryColor) !== null) {
+      this.dom.primaryColor.value = localStorage.getItem(LS_KEYS.primaryColor);
     } else {
-      localStorage.setItem('piskelPrimaryColor', this.dom.primaryColor.value);
+      localStorage.setItem(LS_KEYS.primaryColor, this.dom.primaryColor.value);
     }
-    if (localStorage.getItem('piskelSecondaryColor') !== null) {
-      this.dom.secondaryColor.value = localStorage.getItem('piskelSecondaryColor');
+    if (localStorage.getItem(LS_KEYS.secondaryColor) !== null) {
+      this.dom.secondaryColor.value = localStorage.getItem(LS_KEYS.secondaryColor);
     } else {
-      localStorage.setItem('piskelSecondaryColor', this.dom.secondaryColor.value);
+      localStorage.setItem(LS_KEYS.secondaryColor, this.dom.secondaryColor.value);
     }
   }
 
@@ -195,20 +198,24 @@ export default class Controller {
     // LEFT SIDE COLUMN
     // PEN SIZE
     this.dom.penSizes.addEventListener('click', e => {
-      this.penSize = penSizeHandler(e, this.penSize, highlightTarget, refreshLocalStorageValue, getDomElement);
+      this.penSize = penSizeHandler(e, this.penSize, highlightTarget, getDomElement);
+      refreshLocalStorageValue(LS_KEYS.penSize, this.penSize);
     });
 
     // COLOR SWAPER
-    this.dom.swapColor.addEventListener('click', () =>
-      swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx, refreshLocalStorageValue)
-    );
+    this.dom.swapColor.addEventListener('click', () => {
+      swapHandler(this.dom.primaryColor, this.dom.secondaryColor, this.ctx);
+
+      refreshLocalStorageValue(LS_KEYS.primaryColor, this.dom.primaryColor.value);
+      refreshLocalStorageValue(LS_KEYS.secondaryColor, this.dom.secondaryColor.value);
+    });
 
     this.dom.primaryColor.addEventListener('change', () => {
-      refreshLocalStorageValue('piskelPrimaryColor', this.dom.primaryColor.value);
+      refreshLocalStorageValue(LS_KEYS.primaryColor, this.dom.primaryColor.value);
     });
 
     this.dom.secondaryColor.addEventListener('change', () => {
-      refreshLocalStorageValue('piskelSecondaryColor', this.dom.secondaryColor.value);
+      refreshLocalStorageValue(LS_KEYS.secondaryColor, this.dom.secondaryColor.value);
     });
 
     // MAIN COLUMN
@@ -227,7 +234,9 @@ export default class Controller {
         this.currentCount,
         drawOnCanvas,
         highlightTarget,
-        getDomElement
+        getDomElement,
+        LS_KEYS.pixelSize,
+        LS_KEYS.piskelImg
       );
     });
 
@@ -237,7 +246,7 @@ export default class Controller {
     // EXPORT IMAGE
     this.dom.saveBtns.addEventListener(
       'click',
-      e => saveHandler(e, this.dom.canvasAbove, gifSave, apngSave, GIFEncoder) // eslint-disable-line
+      e => saveHandler(e, this.dom.canvasAbove, gifSave, apngSave, GIFEncoder, LS_KEYS) // eslint-disable-line
     );
 
     // KEYBOARD SHORTCUTS WINDOW OPENER
@@ -252,7 +261,7 @@ export default class Controller {
   }
 
   fpsWatch = animateFrame => {
-    this.dom.fps.addEventListener('input', e => fpsHandler(e.target, animateFrame));
+    this.dom.fps.addEventListener('input', e => fpsHandler(e.target, animateFrame, LS_KEYS.fps));
   };
 
   frameWatch() {
@@ -288,31 +297,32 @@ export default class Controller {
           getDomElement
         );
       }
-      refreshLocalStorageValue('piskelImg', JSON.stringify(this.piskelImg));
-      refreshLocalStorageValue('piskelCounter', this.currentCount);
+      refreshLocalStorageValue(LS_KEYS.piskelImg, JSON.stringify(this.piskelImg));
+      refreshLocalStorageValue(LS_KEYS.counter, this.currentCount);
     });
 
     this.dom.frameAddBtn.addEventListener('click', () => {
       frameAdd(renderFrameActive, this.dom.framesList, this.dom.canvas, this.piskelImg);
-      this.currentCount = +localStorage.getItem('piskelCounter');
+      this.currentCount = +localStorage.getItem(LS_KEYS.counter);
     });
 
     this.dom.canvas.addEventListener('mouseup', () => {
       saveImgsInLocalStorage(this.piskelImg, this.dom.canvas, this.currentCount);
+      refreshLocalStorageValue(LS_KEYS.piskelImg, JSON.stringify(this.piskelImg));
       frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
-      const fps = +localStorage.getItem('piskelFps');
+      const fps = +localStorage.getItem(LS_KEYS.fps);
       if (!fps) drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
     });
   }
 
   paintTools() {
     // get drawing tool from Local Storage if exists
-    if (localStorage.getItem('piskelTool') === null) {
+    if (localStorage.getItem(LS_KEYS.tool) === null) {
       this.targetTool = 'pencil';
       this.tools.pencilTool(this.targetTool);
-      localStorage.setItem('piskelTool', this.targetTool);
+      localStorage.setItem(LS_KEYS.tool, this.targetTool);
     } else {
-      this.targetTool = localStorage.getItem('piskelTool');
+      this.targetTool = localStorage.getItem(LS_KEYS.tool);
       highlightTarget(document.querySelector(`#${this.targetTool}`), 'tool--active', getDomElement);
       this.tools.toolHandler(this.targetTool, frameDraw, '.frame', getDomElementsList);
     }
@@ -324,7 +334,7 @@ export default class Controller {
 
       switch (this.targetTool) {
         case 'cleanCanvas':
-          clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
+          clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount, LS_KEYS.piskelImg);
           frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
           break;
         default:
@@ -336,9 +346,9 @@ export default class Controller {
 
   penSizes() {
     // get pen size from localStorage when app loaded
-    if (localStorage.getItem('piskelPenSize') !== null) {
-      this.pixelSize = Number(localStorage.getItem('piskelPenSize'));
-      this.penSize = localStorage.getItem('piskelPenSize');
+    if (localStorage.getItem(LS_KEYS.penSize) !== null) {
+      this.pixelSize = Number(localStorage.getItem(LS_KEYS.penSize));
+      this.penSize = localStorage.getItem(LS_KEYS.penSize);
       for (let i = 0; i < this.dom.penSizes.children.length; i += 1) {
         if (this.dom.penSizes.children[i].dataset.size === this.penSize) {
           highlightTarget(this.dom.penSizes.children[i], 'pen-size--active', getDomElement);
@@ -349,7 +359,7 @@ export default class Controller {
 
   keyboardShortCutHandler() {
     // prettier-ignore
-    this.toolsMap = (localStorage.getItem('piskelHotKeys') === null) ? toolsMap : new Map(JSON.parse(localStorage.getItem('piskelHotKeys')));
+    this.toolsMap = (localStorage.getItem(LS_KEYS.hotKeys) === null) ? toolsMap : new Map(JSON.parse(localStorage.getItem(LS_KEYS.hotKeys)));
     // make array of list items of dom Elements
     const arr = Array.from(this.dom.hotKeysList.children);
 
@@ -390,7 +400,7 @@ export default class Controller {
         this.isToSetToolKey = false;
         clearTimeout(this.timerId);
 
-        refreshLocalStorageMap('piskelHotKeys', this.toolsMap);
+        refreshLocalStorageMap(LS_KEYS.hotKeys, this.toolsMap);
         setKeyToolsMap(
           e.code,
           this.toolsMap,
@@ -399,14 +409,15 @@ export default class Controller {
           setExistKeyInMap,
           refreshLocalStorageMap,
           manageStyleToolToChange,
-          highlightUnsettedTool
+          highlightUnsettedTool,
+          LS_KEYS.hotKeys
         );
       } else {
         this.targetTool = this.toolsMap.has(e.code) ? this.toolsMap.get(e.code) : this.targetTool;
 
         switch (this.targetTool) {
           case 'cleanCanvas':
-            clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount);
+            clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount, LS_KEYS.piskelImg);
             frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
             break;
           default:

@@ -23,16 +23,16 @@ function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, createDomEleme
   return list;
 }
 
-function galleryItemsHandler(e, imgArr) {
+function galleryItemsHandler(e, imgArr, LS_KEYS) {
   let count;
   if (e.target.tagName === 'CANVAS') {
     count = e.target.parentNode.dataset.count;
-    localStorage.removeItem('piskelImg');
-    localStorage.setItem('piskelImg', JSON.stringify(imgArr[count]));
-    localStorage.removeItem('piskelCounter');
-    localStorage.setItem('piskelCounter', 0);
-    localStorage.removeItem('piskelFps');
-    localStorage.setItem('piskelFps', 3);
+    localStorage.removeItem(LS_KEYS.piskelImg);
+    localStorage.setItem(LS_KEYS.piskelImg, JSON.stringify(imgArr[count]));
+    localStorage.removeItem(LS_KEYS.counter);
+    localStorage.setItem(LS_KEYS.counter, 0);
+    localStorage.removeItem(LS_KEYS.fps);
+    localStorage.setItem(LS_KEYS.fps, 3);
   }
   return count;
 }

@@ -1,4 +1,5 @@
 const LS_KEYS = {
+  piskelImg: 'piskelImg',
   pixelSize: 'piskelPixelSize',
   primaryColor: 'piskelPrimaryColor',
   secondaryColor: 'piskelSecondaryColor',
@@ -6,6 +7,7 @@ const LS_KEYS = {
   penSize: 'piskelPenSize',
   fps: 'piskelFps',
   counter: 'piskelCounter',
+  hotKeys: 'piskelHotKeys',
 };
 
 const SELECTORS = {

@@ -55,7 +55,8 @@ function setKeyToolsMap(
   setExistKeyMap,
   refreshLocalStorageMap,
   manageStyleTool,
-  highlightUnsetted
+  highlightUnsetted,
+  hotKeys
 ) {
   if (code === 'KeyX') return;
 
@@ -68,6 +69,6 @@ function setKeyToolsMap(
     map.set(code, toolToChange);
   }
   manageStyleTool(code, toolToChange, getDomElement);
-  refreshLocalStorageMap('piskelHotKeys', map);
+  refreshLocalStorageMap(hotKeys, map);
 }
 export { classToggler, setExistKeyInMap, setKeyToolsMap, manageStyleToolToChange, highlightUnsettedTool };

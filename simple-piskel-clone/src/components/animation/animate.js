@@ -38,11 +38,11 @@ function animationFullscreen(fullscreenBtn, previewCanvas) {
   });
 }
 // fpsHandler for fps input changing
-function fpsHandler(input, animateFrame) {
+function fpsHandler(input, animateFrame, key) {
   input.parentNode.children[0].innerText = input.value; // eslint-disable-line
 
-  localStorage.removeItem('piskelFps');
-  localStorage.setItem('piskelFps', input.value);
+  localStorage.removeItem(key);
+  localStorage.setItem(key, input.value);
 
   if (+input.value) {
     requestAnimationFrame(animateFrame);

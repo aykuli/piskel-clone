@@ -1,15 +1,15 @@
 import UPNG from 'upng-js';
 import download from 'downloadjs';
 
-export default function apngSave(canvas) {
-  const framesData = JSON.parse(localStorage.getItem('piskelImg'));
-  const fps = localStorage.getItem('piskelFps');
+export default function apngSave(canvas, LS_KEYS) {
+  const framesData = JSON.parse(localStorage.getItem(LS_KEYS.piskelImg));
+  const fps = localStorage.getItem(LS_KEYS.fps);
   const ctx = canvas.getContext('2d');
 
   const imgs = [];
   const delays = [];
 
-  const scale = localStorage.getItem('piskelPixelSize');
+  const scale = localStorage.getItem(LS_KEYS.pixelSize);
 
   framesData.forEach((frame, index) => {
     const img = new Image();
