@@ -14,6 +14,6 @@ const firebaseConfig = {
   appId: '1:958250490194:web:ab19f66023057e3c7c828b',
 };
 
-// options = [pixelSize, currentCount, fps, penSize, piskelImg]
-const options = [1, 0, 0, 1, []];
-const app = new App(domElements, options, firebaseConfig); // eslint-disable-line
+const app = new App(domElements, { firebaseConfig });
+
+app.run();

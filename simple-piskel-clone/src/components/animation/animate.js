@@ -1,13 +1,14 @@
 import './animation.scss';
 
-function animate(draw, piskelImg, fpsWatch, isForLanding = false) {
-  if (piskelImg.length === 0) return;
+function animate({ draw, piskelImg, fpsWatch = () => {}, fps = 3 }) {
+  if (!piskelImg.length) return;
+
   const start = performance.now();
   let i = 0;
   let timeFraction = 0;
 
   function animateFrame(time) {
-    const fps = isForLanding ? 3 : localStorage.getItem('piskelFps');
+    // const fps = isForLanding ? 3 : localStorage.getItem('piskelFps');
 
     const duration = 1000 / fps;
     const prev = timeFraction;
@@ -17,7 +18,7 @@ function animate(draw, piskelImg, fpsWatch, isForLanding = false) {
       i += 1;
       i %= piskelImg.length;
 
-      if (+fps === 0) {
+      if (!+fps) {
         const currentCount = localStorage.getItem('piskelCounter');
         draw(currentCount);
       }
@@ -27,7 +28,7 @@ function animate(draw, piskelImg, fpsWatch, isForLanding = false) {
     }
   }
 
-  if (!isForLanding) fpsWatch(animateFrame);
+  fpsWatch(animateFrame);
   requestAnimationFrame(animateFrame);
 }
 
@@ -43,7 +44,7 @@ function fpsHandler(input, animateFrame) {
   localStorage.removeItem('piskelFps');
   localStorage.setItem('piskelFps', input.value);
 
-  if (+input.value !== 0) {
+  if (+input.value) {
     requestAnimationFrame(animateFrame);
   }
 }

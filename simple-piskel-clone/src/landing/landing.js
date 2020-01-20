@@ -16,24 +16,20 @@ function landing(
 ) {
   const [canvasMain, gallery, functionalityPreview] = getLandingDOMElements(getDomElem);
   // animate on screenshot of app
-  animation(
-    i => {
+  animation({
+    draw: i => {
       drawCanvas(canvasMain, imagesArray[0][i]);
     },
-    imagesArray[0],
-    0,
-    true
-  );
+    piskelImg: imagesArray[0],
+  });
 
   // animate in functionality list
-  animation(
-    i => {
+  animation({
+    draw: i => {
       drawCanvas(functionalityPreview, imagesArray[1][i]);
     },
-    imagesArray[1],
-    0,
-    true
-  );
+    piskelImg: imagesArray[1],
+  });
 
   // animate in example gallery
   renderGalleryElements(drawCanvas, animation, gallery, imagesArray, el => document.createElement(el));

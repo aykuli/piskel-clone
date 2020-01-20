@@ -66,14 +66,23 @@ import {
 } from './components/hotKeys/hotKeys';
 
 export default class Controller {
-  constructor(dom, options, authConfig) {
+  constructor(dom, { authConfig = {}, ...rest } = {}) {
+    const { pixelSize = 1, currentCount = 0, fps = 0, penSize = 1, piskelImg = [] } = rest;
+    this.pixelSize = pixelSize;
+    this.currentCount = currentCount;
+    this.fps = fps;
+    this.penSize = penSize;
+    this.piskelImg = piskelImg;
+
     this.dom = dom(getDomElement);
     this.ctx = this.dom.canvas.getContext('2d');
-    [this.pixelSize, this.currentCount, this.fps, this.penSize, this.piskelImg] = options;
+
     this.firebaseConfig = authConfig;
     this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize);
     this.isHotKeyOpen = false;
+  }
 
+  run() {
     this.init();
 
     this.paintTools(); // tools eventListener
@@ -82,14 +91,14 @@ export default class Controller {
     this.penSizes(); // pen size eventListener
     frameDndHandler(this.dom.canvas, this.piskelImg, this.dom.framesList, frameDatasetCountSet, drawOnCanvas); // frame drag and drop listener
 
-    animate(
-      i => {
+    animate({
+      draw: i => {
         drawOnCanvas(this.dom.preview, this.piskelImg[i]);
       },
-      this.piskelImg,
-      this.fpsWatch,
-      false
-    );
+      piskelImg: this.piskelImg,
+      fpsWatch: this.fpsWatch,
+      fps: this.fps,
+    });
 
     animationFullscreen(this.dom.fullscreenBtn, this.dom.preview);
 
@@ -98,7 +107,6 @@ export default class Controller {
   }
 
   init() {
-    // console.log(firebase);
     // init for authentification
     firebase.initializeApp(this.firebaseConfig);
 
@@ -134,17 +142,17 @@ export default class Controller {
       localStorage.setItem('piskelFps', this.fps);
     }
     this.dom.fpsValue.innerText = localStorage.getItem('piskelFps');
-    if (+this.fps === 0 || this.piskelImg.length !== 0) {
+    if (!+this.fps || this.piskelImg.length) {
       drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
     } else {
-      animate(
-        i => {
+      animate({
+        draw: i => {
           drawOnCanvas(this.dom.preview, this.piskelImg[i]);
         },
-        this.piskelImg,
-        this.fpsWatch,
-        false
-      );
+        piskelImg: this.piskelImg,
+        fpsWatch: this.fpsWatch,
+        fps: this.fps,
+      });
     }
 
     // set pixel size at app page loading
@@ -293,7 +301,7 @@ export default class Controller {
       saveImgsInLocalStorage(this.piskelImg, this.dom.canvas, this.currentCount);
       frameDraw(this.piskelImg, this.currentCount, '.frame', getDomElementsList);
       const fps = +localStorage.getItem('piskelFps');
-      if (fps === 0) drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
+      if (!fps) drawOnCanvas(this.dom.preview, this.piskelImg[this.currentCount]);
     });
   }
 

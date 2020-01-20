@@ -13,14 +13,12 @@ function renderGalleryItems(drawOnCanvas, animate, list, imgsArr, createDomEleme
     item.setAttribute('href', 'app.html');
     item.dataset.count = i;
     list.append(item);
-    animate(
-      j => {
+    animate({
+      draw: j => {
         drawOnCanvas(item.children[0], imgsArr[i][j]);
       },
-      imgsArr[i],
-      false,
-      true
-    );
+      piskelImg: imgsArr[i],
+    });
   }
   return list;
 }
