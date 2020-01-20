@@ -249,7 +249,6 @@ export default class Tools {
         localStorage.setItem(this.LS_KEYS.piskelImg, JSON.stringify(piskelImg));
         frameDraw(piskelImg, currentCount, frameClassName, getDomElementsList);
         framePreviewDraw(this.LS_KEYS.fps, preview, piskelImg, currentCount, drawOnCanvas);
-        // framePreviewDraw(LS_KEYS.fps, this.dom.preview, this.piskelImg, this.currentCount, drawOnCanvas);
       });
     } else {
       canvasAbove.style.display = '';
