@@ -17,8 +17,5 @@ describe('swapHandler function for changing colors', () => {
     expect(primaryColor).toStrictEqual({ value: '#222222' });
     expect(secondaryColor).toStrictEqual({ value: '#111111' });
     expect(ctx).toStrictEqual({ fillStyle: '#222222' });
-
-    expect(localStorage.getItem('piskelPrimaryColor')).toBe('#222222');
-    expect(localStorage.getItem('piskelSecondaryColor')).toBe('#111111');
   });
 });

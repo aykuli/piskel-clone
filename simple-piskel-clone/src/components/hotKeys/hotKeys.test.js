@@ -7,6 +7,7 @@ import {
 } from './hotKeys';
 
 import { refreshLocalStorageMap } from '../sessionActions/sessionActions';
+import { LS_KEYS, SELECTORS } from '../../constants';
 
 require('@babel/register');
 const jsdom = require('jsdom');
@@ -137,10 +138,13 @@ describe('hotKeys manipulating functions', () => {
     expect(pencil.children[1].innerText).toBe('???');
     expect(highlighted.classList).toContain('hotKeys__ecode--highlight');
 
-    manageStyleToolToChange(code, toolToChange, getDomEl);
+    manageStyleToolToChange(code, toolToChange, getDomEl, SELECTORS);
     // state of dom after this function
-    expect(pencil.children[1].classList).not.toContain('hotKeys__ecode--unsetted');
+    let toolClassList = Array.from(pencil.children[1].classList);
+    expect(toolClassList).toContain('hotKeys__ecode--unsetted');
     expect(pencil.children[1].innerText).toBe('A');
+
+    toolClassList = Array.from(highlighted.classList);
     expect(highlighted.classList).not.toContain('hotKeys__ecode--highlight');
   });
 
@@ -149,11 +153,14 @@ describe('hotKeys manipulating functions', () => {
 
     const toolDom = getDomEl(`.hotKeys__item--${tool}`);
     toolDom.children[1].innerText = 'B';
+    let toolClassList = Array.from(toolDom.children[1].classList);
     expect(toolDom.children[1].classList).not.toContain('hotKeys__ecode--unsetted');
 
-    highlightUnsettedTool(tool, getDomEl);
+    highlightUnsettedTool(tool, getDomEl, SELECTORS);
+
     // state of dom after this function
-    expect(toolDom.children[1].classList).toContain('hotKeys__ecode--unsetted');
+    toolClassList = Array.from(toolDom.children[1].classList);
+    expect(toolClassList).toContain('hotKeys__ecode--highlight');
   });
 
   it('setKeyToolsMap should manage all logic eith hotKey changing', () => {
@@ -173,7 +180,9 @@ describe('hotKeys manipulating functions', () => {
       setExistKeyInMap,
       refreshLocalStorageMap,
       manageStyleToolToChange,
-      highlightUnsettedTool
+      highlightUnsettedTool,
+      LS_KEYS.hotKeys,
+      SELECTORS
     );
 
     expect(map.get(code)).toBe(toolToChange);
@@ -191,7 +200,9 @@ describe('hotKeys manipulating functions', () => {
       setExistKeyInMap,
       refreshLocalStorageMap,
       manageStyleToolToChange,
-      highlightUnsettedTool
+      highlightUnsettedTool,
+      'piskelHotKeys',
+      SELECTORS
     );
     expect(map1.has(code)).toBeTruthy();
     expect(map1.get(code)).toBe(toolToChange);
@@ -205,7 +216,9 @@ describe('hotKeys manipulating functions', () => {
       setExistKeyInMap,
       refreshLocalStorageMap,
       manageStyleToolToChange,
-      highlightUnsettedTool
+      highlightUnsettedTool,
+      'piskelHotKeys',
+      SELECTORS
     );
     expect(map1.has(code)).toBeFalsy();
   });

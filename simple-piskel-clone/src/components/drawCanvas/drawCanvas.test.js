@@ -1,4 +1,5 @@
 import { drawOnCanvas, canvasResolutionHandler } from './drawCanvas';
+import { LS_KEYS, SELECTORS } from '../../constants';
 
 /* eslint-disable */
 const canvas = {
@@ -38,8 +39,13 @@ describe('drawCanvas module functions', () => {
       currentCount,
       drawOnCanvas,
       highlightTarget,
-      getDomElement
+      getDomElement,
+      LS_KEYS.pixelSize,
+      LS_KEYS.piskelImg,
+      SELECTORS
     );
     expect(res).toBe(4);
+    expect(+localStorage.getItem(LS_KEYS.pixelSize)).toBe(4);
+    expect(JSON.stringify(localStorage.getItem(LS_KEYS.piskelImg))).not.toBe(null);
   });
 });

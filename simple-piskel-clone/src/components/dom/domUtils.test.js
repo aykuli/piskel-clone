@@ -1,4 +1,5 @@
 import { setCanvasWrapSize, renderFrames, renderFrameActive, highlightTarget, createPopup } from './domUtils';
+import { SELECTORS } from '../../constants';
 
 require('@babel/register');
 const jsdom = require('jsdom');
@@ -115,7 +116,9 @@ describe('domElements Object', () => {
     const i = 0;
     const piskelImg = [''];
     const framesList = domVirt.window.document.querySelector('.frames__list');
+
     const res = renderFrameActive(i, piskelImg, framesList);
+
     expect(res.className).toBe('frame__item frame__active');
     expect(res.children[0].tagName).toBe('CANVAS');
     expect(res.children[0].className).toBe('frame');
@@ -161,7 +164,7 @@ describe('domElements Object', () => {
     const piskelImg = ['', '', '', ''];
     const framesList = domVirt.window.document.querySelector('.frames__list');
 
-    const result = renderFrames(piskelImg, currentCount, framesList);
+    const result = renderFrames(piskelImg, currentCount, framesList, SELECTORS);
     expect(result.children).toBeDefined();
     expect(piskelImg).toStrictEqual(['', '', '', '']);
   });
@@ -172,7 +175,7 @@ describe('domElements Object', () => {
 
     expect(popup.classList).toContain('visually-hidden');
 
-    createPopup('Hello, Russia', getDomElement);
+    createPopup('Hello, Russia', getDomElement, SELECTORS);
 
     expect(popup.classList.contains('visually-hidden')).toBeFalsy();
   });

@@ -1,4 +1,5 @@
 import apngSave from './apngSave';
+import { LS_KEYS } from '../../constants';
 
 /* eslint-disable */
 describe('function apngSave to exporting images as .apng', () => {
@@ -19,6 +20,6 @@ describe('function apngSave to exporting images as .apng', () => {
     localStorage.setItem('piskelImg', JSON.stringify(['', '']));
     localStorage.setItem('piskelFps', 5);
 
-    expect(apngSave(canvas)).toBe('image saved as .apng');
+    expect(apngSave(canvas, LS_KEYS)).toBe('image saved as .apng');
   });
 });

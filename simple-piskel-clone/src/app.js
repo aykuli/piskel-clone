@@ -363,6 +363,7 @@ export default class Controller {
         case 'cleanCanvas':
           clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount, LS_KEYS.piskelImg);
           frameDraw(this.piskelImg, this.currentCount, `.${SELECTORS.FRAME}`, getDomElementsList);
+          framePreviewDraw(LS_KEYS.fps, this.dom.preview, this.piskelImg, this.currentCount, drawOnCanvas);
           break;
         default:
           highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);
@@ -437,15 +438,18 @@ export default class Controller {
           refreshLocalStorageMap,
           manageStyleToolToChange,
           highlightUnsettedTool,
-          LS_KEYS.hotKeys
+          LS_KEYS.hotKeys,
+          SELECTORS
         );
       } else {
         this.targetTool = this.toolsMap.has(e.code) ? this.toolsMap.get(e.code) : this.targetTool;
 
         switch (this.targetTool) {
           case 'cleanCanvas':
+            this.currentCount = localStorage.getItem(LS_KEYS.counter);
             clearCanvas(this.dom.canvas, this.piskelImg, this.currentCount, LS_KEYS.piskelImg);
             frameDraw(this.piskelImg, this.currentCount, `.${SELECTORS.FRAME}`, getDomElementsList);
+            framePreviewDraw(LS_KEYS.fps, this.dom.preview, this.piskelImg, this.currentCount, drawOnCanvas);
             break;
           default:
             highlightTarget(document.querySelector(`#${this.targetTool}`), SELECTORS.TOOL_ACTIVE, getDomElement);

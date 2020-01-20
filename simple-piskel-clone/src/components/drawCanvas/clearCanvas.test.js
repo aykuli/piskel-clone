@@ -12,13 +12,15 @@ describe('clearCanvas function', () => {
     };
     const piskelImg = ['data0', 'data1', 'data2'];
     let currentCount = 0;
-    localStorage.setItem('piskelImg', JSON.stringify(piskelImg));
+    const imgsKey = 'piskelImg';
 
-    clearCanvas(canvas, piskelImg, currentCount);
-    expect(JSON.parse(localStorage.getItem('piskelImg'))).toStrictEqual(['', 'data1', 'data2']);
+    localStorage.setItem(imgsKey, JSON.stringify(piskelImg));
+
+    clearCanvas(canvas, piskelImg, currentCount, imgsKey);
+    expect(JSON.parse(localStorage.getItem(imgsKey))).toStrictEqual(['', 'data1', 'data2']);
 
     currentCount = 2;
-    clearCanvas(canvas, piskelImg, currentCount);
-    expect(JSON.parse(localStorage.getItem('piskelImg'))).toStrictEqual(['', 'data1', '']);
+    clearCanvas(canvas, piskelImg, currentCount, imgsKey);
+    expect(JSON.parse(localStorage.getItem(imgsKey))).toStrictEqual(['', 'data1', '']);
   });
 });

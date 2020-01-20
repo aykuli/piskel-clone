@@ -1,4 +1,5 @@
 import gifSave from './gifSave';
+import { LS_KEYS } from '../../constants';
 
 /* eslint-disable */
 describe('function gifSave to exporting images as .gif', () => {
@@ -27,6 +28,6 @@ describe('function gifSave to exporting images as .gif', () => {
     localStorage.setItem('piskelImg', JSON.stringify(['', '']));
     localStorage.setItem('piskelFps', 5);
 
-    expect(gifSave(canvas, GIFEncoder)).toBe('image saved as .gif');
+    expect(gifSave(canvas, GIFEncoder, LS_KEYS)).toBe('image saved as .gif');
   });
 });

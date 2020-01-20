@@ -13,6 +13,7 @@ const LS_KEYS = {
 const SELECTORS = {
   VISUALLY_HIDDEN: 'visually-hidden',
 
+  CANVAS_ABOVE: 'canvas--above',
   CANVAS_RESOLUTION: 'resolution--res',
 
   BUTTON_RESOLUTION_ACTIVE: 'resolution__btn--active',

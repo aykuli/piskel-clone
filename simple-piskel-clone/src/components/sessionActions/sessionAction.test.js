@@ -7,7 +7,7 @@ describe('sessionActions function', () => {
     const canvas = { toDataURL: () => 'data:someImage' };
     const currentCount = 0;
     expect(saveImgsInLocalStorage(piskelImg, canvas, currentCount)).toBe('data:someImage');
-    expect(JSON.parse(localStorage.getItem('piskelImg'))).toStrictEqual(['data:someImage']);
+    expect(piskelImg).toStrictEqual(['data:someImage']);
   });
 
   it('refreshLocalStorageValue function should set key according to value in localStorage', () => {
@@ -26,8 +26,10 @@ describe('sessionActions function', () => {
       value: () => {},
       writable: false,
     });
-    refreshLocalStorageValue('img', ['some image data']);
+    refreshLocalStorageValue('key0', ['some image data']);
+    refreshLocalStorageValue('key1', ['some data']);
     clearSession();
-    expect(localStorage.getItem('img')).toBe('some image data');
+    expect(localStorage.getItem('key0')).toBe(null);
+    expect(localStorage.getItem('key1')).toBe(null);
   });
 });

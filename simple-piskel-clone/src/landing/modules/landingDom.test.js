@@ -1,5 +1,6 @@
 import { getLandingElements, renderGalleryItems, galleryItemsHandler } from './landingDom';
 import { imagesArr } from './dataURIs';
+import { LS_KEYS } from '../../constants';
 
 /* eslint-disable */
 require('@babel/register');
@@ -37,7 +38,7 @@ describe('landing page functions', () => {
   it('galleryItemsHandler function should set default values to start to edit presented animations', () => {
     const e = { target: { tagName: 'CANVAS', parentNode: { dataset: { count: 3 } } } };
 
-    expect(galleryItemsHandler(e, imagesArr)).toBe(3);
+    expect(galleryItemsHandler(e, imagesArr, LS_KEYS)).toBe(3);
     expect(JSON.parse(localStorage.getItem('piskelImg'))).toStrictEqual(imagesArr[3]);
     expect(localStorage.getItem('piskelCounter')).toBe('0');
     expect(localStorage.getItem('piskelFps')).toBe('3');
@@ -52,7 +53,7 @@ describe('landing page functions', () => {
   it('renderGalleryItems function should get elements with acoording dataset.count', () => {
     const drawOnCanvas = (canvas, img) => {};
     const animate = (func, img, bool1, bool2) => {};
-    const list = renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr, el =>
+    const list = renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr, LS_KEYS, el =>
       domVirt.window.document.createElement(el)
     );
 
