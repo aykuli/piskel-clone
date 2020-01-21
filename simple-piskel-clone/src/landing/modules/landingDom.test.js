@@ -1,6 +1,6 @@
 import { getLandingElements, renderGalleryItems, galleryItemsHandler } from './landingDom';
 import { imagesArr } from './dataURIs';
-import { LS_KEYS } from '../../constants';
+import { LS_KEYS, SELECTORS } from '../../constants';
 
 /* eslint-disable */
 require('@babel/register');
@@ -46,14 +46,14 @@ describe('landing page functions', () => {
 
   it('getLandingElements function should return DOM elements', () => {
     const getDomElement = str => domVirt.window.document.querySelector(str);
-    expect(getType(getLandingElements(getDomElement))).toBe('array');
-    expect(getLandingElements(getDomElement)).toStrictEqual([canvasMain, gallery, functionalityPreview]);
+    expect(getType(getLandingElements(getDomElement, SELECTORS))).toBe('array');
+    expect(getLandingElements(getDomElement, SELECTORS)).toStrictEqual([canvasMain, gallery, functionalityPreview]);
   });
 
   it('renderGalleryItems function should get elements with acoording dataset.count', () => {
     const drawOnCanvas = (canvas, img) => {};
     const animate = (func, img, bool1, bool2) => {};
-    const list = renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr, LS_KEYS, el =>
+    const list = renderGalleryItems(drawOnCanvas, animate, gallery, imagesArr, LS_KEYS, SELECTORS, el =>
       domVirt.window.document.createElement(el)
     );
 
