@@ -21,7 +21,6 @@ module.exports = {
   },
   mode: setDMode(),
   devtool: setDevTool(),
-  // mode: 'development',
   module: {
     rules: [
       {
