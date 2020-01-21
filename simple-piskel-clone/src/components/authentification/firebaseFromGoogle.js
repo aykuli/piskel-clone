@@ -6,21 +6,22 @@ function loginGoogleAccount(firebase, authElements, createPopup, getDomElement, 
 
   firebase.auth().useDeviceLanguage();
 
-  try {
-    const result = firebase.auth().signInWithPopup(provider);
-    // The signed-in user info.
-    const { user } = result;
-
-    authPhoto.setAttribute('src', user.providerData[0].photoURL);
-    authName.innerText = user.providerData[0].displayName;
-    authName.parentNode.title = user.email;
-    authLoginBtn.style.display = 'none';
-    authLogoutBtn.style.display = 'block';
-
-    return result.user;
-  } catch (e) {
-    createPopup(e.message, getDomElement, SELECTORS);
-  }
+  firebase
+    .auth()
+    .signInWithPopup(provider)
+    .then(result => {
+      // The signed-in user info.
+      const { user } = result;
+      authPhoto.setAttribute('src', user.providerData[0].photoURL);
+      authName.innerText = user.providerData[0].displayName;
+      authName.parentNode.title = user.email;
+      authLoginBtn.style.display = 'none';
+      authLogoutBtn.style.display = 'block';
+      return result.user;
+    })
+    .catch(e => {
+      createPopup(e.message, getDomElement, SELECTORS);
+    });
   return 'authentification passed';
 }
 

@@ -5,7 +5,7 @@ import './components/hotKeys/hotKeys';
 
 // Firebase project configuration from google-firebase
 const firebaseConfig = {
-  apiKey: 'AIzaSyARJwn4pidGuuTH8d0Cwq6iKkofYZZzW3c',
+  apiKey: API_KEY,
   authDomain: 'aykuli-simple-piskel-clone.firebaseapp.com',
   databaseURL: 'https://aykuli-simple-piskel-clone.firebaseio.com',
   projectId: 'aykuli-simple-piskel-clone',
@@ -14,6 +14,13 @@ const firebaseConfig = {
   appId: '1:958250490194:web:ab19f66023057e3c7c828b',
 };
 
-const app = new App(domElements, { firebaseConfig });
+const app = new App(domElements, {
+  authConfig: firebaseConfig,
+  pixelSize: 1,
+  currentCount: 0,
+  fps: 0,
+  penSize: 1,
+  piskelImg: [],
+});
 
 app.run();

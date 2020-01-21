@@ -70,8 +70,8 @@ import {
   highlightUnsettedTool,
 } from './components/hotKeys/hotKeys';
 
-export default class Controller {
-  constructor(dom, { authConfig = {}, ...rest } = {}) {
+export default class App {
+  constructor(dom, { authConfig, ...rest } = {}) {
     const { pixelSize = 1, currentCount = 0, fps = 0, penSize = 1, piskelImg = [] } = rest;
     this.pixelSize = pixelSize;
     this.currentCount = currentCount;
@@ -81,7 +81,6 @@ export default class Controller {
 
     this.dom = dom(getDomElement);
     this.ctx = this.dom.canvas.getContext('2d');
-
     this.firebaseConfig = authConfig;
     this.tools = new Tools(this.dom.canvas, this.ctx, this.dom.primaryColor, this.pixelSize, LS_KEYS);
     this.isHotKeyOpen = false;

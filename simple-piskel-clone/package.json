@@ -50,6 +50,7 @@
     "@babel/helper-plugin-utils": "^7.0.0",
     "apng-js": "^1.1.0",
     "babel-loader": "^8.0.6",
+    "dotenv": "^8.2.0",
     "downloadjs": "^1.4.7",
     "fibers": "^4.0.2",
     "firebase": "^7.6.1",
